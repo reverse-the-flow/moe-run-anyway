@@ -6,7 +6,7 @@ This note records the observability surfaces and runtime knobs that are most rel
 
 ### Probe 1: Passive Sidecar
 
-File: [llama_sidecar.py](/X:/Experiments/memory-moe-mvp/llama_sidecar.py)
+File: [llama_sidecar.py](../llama_sidecar.py)
 
 Use when:
 
@@ -41,7 +41,7 @@ That enables before/after snapshots of:
 
 ### Probe 2: Llama Runtime Probe
 
-File: [llama_runtime_probe.py](/X:/Experiments/memory-moe-mvp/llama_runtime_probe.py)
+File: [llama_runtime_probe.py](../llama_runtime_probe.py)
 
 Use when:
 
@@ -65,7 +65,7 @@ What it still cannot see:
 
 ### Probe 3: Forward-Hook Probe
 
-File: [moe_forward_probe.py](/X:/Experiments/memory-moe-mvp/moe_forward_probe.py)
+File: [moe_forward_probe.py](../moe_forward_probe.py)
 
 Use when:
 
@@ -176,8 +176,8 @@ Per the official `llama.cpp` Docker docs:
 
 Files:
 
-- [forward-hook-probe.Dockerfile](/X:/Experiments/memory-moe-mvp/docker/forward-hook-probe.Dockerfile)
-- [forward-hook-probe.requirements.txt](/X:/Experiments/memory-moe-mvp/docker/forward-hook-probe.requirements.txt)
-- [forward-hook-probe.compose.yaml](/X:/Experiments/memory-moe-mvp/docker/forward-hook-probe.compose.yaml)
+- [forward-hook-probe.Dockerfile](../docker/forward-hook-probe.Dockerfile)
+- [forward-hook-probe.requirements.txt](../docker/forward-hook-probe.requirements.txt)
+- [forward-hook-probe.compose.yaml](../docker/forward-hook-probe.compose.yaml)
 
 This stack is for the PyTorch / Transformers path, not `llama.cpp`.

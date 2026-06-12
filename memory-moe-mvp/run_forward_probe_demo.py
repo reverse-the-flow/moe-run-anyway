@@ -168,13 +168,13 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("X:/Experiments/memory-moe-mvp/forward-probe-runs"),
+        default=Path("forward-probe-runs"),
     )
     parser.add_argument("--label", default="forward-probe-demo")
     parser.add_argument(
         "--suite-path",
         type=Path,
-        default=Path("X:/Experiments/memory-moe-mvp/data/mixtral_probe_prompts.json"),
+        default=Path("data/mixtral_probe_prompts.json"),
     )
     parser.add_argument("--max-prompts", type=int, default=6)
     parser.add_argument("--window-size-tokens", type=int, default=32)

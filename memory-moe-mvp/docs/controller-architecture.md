@@ -1,6 +1,6 @@
 # Controller Architecture
 
-This note distills the main controller-design lessons from [ChatGPT-MoE Sparse Attention Insights.md](/X:/Experiments/AI data/ChatGPT-MoE Sparse Attention Insights.md) into a reusable architecture for our MoE probe work.
+This note distills the main controller-design lessons from the archived sparse-attention discussion into a reusable architecture for our MoE probe work.
 
 The key idea is not "use sparse attention for MoE." The useful transfer is a controller pattern:
 
@@ -196,13 +196,13 @@ Every controller experiment should report at least one metric from each class.
 ### Already Present
 
 - Observer:
-  - [llama_sidecar.py](/X:/Experiments/memory-moe-mvp/llama_sidecar.py)
-  - [llama_runtime_probe.py](/X:/Experiments/memory-moe-mvp/llama_runtime_probe.py)
-  - [moe_forward_probe.py](/X:/Experiments/memory-moe-mvp/moe_forward_probe.py)
+  - [llama_sidecar.py](../llama_sidecar.py)
+  - [llama_runtime_probe.py](../llama_runtime_probe.py)
+  - [moe_forward_probe.py](../moe_forward_probe.py)
 - Prompt differentiation:
-  - [mixtral_probe_prompts.json](/X:/Experiments/memory-moe-mvp/data/mixtral_probe_prompts.json)
+  - [mixtral_probe_prompts.json](../data/mixtral_probe_prompts.json)
 - Initial selector and actuator ideas in simulation:
-  - [memory_moe.py](/X:/Experiments/memory-moe-mvp/memory_moe.py)
+  - [memory_moe.py](../memory_moe.py)
 
 ### Still Missing
 

@@ -1,8 +1,8 @@
 [CmdletBinding()]
 param(
-    [string]$SuitePath = "X:\Experiments\memory-moe-mvp\data\mixtral_probe_prompts.json",
+    [string]$SuitePath = ".\data\mixtral_probe_prompts.json",
     [string]$Endpoint = "http://127.0.0.1:18080/v1/chat/completions",
-    [string]$OutputRoot = "X:\Experiments\memory-moe-mvp\probe-results",
+    [string]$OutputRoot = ".\probe-results",
     [string]$RunDir = "",
     [int]$Repeats = 2,
     [int]$PauseMilliseconds = 250,
