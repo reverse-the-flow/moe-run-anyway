@@ -10,13 +10,16 @@ Ready to upload as a measurement-first MoE controllability probe project.
 
 The repository is not claiming real expert paging yet. It is uploadable because a fresh reader can understand the project surface, run a dependency-free local readiness command, and see the exact live model gates that remain deferred.
 
-## Current Commits
+## Validated Commits
 
 - `61f11a0 Finalize uploadable project surface`
 - `b1dd127 Record git baseline status`
 - `c6483c6 Initialize MoE run-anyway project`
 
-This readiness file records the final state after `61f11a0` and is committed as the follow-up readiness record.
+This readiness file records the final upload-surface state after `61f11a0`.
+The commit that contains this readiness record is intentionally not listed as a
+self-referential "current" hash; use `git log --oneline --decorate -5` for the
+latest repository HEAD.
 
 ## Files Changed In Upload-Surface Commit
 
