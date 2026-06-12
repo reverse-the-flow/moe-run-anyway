@@ -1,0 +1,351 @@
+{
+  "suite_name": "mixtral-expert-coverage-probe",
+  "target_model": "dolphin-mixtral:8x7b",
+  "purpose": "Exercise different routing patterns in a Mixtral-family MoE without assuming that experts map cleanly to human-readable domains.",
+  "design_principles": [
+    "Do not assume there is a neat math expert, code expert, or legal expert. MoE routing is token-level and can specialize around syntax, language, format, or style as much as topic.",
+    "Probe across contrasting token regimes: natural prose, code, SQL, JSON, XML, shell, logs, math notation, markdown tables, and multilingual text.",
+    "Keep generation deterministic when possible so routing differences are easier to compare across repeated runs.",
+    "Use paired and hybrid prompts so we can test whether routing changes with format alone, with topic alone, or with both together."
+  ],
+  "default_request": {
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "max_tokens": 220,
+    "stream": false
+  },
+  "recommended_protocol": [
+    "Run every prompt at least twice with the same generation settings.",
+    "Start with the single-format families before the hybrid families.",
+    "If expert IDs become visible later, compare both unique experts touched and stable co-activation patterns across repeats.",
+    "Treat this suite as a coverage sweep, not a proof that a prompt exclusively belongs to one expert."
+  ],
+  "families": [
+    {
+      "family_id": "english_prose",
+      "routing_hypothesis": "Long natural-language prose and editorial rewriting may cluster on a stable subset of experts distinct from heavy syntax or code prompts.",
+      "prompts": [
+        {
+          "probe_id": "prose-summary-01",
+          "title": "Operations memo summary",
+          "expected_surface_features": [
+            "natural English prose",
+            "bulleted summary",
+            "plain instruction following"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Summarize the memo below into exactly four bullets and one one-sentence recommendation.\n\nMemo:\nDuring the last two release cycles, inference latency spiked whenever long prompts arrived while several large background models were still warm in memory. Engineers observed that the worst tail latencies happened after a burst of code-assistant traffic because the system kept the same heavy experts resident even when the next request mostly needed ordinary reasoning. We need a runtime that can decide whether to keep experts warm for reuse or free that memory to preserve longer context."
+            }
+          ]
+        },
+        {
+          "probe_id": "prose-rewrite-01",
+          "title": "Tone rewrite for support escalation",
+          "expected_surface_features": [
+            "customer-service language",
+            "tone conversion",
+            "short structured prose"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Rewrite the email below into a calm internal support handoff note with these sections only: Issue, Customer impact, Requested next step.\n\nEmail:\nI have restarted this thing three times and it still freezes the moment I paste a larger document. The short demos work fine, but the minute I use a real transcript your app crawls and then times out. I am not interested in another generic checklist. Please get this in front of someone who can actually look at memory usage."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "code_python",
+      "routing_hypothesis": "Dense programming syntax, identifiers, indentation, and traceback text can shift routing away from prose-heavy patterns.",
+      "prompts": [
+        {
+          "probe_id": "python-impl-01",
+          "title": "Python implementation with tests",
+          "expected_surface_features": [
+            "Python syntax",
+            "type hints",
+            "unit tests"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Write Python code that implements `def merge_intervals(intervals: list[tuple[int, int]]) -> list[tuple[int, int]]` and then provide exactly three `pytest` unit tests. Keep the answer in one fenced Python block."
+            }
+          ]
+        },
+        {
+          "probe_id": "python-debug-01",
+          "title": "Traceback diagnosis",
+          "expected_surface_features": [
+            "traceback tokens",
+            "patch reasoning",
+            "code-and-explanation mix"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Diagnose the bug from this traceback and return two sections only: Root cause and Minimal patch.\n\nTraceback:\nTraceback (most recent call last):\n  File \"worker.py\", line 48, in <module>\n    result = process(items)\n  File \"worker.py\", line 33, in process\n    cache[key] += item[\"score\"]\nKeyError: 'user-17'\n\nRelevant code:\ncache = {}\nfor item in items:\n    key = item[\"user_id\"]\n    cache[key] += item[\"score\"]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "sql_and_tabular",
+      "routing_hypothesis": "SQL keywords, schemas, and table-shaped data often behave differently from either plain prose or general-purpose code.",
+      "prompts": [
+        {
+          "probe_id": "sql-query-01",
+          "title": "SQL over a warehouse schema",
+          "expected_surface_features": [
+            "SQL syntax",
+            "schema reasoning",
+            "aggregation and joins"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Given the schema below, write one SQL query that returns each account manager and the count of customers whose total 2025 order value exceeded 10000. Use only these tables.\n\ncustomers(id, name, account_manager_id)\naccount_managers(id, full_name)\norders(id, customer_id, order_date, total_usd)\n\nReturn only SQL in a fenced code block."
+            }
+          ]
+        },
+        {
+          "probe_id": "table-analysis-01",
+          "title": "Tabular anomaly summary",
+          "expected_surface_features": [
+            "CSV-like rows",
+            "numerical comparison",
+            "tabular reasoning"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Read this small table and answer with exactly two bullets: one likely anomaly and one likely explanation.\n\nweek,requests,p95_ms,error_rate\n2026-W10,120000,410,0.3\n2026-W11,119500,425,0.4\n2026-W12,121100,418,0.3\n2026-W13,118900,970,2.1\n2026-W14,120400,440,0.4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "structured_formats",
+      "routing_hypothesis": "Braces, quotes, commas, tags, and schema-constrained output can trigger routing patterns unlike freeform generation.",
+      "prompts": [
+        {
+          "probe_id": "json-extract-01",
+          "title": "Strict JSON extraction",
+          "expected_surface_features": [
+            "JSON punctuation",
+            "schema-constrained output",
+            "entity extraction"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Extract the information below into strict JSON with this schema and no extra keys:\n{\n  \"company\": string,\n  \"contact\": string,\n  \"deadline\": string,\n  \"budget_usd\": number,\n  \"risks\": string[]\n}\n\nText:\nNorthwind Robotics asked Maya Chen to send a revised proposal by May 14, 2026. The team thinks the budget will land near $185,000, but the cooling subsystem vendor is still unconfirmed and the embedded firmware schedule may slip."
+            }
+          ]
+        },
+        {
+          "probe_id": "xml-convert-01",
+          "title": "YAML to XML conversion",
+          "expected_surface_features": [
+            "YAML tokens",
+            "XML tags",
+            "format conversion"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Convert this YAML into XML. Preserve the same hierarchy and keep the answer in one fenced XML block.\n\nservice:\n  name: billing-api\n  port: 8443\n  healthcheck:\n    path: /health\n    timeout_seconds: 2\n  features:\n    - invoices\n    - refunds\n    - credit-notes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "math_and_latex",
+      "routing_hypothesis": "Equations, symbolic notation, and LaTeX commands often create different routing pressure than prose or code.",
+      "prompts": [
+        {
+          "probe_id": "math-derivation-01",
+          "title": "Probability derivation with LaTeX",
+          "expected_surface_features": [
+            "equation symbols",
+            "LaTeX",
+            "stepwise reasoning"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "A box contains 5 red balls and 7 blue balls. Two balls are drawn without replacement. Compute the probability that exactly one ball is red. Answer with two sections only: Plain-English answer and LaTeX derivation."
+            }
+          ]
+        },
+        {
+          "probe_id": "math-complexity-01",
+          "title": "Asymptotic complexity explanation",
+          "expected_surface_features": [
+            "Big-O notation",
+            "algorithmic language",
+            "math-style formatting"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Explain why binary search runs in O(log n) time. Use exactly three numbered steps and include one displayed formula."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "logs_shell_regex",
+      "routing_hypothesis": "Log lines, timestamps, regex tokens, and shell commands create a dense syntax regime that may light up different experts.",
+      "prompts": [
+        {
+          "probe_id": "regex-log-01",
+          "title": "Regex over server logs",
+          "expected_surface_features": [
+            "timestamps",
+            "regex punctuation",
+            "log parsing"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Given the log lines below, write one regular expression that captures the request id and status code, then give one `grep` command that prints only 5xx lines.\n\n2026-04-06T10:41:02Z INFO req=ab12 path=/chat status=200 latency_ms=183\n2026-04-06T10:41:05Z WARN req=ab13 path=/chat status=503 latency_ms=4100\n2026-04-06T10:41:07Z INFO req=ab14 path=/embed status=200 latency_ms=91\n2026-04-06T10:41:09Z ERROR req=ab15 path=/chat status=500 latency_ms=2870"
+            }
+          ]
+        },
+        {
+          "probe_id": "shell-triage-01",
+          "title": "Container triage commands",
+          "expected_surface_features": [
+            "shell commands",
+            "ops vocabulary",
+            "incident response"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "A containerized inference service is returning 503 during startup and operators suspect GPU memory pressure. Give exactly five bash commands to investigate, each followed by a short comment explaining why it helps."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "multilingual",
+      "routing_hypothesis": "Different languages and scripts can change routing even when the underlying task stays the same.",
+      "prompts": [
+        {
+          "probe_id": "translate-multilingual-01",
+          "title": "Tri-lingual release note translation",
+          "expected_surface_features": [
+            "multilingual translation",
+            "non-Latin script",
+            "parallel formatting"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Translate the release note below into Spanish and Simplified Chinese. Return a three-column markdown table with headers English, Spanish, Chinese.\n\nRelease note:\nThe new runtime keeps a smaller set of experts in memory, which can reduce latency spikes and preserve more room for long context."
+            }
+          ]
+        },
+        {
+          "probe_id": "multilingual-summary-01",
+          "title": "Code-switched summary",
+          "expected_surface_features": [
+            "language switching",
+            "mixed scripts",
+            "short structured output"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Explain this bug report in English in two sentences, then give a one-sentence summary in German and one in Japanese.\n\nBug report:\nWhen the user pastes a long transcript, the app becomes slow only after the coding assistant has been used for a while. Restarting clears the problem for a short time."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "domain_jargon",
+      "routing_hypothesis": "Legal and scientific registers may not own dedicated experts, but they often shift vocabulary distribution enough to be useful probe targets.",
+      "prompts": [
+        {
+          "probe_id": "legal-extract-01",
+          "title": "Contract obligation extraction",
+          "expected_surface_features": [
+            "legal register",
+            "obligation extraction",
+            "quoted clause parsing"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Read the clause below and extract exactly three items: supplier obligation, customer obligation, termination trigger.\n\nClause:\nThe Supplier shall deliver the reporting module no later than June 30, 2026, provided that the Customer furnishes all required API credentials within ten business days of contract execution. If the Customer fails to provide credentials by that deadline, the delivery date shall extend accordingly. Either party may terminate this Statement of Work for material breach if such breach remains uncured for thirty days after written notice."
+            }
+          ]
+        },
+        {
+          "probe_id": "science-summary-01",
+          "title": "Scientific abstract structuring",
+          "expected_surface_features": [
+            "scientific register",
+            "abstract summarization",
+            "specialized vocabulary"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Convert the abstract below into four bullets labeled Hypothesis, Method, Result, Limitation.\n\nAbstract:\nWe evaluated a memory-aware sparse inference policy on a synthetic long-context benchmark. Compared with a fixed-residency baseline, the adaptive policy reduced reload events by 28% at short context lengths while preserving higher context retention on long prompts. However, the quality gains were sensitive to routing stability and degraded when cold experts were repeatedly chosen for transient requests."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "hybrid_mixed_format",
+      "routing_hypothesis": "Hybrid prompts that force multiple formats in one completion are good stress probes because they mix token regimes within a single request.",
+      "prompts": [
+        {
+          "probe_id": "hybrid-incident-01",
+          "title": "Traceback to explanation plus JSON plus shell",
+          "expected_surface_features": [
+            "Python traceback",
+            "JSON object",
+            "bash commands",
+            "mixed-format output"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Use the error below and answer in exactly three parts:\n1. One sentence explaining the failure in plain English.\n2. A JSON object with keys `severity`, `probable_cause`, and `next_action`.\n3. Two bash commands to investigate.\n\nError:\nValueError: KV cache allocation failed after loading additional experts for request 9184"
+            }
+          ]
+        },
+        {
+          "probe_id": "hybrid-data-01",
+          "title": "CSV to markdown plus SQL plus JSON schema",
+          "expected_surface_features": [
+            "CSV rows",
+            "markdown table",
+            "SQL",
+            "JSON schema"
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": "Read the CSV below and answer with exactly three sections: a markdown table reproducing the data, one SQL query that selects only rows where latency_ms > 1000, and a JSON schema for the row shape.\n\nrequest_id,expert_pair,latency_ms\nr1,e0+e1,412\nr2,e2+e3,1580\nr3,e4+e5,1744"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

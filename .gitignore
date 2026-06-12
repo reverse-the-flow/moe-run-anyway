@@ -1,0 +1,37 @@
+# Python caches and local test output
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments and local configuration
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# Logs, temp files, and local editor state
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+.DS_Store
+
+# Codex/session transcripts and generated run logs
+codex-*.log
+*.session.log
+.codex-session*
+
+# Generated probe/controller run directories
+memory-moe-mvp/*-runs/
+memory-moe-mvp/runtime-probe-runs/
+memory-moe-mvp/sidecar-runs/
+memory-moe-mvp/forward-probe-runs/
+memory-moe-mvp/controller-runs/
+memory-moe-mvp/sim-runs/

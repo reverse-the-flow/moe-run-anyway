@@ -1,0 +1,99 @@
+﻿{
+    "created_at":  "2026-04-08T16:20:29.3243214-05:00",
+    "run_dir":  "X:\\Experiments\\memory-moe-mvp\\probe-results\\mixtral-probe-20260408-155219",
+    "total_runs":  18,
+    "successful_runs":  18,
+    "failed_runs":  0,
+    "family_summaries":  [
+                             {
+                                 "family_id":  "english_prose",
+                                 "runs":  2,
+                                 "errors":  0,
+                                 "mean_elapsed_ms":  56135.642,
+                                 "mean_prompt_tokens":  121.5,
+                                 "mean_completion_tokens":  103,
+                                 "mean_prompt_ms":  815.994,
+                                 "mean_predicted_ms":  53450.956
+                             },
+                             {
+                                 "family_id":  "code_python",
+                                 "runs":  2,
+                                 "errors":  0,
+                                 "mean_elapsed_ms":  87604.383,
+                                 "mean_prompt_tokens":  105,
+                                 "mean_completion_tokens":  161,
+                                 "mean_prompt_ms":  2146.99,
+                                 "mean_predicted_ms":  82538.18
+                             },
+                             {
+                                 "family_id":  "sql_and_tabular",
+                                 "runs":  2,
+                                 "errors":  0,
+                                 "mean_elapsed_ms":  65724.89,
+                                 "mean_prompt_tokens":  138,
+                                 "mean_completion_tokens":  119.5,
+                                 "mean_prompt_ms":  477.754,
+                                 "mean_predicted_ms":  62459.121
+                             },
+                             {
+                                 "family_id":  "structured_formats",
+                                 "runs":  2,
+                                 "errors":  0,
+                                 "mean_elapsed_ms":  51722.134,
+                                 "mean_prompt_tokens":  117.5,
+                                 "mean_completion_tokens":  107.5,
+                                 "mean_prompt_ms":  384.968,
+                                 "mean_predicted_ms":  49183.825
+                             },
+                             {
+                                 "family_id":  "math_and_latex",
+                                 "runs":  2,
+                                 "errors":  0,
+                                 "mean_elapsed_ms":  122885.017,
+                                 "mean_prompt_tokens":  47.5,
+                                 "mean_completion_tokens":  220,
+                                 "mean_prompt_ms":  3913.066,
+                                 "mean_predicted_ms":  115362.089
+                             },
+                             {
+                                 "family_id":  "logs_shell_regex",
+                                 "runs":  2,
+                                 "errors":  0,
+                                 "mean_elapsed_ms":  142547.776,
+                                 "mean_prompt_tokens":  138.5,
+                                 "mean_completion_tokens":  216,
+                                 "mean_prompt_ms":  2117.89,
+                                 "mean_predicted_ms":  135644.504
+                             },
+                             {
+                                 "family_id":  "multilingual",
+                                 "runs":  2,
+                                 "errors":  0,
+                                 "mean_elapsed_ms":  104314.134,
+                                 "mean_prompt_tokens":  77,
+                                 "mean_completion_tokens":  162.5,
+                                 "mean_prompt_ms":  4174.36,
+                                 "mean_predicted_ms":  96998.262
+                             },
+                             {
+                                 "family_id":  "domain_jargon",
+                                 "runs":  2,
+                                 "errors":  0,
+                                 "mean_elapsed_ms":  83726.053,
+                                 "mean_prompt_tokens":  120.5,
+                                 "mean_completion_tokens":  118.5,
+                                 "mean_prompt_ms":  4185.478,
+                                 "mean_predicted_ms":  76965.238
+                             },
+                             {
+                                 "family_id":  "hybrid_mixed_format",
+                                 "runs":  2,
+                                 "errors":  0,
+                                 "mean_elapsed_ms":  127911.418,
+                                 "mean_prompt_tokens":  104.5,
+                                 "mean_completion_tokens":  187,
+                                 "mean_prompt_ms":  4014.712,
+                                 "mean_predicted_ms":  120044.39
+                             }
+                         ]
+}

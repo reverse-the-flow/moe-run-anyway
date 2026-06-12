@@ -1,0 +1,24 @@
+services:
+  forward-hook-probe:
+    build:
+      context: ..
+      dockerfile: docker/forward-hook-probe.Dockerfile
+    image: memory-moe-forward-hook-probe:pt260-cu124
+    container_name: memory-moe-forward-hook-probe
+    gpus: all
+    stdin_open: true
+    tty: true
+    shm_size: "16gb"
+    working_dir: /workspace
+    environment:
+      HF_HOME: /cache/huggingface
+      TRANSFORMERS_CACHE: /cache/huggingface/transformers
+      PYTHONUNBUFFERED: "1"
+      PYTORCH_CUDA_ALLOC_CONF: max_split_size_mb:256
+    volumes:
+      - ../:/workspace
+      - forward_hook_hf_cache:/cache/huggingface
+    command: ["bash", "-lc", "sleep infinity"]
+
+volumes:
+  forward_hook_hf_cache:

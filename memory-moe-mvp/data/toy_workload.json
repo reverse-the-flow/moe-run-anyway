@@ -1,0 +1,309 @@
+{
+  "scenario_name": "toy-memory-aware-moe",
+  "origin": "Synthetic workload for a memory-aware MoE runtime MVP.",
+  "why": "Force measurable tradeoffs between expert reuse, expert loading cost, and context capacity under one fixed memory budget.",
+  "memory": {
+    "total_budget_mb": 1000,
+    "core_memory_mb": 320,
+    "kv_cache_mb_per_token": 0.05,
+    "hard_context_limit_tokens": 12000,
+    "top_k": 2,
+    "bootstrap_resident_experts": []
+  },
+  "latency": {
+    "base_ms": 18.0,
+    "ms_per_token": 0.004,
+    "ms_per_selected_expert": 6.0,
+    "eviction_ms": 3.0
+  },
+  "quality": {
+    "expert_weight": 0.65,
+    "context_weight": 0.35
+  },
+  "experts": [
+    {
+      "expert_id": "e0",
+      "memory_mb": 90,
+      "load_ms": 28.0
+    },
+    {
+      "expert_id": "e1",
+      "memory_mb": 85,
+      "load_ms": 26.0
+    },
+    {
+      "expert_id": "e2",
+      "memory_mb": 145,
+      "load_ms": 40.0
+    },
+    {
+      "expert_id": "e3",
+      "memory_mb": 155,
+      "load_ms": 44.0
+    },
+    {
+      "expert_id": "e4",
+      "memory_mb": 90,
+      "load_ms": 22.0
+    },
+    {
+      "expert_id": "e5",
+      "memory_mb": 130,
+      "load_ms": 38.0
+    }
+  ],
+  "requests": [
+    {
+      "request_id": "req-001",
+      "prompt_tokens": 4200,
+      "note": "Warm up the first expert pair.",
+      "router_scores": {
+        "e0": 0.95,
+        "e1": 0.92,
+        "e2": 0.4,
+        "e3": 0.35,
+        "e4": 0.3,
+        "e5": 0.28
+      },
+      "quality_scores": {
+        "e0": 0.98,
+        "e1": 0.93,
+        "e2": 0.43,
+        "e3": 0.31,
+        "e4": 0.26,
+        "e5": 0.22
+      }
+    },
+    {
+      "request_id": "req-002",
+      "prompt_tokens": 4800,
+      "note": "Keep the same pair warm so reuse matters later.",
+      "router_scores": {
+        "e0": 0.91,
+        "e1": 0.9,
+        "e2": 0.45,
+        "e3": 0.32,
+        "e4": 0.28,
+        "e5": 0.3
+      },
+      "quality_scores": {
+        "e0": 0.95,
+        "e1": 0.94,
+        "e2": 0.47,
+        "e3": 0.34,
+        "e4": 0.24,
+        "e5": 0.27
+      }
+    },
+    {
+      "request_id": "req-003",
+      "prompt_tokens": 5600,
+      "note": "Switch domains and load a second expert pair.",
+      "router_scores": {
+        "e0": 0.55,
+        "e1": 0.5,
+        "e2": 0.94,
+        "e3": 0.91,
+        "e4": 0.36,
+        "e5": 0.33
+      },
+      "quality_scores": {
+        "e0": 0.52,
+        "e1": 0.49,
+        "e2": 0.97,
+        "e3": 0.92,
+        "e4": 0.38,
+        "e5": 0.35
+      }
+    },
+    {
+      "request_id": "req-004",
+      "prompt_tokens": 6200,
+      "note": "Keep the second pair resident so memory fills up.",
+      "router_scores": {
+        "e0": 0.48,
+        "e1": 0.46,
+        "e2": 0.93,
+        "e3": 0.9,
+        "e4": 0.4,
+        "e5": 0.37
+      },
+      "quality_scores": {
+        "e0": 0.45,
+        "e1": 0.44,
+        "e2": 0.95,
+        "e3": 0.93,
+        "e4": 0.42,
+        "e5": 0.4
+      }
+    },
+    {
+      "request_id": "req-005",
+      "prompt_tokens": 9800,
+      "note": "Return to the first pair with a much longer prompt.",
+      "router_scores": {
+        "e0": 0.9,
+        "e1": 0.88,
+        "e2": 0.62,
+        "e3": 0.58,
+        "e4": 0.35,
+        "e5": 0.34
+      },
+      "quality_scores": {
+        "e0": 0.96,
+        "e1": 0.91,
+        "e2": 0.6,
+        "e3": 0.55,
+        "e4": 0.33,
+        "e5": 0.31
+      }
+    },
+    {
+      "request_id": "req-006",
+      "prompt_tokens": 10400,
+      "note": "Cold experts look slightly better, but loading them costs memory and latency.",
+      "router_scores": {
+        "e0": 0.87,
+        "e1": 0.86,
+        "e2": 0.47,
+        "e3": 0.44,
+        "e4": 0.91,
+        "e5": 0.89
+      },
+      "quality_scores": {
+        "e0": 0.86,
+        "e1": 0.82,
+        "e2": 0.45,
+        "e3": 0.42,
+        "e4": 0.95,
+        "e5": 0.9
+      }
+    },
+    {
+      "request_id": "req-007",
+      "prompt_tokens": 10800,
+      "note": "If the cold experts were loaded once, reuse should start paying off.",
+      "router_scores": {
+        "e0": 0.74,
+        "e1": 0.73,
+        "e2": 0.42,
+        "e3": 0.4,
+        "e4": 0.93,
+        "e5": 0.91
+      },
+      "quality_scores": {
+        "e0": 0.72,
+        "e1": 0.7,
+        "e2": 0.41,
+        "e3": 0.39,
+        "e4": 0.96,
+        "e5": 0.92
+      }
+    },
+    {
+      "request_id": "req-008",
+      "prompt_tokens": 11200,
+      "note": "Long context returns to the original warm pair.",
+      "router_scores": {
+        "e0": 0.89,
+        "e1": 0.87,
+        "e2": 0.51,
+        "e3": 0.48,
+        "e4": 0.8,
+        "e5": 0.76
+      },
+      "quality_scores": {
+        "e0": 0.94,
+        "e1": 0.9,
+        "e2": 0.53,
+        "e3": 0.49,
+        "e4": 0.78,
+        "e5": 0.74
+      }
+    },
+    {
+      "request_id": "req-009",
+      "prompt_tokens": 11600,
+      "note": "Another revisit forces the runtime to decide what to keep resident.",
+      "router_scores": {
+        "e0": 0.71,
+        "e1": 0.69,
+        "e2": 0.92,
+        "e3": 0.9,
+        "e4": 0.6,
+        "e5": 0.58
+      },
+      "quality_scores": {
+        "e0": 0.7,
+        "e1": 0.67,
+        "e2": 0.96,
+        "e3": 0.93,
+        "e4": 0.58,
+        "e5": 0.56
+      }
+    },
+    {
+      "request_id": "req-010",
+      "prompt_tokens": 9000,
+      "note": "Mixed routing should allow partial reuse plus one new expert if worth it.",
+      "router_scores": {
+        "e0": 0.9,
+        "e1": 0.78,
+        "e2": 0.55,
+        "e3": 0.45,
+        "e4": 0.88,
+        "e5": 0.75
+      },
+      "quality_scores": {
+        "e0": 0.93,
+        "e1": 0.76,
+        "e2": 0.53,
+        "e3": 0.44,
+        "e4": 0.91,
+        "e5": 0.73
+      }
+    },
+    {
+      "request_id": "req-011",
+      "prompt_tokens": 9300,
+      "note": "A second mixed step tests whether the runtime over-evicts useful experts.",
+      "router_scores": {
+        "e0": 0.8,
+        "e1": 0.9,
+        "e2": 0.46,
+        "e3": 0.43,
+        "e4": 0.78,
+        "e5": 0.89
+      },
+      "quality_scores": {
+        "e0": 0.78,
+        "e1": 0.93,
+        "e2": 0.45,
+        "e3": 0.41,
+        "e4": 0.76,
+        "e5": 0.91
+      }
+    },
+    {
+      "request_id": "req-012",
+      "prompt_tokens": 10000,
+      "note": "Finish on the original pair so repeated reloads show up in the logs.",
+      "router_scores": {
+        "e0": 0.94,
+        "e1": 0.92,
+        "e2": 0.4,
+        "e3": 0.38,
+        "e4": 0.7,
+        "e5": 0.66
+      },
+      "quality_scores": {
+        "e0": 0.97,
+        "e1": 0.94,
+        "e2": 0.39,
+        "e3": 0.36,
+        "e4": 0.68,
+        "e5": 0.64
+      }
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "schema_version": "memory-moe-target-registry-v1",
+  "updated_at": "2026-06-12",
+  "required_target_classes": [
+    "stock_llama_cpp_openai_compatible",
+    "hookable_pytorch_moe",
+    "passive_sidecar_proxy",
+    "small_local_moe",
+    "mixtral_style"
+  ],
+  "targets": [
+    {
+      "target_id": "llama_cpp_openai_compatible_generic",
+      "target_class": "stock_llama_cpp_openai_compatible",
+      "backend_family": "llama_cpp",
+      "probe_tier": "internal_runtime",
+      "model_family": "openai_compatible_moe_or_dense",
+      "example_models": [
+        "dolphin-mixtral:8x7b",
+        "local GGUF served by llama-server"
+      ],
+      "semantic_expert_ids": "not_exposed",
+      "local_only_status": "requires_user_running_server",
+      "primary_probe": "llama_runtime_probe.py",
+      "observable_signals": [
+        "request and response usage",
+        "llama-server timings",
+        "metrics deltas",
+        "slot state",
+        "props snapshot",
+        "optional bounded log growth"
+      ],
+      "deferred_requirements": [
+        "user starts llama-server with --metrics --slots --props --perf and an optional --log-file",
+        "model weights are already available outside this validation pass",
+        "no semantic expert id assertion until libllama hooks or a runtime patch exists"
+      ],
+      "next_live_commands": [
+        "python3 llama_runtime_probe.py --base-url http://127.0.0.1:18080 --output-dir runtime-probe-runs --label llama-cpp-observational --model dolphin-mixtral --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 2 --log-file-path /path/to/llama-server.log"
+      ]
+    },
+    {
+      "target_id": "llama_cpp_passive_sidecar",
+      "target_class": "passive_sidecar_proxy",
+      "backend_family": "llama_cpp",
+      "probe_tier": "passive_external",
+      "model_family": "openai_compatible_moe_or_dense",
+      "example_models": [
+        "dolphin-mixtral:8x7b behind llama-server",
+        "any OpenAI-compatible backend"
+      ],
+      "semantic_expert_ids": "not_exposed",
+      "local_only_status": "requires_user_running_server",
+      "primary_probe": "llama_sidecar.py",
+      "observable_signals": [
+        "request boundary metadata",
+        "prompt size proxy",
+        "latency",
+        "usage",
+        "system memory snapshots",
+        "optional GPU snapshots",
+        "optional upstream metrics, slots, and props"
+      ],
+      "deferred_requirements": [
+        "user starts an upstream model server",
+        "client traffic is routed through the sidecar listen port",
+        "GPU capture is optional and depends on nvidia-smi"
+      ],
+      "next_live_commands": [
+        "python3 llama_sidecar.py --listen-port 8091 --upstream-base-url http://127.0.0.1:18080 --output-dir sidecar-runs --label mixtral-sidecar --capture-upstream-observability"
+      ]
+    },
+    {
+      "target_id": "transformers_mixtral_hookable",
+      "target_class": "hookable_pytorch_moe",
+      "backend_family": "pytorch_transformers",
+      "probe_tier": "semantic_router_hooks",
+      "model_family": "mixtral_style",
+      "example_models": [
+        "Mixtral-style Transformers model loaded from a local path",
+        "dolphin-mixtral-compatible local checkpoint if exposed as PyTorch modules"
+      ],
+      "semantic_expert_ids": "expected_when_router_outputs_are_exposed",
+      "local_only_status": "requires_user_provided_local_model_path",
+      "primary_probe": "moe_forward_probe.py",
+      "observable_signals": [
+        "router module names",
+        "layer ids inferred from module names",
+        "explicit expert ids and weights when exposed",
+        "top-k expert ids inferred from router logits when explicit ids are absent",
+        "routing entropy",
+        "per-window expert hit counts"
+      ],
+      "deferred_requirements": [
+        "torch and transformers are available in the user's environment",
+        "model is already cached or mounted locally",
+        "a thin runner loads the target and wraps generation with ForwardHookMoEProbe"
+      ],
+      "next_live_commands": [
+        "python3 run_forward_probe_demo.py --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 2 --window-size-events 2 --label synthetic-hook-smoke",
+        "MODEL_PATH=/path/to/local/mixtral python3 path/to/future_transformers_runner.py --model-path \"$MODEL_PATH\" --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 2"
+      ]
+    },
+    {
+      "target_id": "olmoe_style_local_hookable",
+      "target_class": "small_local_moe",
+      "backend_family": "pytorch_transformers",
+      "probe_tier": "semantic_router_hooks",
+      "model_family": "olmoe_style",
+      "example_models": [
+        "OLMoE-style small MoE checkpoint already cached locally",
+        "other small MoE with router or gate modules visible to Python"
+      ],
+      "semantic_expert_ids": "expected_when_router_outputs_are_exposed",
+      "local_only_status": "requires_user_provided_local_model_path",
+      "primary_probe": "moe_forward_probe.py",
+      "observable_signals": [
+        "router/gate module discovery",
+        "expert ids or logits",
+        "expert hit counts",
+        "routing entropy",
+        "contract-compatible window summaries"
+      ],
+      "deferred_requirements": [
+        "no model download in this repo pass",
+        "no package installation in this repo pass",
+        "user supplies a local checkpoint and compatible runtime"
+      ],
+      "next_live_commands": [
+        "MODEL_PATH=/path/to/local/olmoe python3 path/to/future_transformers_runner.py --model-path \"$MODEL_PATH\" --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 2"
+      ]
+    },
+    {
+      "target_id": "mixtral_family_matrix_anchor",
+      "target_class": "mixtral_style",
+      "backend_family": "mixed",
+      "probe_tier": "matrix_anchor",
+      "model_family": "mixtral_style",
+      "example_models": [
+        "dolphin-mixtral:8x7b via llama-server",
+        "Mixtral-style PyTorch checkpoint with visible router modules"
+      ],
+      "semantic_expert_ids": "runtime_dependent",
+      "local_only_status": "covered_by_llama_cpp_or_hookable_target",
+      "primary_probe": "llama_runtime_probe.py or moe_forward_probe.py",
+      "observable_signals": [
+        "stock llama.cpp observational metrics",
+        "sidecar request and memory traces",
+        "semantic router traces when loaded through a hookable runtime"
+      ],
+      "deferred_requirements": [
+        "run both opaque llama.cpp and hookable PyTorch paths when local resources permit",
+        "compare prompt-family stability across repeats before controller decisions"
+      ],
+      "next_live_commands": [
+        "python3 llama_runtime_probe.py --base-url http://127.0.0.1:18080 --output-dir runtime-probe-runs --label mixtral-runtime --model dolphin-mixtral --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 2 --log-file-path /path/to/llama-server.log",
+        "python3 run_forward_probe_demo.py --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 2 --window-size-events 2 --label synthetic-mixtral-hook-shape"
+      ]
+    }
+  ]
+}
