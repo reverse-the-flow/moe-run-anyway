@@ -106,6 +106,16 @@ python3 llama_runtime_probe.py \
   --log-file-path /path/to/llama-server.log
 ```
 
+From the repository root, the guarded live baseline runner checks the server
+observability endpoints before launching prompt traffic:
+
+```bash
+python3 scripts/run_live_baseline.py --dry-run
+python3 scripts/run_live_baseline.py --base-url http://127.0.0.1:18080 --model dolphin-mixtral --preflight-only --preflight-timeout-seconds 2
+```
+
+Details live in [live-baseline-runner.md](docs/live-baseline-runner.md).
+
 This path still does not expose semantic expert ids. It can correlate request timing, server metrics, slot state, properties, and log growth.
 
 ### Tier 2B: Forward-Hook Semantic Probe

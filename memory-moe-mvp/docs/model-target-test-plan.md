@@ -81,6 +81,22 @@ python3 llama_runtime_probe.py \
   --log-file-path /path/to/llama-server.log
 ```
 
+From the repository root, the guarded runner performs the same runtime probe
+after checking that at least one observability endpoint is reachable:
+
+```bash
+python3 scripts/run_live_baseline.py \
+  --base-url http://127.0.0.1:18080 \
+  --model dolphin-mixtral \
+  --output-dir memory-moe-mvp/runtime-probe-runs \
+  --label mixtral-live-baseline \
+  --suite-path memory-moe-mvp/data/mixtral_probe_prompts.json \
+  --max-prompts 4 \
+  --repeats 2 \
+  --preflight-timeout-seconds 2 \
+  --log-file-path /path/to/llama-server.log
+```
+
 For passive observation of the same upstream:
 
 ```bash
