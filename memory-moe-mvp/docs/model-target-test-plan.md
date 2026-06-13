@@ -42,6 +42,8 @@ Tier 1 is passive live observation:
 
 - run `python3 scripts/check_host.py` from the repository root when the host is
   new or unknown
+- run `python3 scripts/plan_live_model.py` when no live backend is already
+  known; use its target-class commands as the next-step checklist
 - user starts a model server
 - run `llama_sidecar.py`
 - route client traffic through the sidecar
@@ -68,6 +70,15 @@ Tier 2B is hookable semantic routing:
 ## Next Live Commands
 
 From `memory-moe-mvp/`, with a user-started llama-server:
+
+From the repository root, first ask the planner what the current host can do
+without starting a backend or using secrets:
+
+```bash
+python3 scripts/plan_live_model.py
+```
+
+Then, with a user-started llama-server, run from `memory-moe-mvp/`:
 
 ```bash
 python3 llama_runtime_probe.py \

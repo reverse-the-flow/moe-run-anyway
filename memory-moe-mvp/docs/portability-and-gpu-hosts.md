@@ -23,6 +23,12 @@ credentials, or GPU access:
   python3 scripts/check_host.py
   ```
 
+- live-model readiness planning from the repository root:
+
+  ```bash
+  python3 scripts/plan_live_model.py
+  ```
+
 - registry validation, unit tests, Python compilation, and stale primary-doc
   path checks inside `scripts/check_project.py`
 - synthetic replay and hook-shape work that uses local fixtures instead of a
@@ -75,6 +81,11 @@ Live `llama.cpp` probing still requires the user to start a compatible
 `llama-server` with a local model file and observability enabled. The project
 does not bundle or download that model.
 
+If `llama-server` or a live backend is absent, run
+`python3 scripts/plan_live_model.py` anyway. It will report cached `.gguf` and
+Hugging Face directory hints when present, show which backend tools are missing,
+and print the next guarded commands without waiting for a server.
+
 ## AMD/ROCm Hosts
 
 On AMD machines, the preflight looks for `rocm-smi` and `rocminfo`. Either tool
@@ -99,6 +110,8 @@ The following remain intentionally outside the upload/readiness check:
 
 Command shapes for live probes are maintained in
 [model-target-test-plan.md](model-target-test-plan.md).
+The no-secrets planner is documented in
+[live-model-readiness-planner.md](live-model-readiness-planner.md).
 
 ## Hugging Face Tokens
 

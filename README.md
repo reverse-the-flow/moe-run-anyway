@@ -21,6 +21,7 @@ Live model work is intentionally deferred until a user supplies a running backen
 - `memory-moe-mvp/`: source package, probe scripts, fixtures, tests, Docker scaffolding, and project docs.
 - `memory-moe-mvp/data/model_target_registry.json`: target matrix for stock `llama.cpp`, passive sidecar, hookable PyTorch MoE, small local MoE, and Mixtral-style paths.
 - `memory-moe-mvp/docs/model-target-test-plan.md`: live-test gates and command shapes.
+- `memory-moe-mvp/docs/live-model-readiness-planner.md`: no-secrets planner for host, cache, backend-tool, and target-class readiness.
 - `memory-moe-mvp/docs/live-baseline-runner.md`: guarded entrypoint for the first live runtime baseline.
 - `memory-moe-mvp/docs/portability-and-gpu-hosts.md`: host portability, GPU preflight, and live-machine dependency notes.
 - `context-pack/`: archived conversation/context notes that explain the project direction.
@@ -46,6 +47,13 @@ python3 scripts/check_host.py
 
 Use `python3 scripts/check_host.py --require-gpu` only for workflows that truly need visible NVIDIA/CUDA or AMD/ROCm tooling. Read [memory-moe-mvp/docs/portability-and-gpu-hosts.md](memory-moe-mvp/docs/portability-and-gpu-hosts.md) for the portable path and host expectations.
 
+To plan the next live-model commands without secrets, downloads, server starts,
+or prompt traffic:
+
+```bash
+python3 scripts/plan_live_model.py
+```
+
 After committing, verify the uploadable tree is clean:
 
 ```bash
@@ -64,11 +72,13 @@ The next live checks remain deferred by design:
 The first live runtime baseline now has a guarded runner:
 
 ```bash
+python3 scripts/plan_live_model.py --target-class stock_llama_cpp_openai_compatible
 python3 scripts/run_live_baseline.py --dry-run
 python3 scripts/run_live_baseline.py --base-url http://127.0.0.1:18080 --model dolphin-mixtral --preflight-only --preflight-timeout-seconds 2
 ```
 
 Read [memory-moe-mvp/docs/model-target-test-plan.md](memory-moe-mvp/docs/model-target-test-plan.md) for the exact command shapes.
+Read [memory-moe-mvp/docs/live-model-readiness-planner.md](memory-moe-mvp/docs/live-model-readiness-planner.md) for the no-secrets planning layer.
 Read [memory-moe-mvp/docs/live-baseline-runner.md](memory-moe-mvp/docs/live-baseline-runner.md) for the runner contract.
 
 ## Current Status
