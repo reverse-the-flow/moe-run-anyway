@@ -10,6 +10,28 @@ Ready to upload as a measurement-first MoE controllability probe project.
 
 The repository is not claiming real expert paging yet. It is uploadable because a fresh reader can understand the project surface, run a dependency-free local readiness command, and see the exact live model gates that remain deferred.
 
+## Portability Addendum
+
+Date: 2026-06-13
+
+The upload/readiness path remains GPU-optional. Ordinary hosts can run Tier 0
+with:
+
+```bash
+python3 scripts/check_project.py
+```
+
+GPU hosts can be inspected without starting services, loading checkpoints,
+using credentials, downloading models, or running GPU-heavy jobs:
+
+```bash
+python3 scripts/check_host.py
+```
+
+Use `python3 scripts/check_host.py --require-gpu` only when a live workflow
+requires visible NVIDIA/CUDA or AMD/ROCm tooling. The durable host guidance is
+in `memory-moe-mvp/docs/portability-and-gpu-hosts.md`.
+
 ## Validated Commits
 
 - `61f11a0 Finalize uploadable project surface`

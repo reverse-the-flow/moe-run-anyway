@@ -40,6 +40,8 @@ Tier 0 is pure local validation:
 
 Tier 1 is passive live observation:
 
+- run `python3 scripts/check_host.py` from the repository root when the host is
+  new or unknown
 - user starts a model server
 - run `llama_sidecar.py`
 - route client traffic through the sidecar
@@ -47,6 +49,8 @@ Tier 1 is passive live observation:
 
 Tier 2A is stock `llama.cpp` active observation:
 
+- run `python3 scripts/check_host.py --require-gpu` from the repository root
+  when the test depends on local GPU execution
 - user starts `llama-server` with `--metrics --slots --props --perf`
 - run `llama_runtime_probe.py` against `data/mixtral_probe_prompts.json`
 - assert shared-contract shape and prompt-family coverage
@@ -54,6 +58,8 @@ Tier 2A is stock `llama.cpp` active observation:
 
 Tier 2B is hookable semantic routing:
 
+- run `python3 scripts/check_host.py --require-gpu` from the repository root
+  when the target checkpoint needs GPU execution
 - user provides an already available local PyTorch MoE checkpoint
 - attach `ForwardHookMoEProbe`
 - assert router events, expert ids or inferred top-k ids, entropy, and window

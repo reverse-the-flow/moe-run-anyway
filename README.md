@@ -21,9 +21,11 @@ Live model work is intentionally deferred until a user supplies a running backen
 - `memory-moe-mvp/`: source package, probe scripts, fixtures, tests, Docker scaffolding, and project docs.
 - `memory-moe-mvp/data/model_target_registry.json`: target matrix for stock `llama.cpp`, passive sidecar, hookable PyTorch MoE, small local MoE, and Mixtral-style paths.
 - `memory-moe-mvp/docs/model-target-test-plan.md`: live-test gates and command shapes.
+- `memory-moe-mvp/docs/portability-and-gpu-hosts.md`: host portability, GPU preflight, and live-machine dependency notes.
 - `context-pack/`: archived conversation/context notes that explain the project direction.
 - `CATCHUP_STATUS.md`, `MODEL_TESTS_STATUS.md`, `GIT_BASELINE_STATUS.md`, `UPLOAD_READINESS.md`: status trail for future agents.
 - `scripts/check_project.py`: dependency-free local readiness check.
+- `scripts/check_host.py`: dependency-free host preflight for Python, git, GPU tooling, and optional local model/server tools.
 
 ## Local Validation
 
@@ -34,6 +36,14 @@ python3 scripts/check_project.py
 ```
 
 The check validates the model-target registry, runs unit tests, compiles Python sources, and scans primary docs for stale absolute Windows paths.
+
+To inspect a host before live GPU work:
+
+```bash
+python3 scripts/check_host.py
+```
+
+Use `python3 scripts/check_host.py --require-gpu` only for workflows that truly need visible NVIDIA/CUDA or AMD/ROCm tooling. Read [memory-moe-mvp/docs/portability-and-gpu-hosts.md](memory-moe-mvp/docs/portability-and-gpu-hosts.md) for the portable path and host expectations.
 
 After committing, verify the uploadable tree is clean:
 
