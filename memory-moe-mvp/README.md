@@ -147,6 +147,7 @@ The forward-hook path can capture routed expert ids, expert weights or probabili
 - [data/synthetic_controller_trace.json](data/synthetic_controller_trace.json): replay fixture for controller/advisor logic.
 - [data/toy_workload.json](data/toy_workload.json): simulator workload.
 - [docs/model-target-test-plan.md](docs/model-target-test-plan.md): target classes and live-test command gates.
+- [../MODEL_CARD.md](../MODEL_CARD.md): model-card style scope, target-class, safety, and limitation summary for the harness.
 - [docs/portability-and-gpu-hosts.md](docs/portability-and-gpu-hosts.md): portable Tier 0 path, host preflight, GPU expectations, and live-machine dependencies.
 - [docs/probe-observability-notes.md](docs/probe-observability-notes.md): probe surfaces and `llama.cpp` observability knobs.
 - [docs/controller-architecture.md](docs/controller-architecture.md): controller pattern and failure-mode guardrails.

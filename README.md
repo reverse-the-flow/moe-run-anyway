@@ -24,6 +24,7 @@ Live model work is intentionally deferred until a user supplies a running backen
 - `memory-moe-mvp/docs/live-model-readiness-planner.md`: no-secrets planner for host, cache, backend-tool, and target-class readiness.
 - `memory-moe-mvp/docs/live-baseline-runner.md`: guarded entrypoint for the first live runtime baseline.
 - `memory-moe-mvp/docs/portability-and-gpu-hosts.md`: host portability, GPU preflight, and live-machine dependency notes.
+- `MODEL_CARD.md`: model-card style scope, target-class, safety, and limitation summary for the harness.
 - `context-pack/`: archived conversation/context notes that explain the project direction.
 - `CATCHUP_STATUS.md`, `MODEL_TESTS_STATUS.md`, `GIT_BASELINE_STATUS.md`, `UPLOAD_READINESS.md`: status trail for future agents.
 - `scripts/check_project.py`: dependency-free local readiness check.
@@ -80,6 +81,7 @@ python3 scripts/run_live_baseline.py --base-url http://127.0.0.1:18080 --model d
 Read [memory-moe-mvp/docs/model-target-test-plan.md](memory-moe-mvp/docs/model-target-test-plan.md) for the exact command shapes.
 Read [memory-moe-mvp/docs/live-model-readiness-planner.md](memory-moe-mvp/docs/live-model-readiness-planner.md) for the no-secrets planning layer.
 Read [memory-moe-mvp/docs/live-baseline-runner.md](memory-moe-mvp/docs/live-baseline-runner.md) for the runner contract.
+Read [MODEL_CARD.md](MODEL_CARD.md) for the model-card style scope and limitations.
 
 ## Current Status
 

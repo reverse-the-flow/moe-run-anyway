@@ -17,6 +17,7 @@ WINDOWS_ABSOLUTE_PATH = re.compile(r"\b[A-Za-z]:[\\/]")
 
 PRIMARY_DOCS = [
     ROOT / "README.md",
+    ROOT / "MODEL_CARD.md",
     ROOT / "MODEL_TESTS_STATUS.md",
     ROOT / "GIT_BASELINE_STATUS.md",
     ROOT / "UPLOAD_READINESS.md",
