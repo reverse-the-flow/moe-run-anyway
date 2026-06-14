@@ -23,6 +23,7 @@ Live model work is intentionally deferred until a user supplies a running backen
 - `memory-moe-mvp/docs/model-target-test-plan.md`: live-test gates and command shapes.
 - `memory-moe-mvp/docs/live-model-readiness-planner.md`: no-secrets planner for host, cache, backend-tool, and target-class readiness.
 - `memory-moe-mvp/docs/live-baseline-runner.md`: guarded entrypoint for the first live runtime baseline.
+- `memory-moe-mvp/docs/model-plane-manifest-consumption.md`: agent contract for consuming Model Plane MoE probe manifests.
 - `memory-moe-mvp/docs/portability-and-gpu-hosts.md`: host portability, GPU preflight, and live-machine dependency notes.
 - `MODEL_CARD.md`: model-card style scope, target-class, safety, and limitation summary for the harness.
 - `context-pack/`: archived conversation/context notes that explain the project direction.
@@ -67,6 +68,8 @@ Runtime baseline manifests emit `run_live_baseline.py --dry-run` and
 proxy command. Hookable PyTorch commands are shown only when the manifest
 declares `hookable_runtime_available=true`; stock endpoint telemetry remains
 runtime evidence, not semantic expert ids.
+Read [memory-moe-mvp/docs/model-plane-manifest-consumption.md](memory-moe-mvp/docs/model-plane-manifest-consumption.md)
+for the agent decision contract.
 
 After committing, verify the uploadable tree is clean:
 

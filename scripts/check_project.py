@@ -24,6 +24,7 @@ PRIMARY_DOCS = [
     MVP_DIR / "README.md",
     MVP_DIR / "docs" / "live-model-readiness-planner.md",
     MVP_DIR / "docs" / "live-baseline-runner.md",
+    MVP_DIR / "docs" / "model-plane-manifest-consumption.md",
     MVP_DIR / "docs" / "model-target-test-plan.md",
     MVP_DIR / "docs" / "portability-and-gpu-hosts.md",
     MVP_DIR / "docs" / "probe-observability-notes.md",
