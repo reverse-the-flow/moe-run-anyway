@@ -55,6 +55,19 @@ or prompt traffic:
 python3 scripts/plan_live_model.py
 ```
 
+To consume a Model Plane bridge manifest and route it to the existing safe probe
+path:
+
+```bash
+python3 scripts/plan_moe_probe_manifest.py /path/to/moe-probe-manifest.json
+```
+
+Runtime baseline manifests emit `run_live_baseline.py --dry-run` and
+`--preflight-only` commands. Passive sidecar manifests emit the non-invasive
+proxy command. Hookable PyTorch commands are shown only when the manifest
+declares `hookable_runtime_available=true`; stock endpoint telemetry remains
+runtime evidence, not semantic expert ids.
+
 After committing, verify the uploadable tree is clean:
 
 ```bash
