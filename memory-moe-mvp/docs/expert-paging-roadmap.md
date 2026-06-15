@@ -29,6 +29,12 @@ python3 scripts/plan_moe_probe_manifest.py memory-moe-mvp/data/model_plane_moe_p
 The Phase 1 runtime baseline artifact contract is
 [runtime_baseline_artifact_contract.json](../data/runtime_baseline_artifact_contract.json).
 Validate it with `python3 scripts/plan_runtime_baseline_artifacts.py`.
+Plan saved-manifest baseline capture packets with
+`python3 scripts/plan_runtime_baseline_capture.py --json`; the default
+llama.cpp fixture and
+[model_plane_moe_probe_manifest.vllm_runtime_baseline.fixture.json](../data/model_plane_moe_probe_manifest.vllm_runtime_baseline.fixture.json)
+exercise the llama.cpp and OpenAI-compatible planning paths without endpoint
+checks or prompt traffic.
 
 ## Current Truth Table
 

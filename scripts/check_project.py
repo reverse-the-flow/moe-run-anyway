@@ -56,6 +56,10 @@ def validate_runtime_baseline_artifact_contract() -> int:
     return run_command([sys.executable, str(ROOT / "scripts" / "plan_runtime_baseline_artifacts.py")])
 
 
+def validate_runtime_baseline_capture_plan() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_runtime_baseline_capture.py")])
+
+
 def run_unit_tests() -> int:
     return run_command([sys.executable, "-m", "unittest", "discover", "-s", str(MVP_DIR / "tests")])
 
@@ -137,6 +141,7 @@ def main() -> int:
         ("expert paging roadmap", validate_expert_paging_roadmap),
         ("managed expert loading plan", validate_managed_expert_loading_plan),
         ("runtime baseline artifact contract", validate_runtime_baseline_artifact_contract),
+        ("runtime baseline capture plan", validate_runtime_baseline_capture_plan),
         ("unit tests", run_unit_tests),
         ("py_compile", compile_python_sources),
         ("docs portability", check_docs_portability),

@@ -1,0 +1,24 @@
+{
+  "schema_version": "model-plane-moe-probe-manifest-v1",
+  "profile_id": "fixture-vllm-runtime-baseline",
+  "model_id": "local/fixture-openai-compatible-moe",
+  "backend_family": "vllm_openai_compatible",
+  "base_url": "http://127.0.0.1:18081",
+  "health_url": "http://127.0.0.1:18081/v1/models",
+  "container_name": "model-plane-fixture-vllm",
+  "primary_probe_hint": "runtime_baseline",
+  "semantic_expert_ids": "not_exposed",
+  "hookable_runtime_available": false,
+  "runtime_observability": {
+    "expected_paths": [],
+    "readiness_paths": [
+      "/v1/models",
+      "/models"
+    ]
+  },
+  "safety_notes": [
+    "Fixture only; do not launch a runtime from this manifest.",
+    "OpenAI-compatible readiness is runtime evidence, not semantic routing evidence.",
+    "Prompt traffic requires explicit user approval after dry-run and preflight artifacts."
+  ]
+}

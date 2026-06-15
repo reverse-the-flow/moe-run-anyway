@@ -86,6 +86,14 @@ side effects:
 python3 scripts/plan_runtime_baseline_artifacts.py
 ```
 
+To plan Phase 1 baseline capture from a saved Model Plane runtime-baseline
+manifest without endpoint checks or prompt traffic:
+
+```bash
+python3 scripts/plan_runtime_baseline_capture.py --json
+python3 scripts/plan_runtime_baseline_capture.py memory-moe-mvp/data/model_plane_moe_probe_manifest.vllm_runtime_baseline.fixture.json --json
+```
+
 After committing, verify the uploadable tree is clean:
 
 ```bash
