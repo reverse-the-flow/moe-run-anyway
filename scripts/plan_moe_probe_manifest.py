@@ -202,6 +202,41 @@ def honesty_note(manifest: JSONDict, target_class: str) -> str:
     return "Semantic expert ids remain runtime-dependent; do not infer them from stock endpoint telemetry."
 
 
+def planned_harness_run_request(
+    manifest: JSONDict,
+    target_class: str,
+    commands: list[str],
+    deferred_live_commands: list[str],
+) -> JSONDict:
+    artifact_class = {
+        "passive_sidecar_proxy": "sidecar_manifest_events_summary",
+        "hookable_pytorch_moe": "forward_hook_trace_or_synthetic_smoke",
+        "openai_compatible_runtime": "runtime_baseline_preflight_or_probe_bundle",
+        "stock_llama_cpp_openai_compatible": "runtime_baseline_preflight_or_probe_bundle",
+    }.get(target_class, "unknown")
+    return {
+        "stage": "harness_run_request",
+        "status": "planned_only",
+        "source": "model_plane_moe_probe_manifest",
+        "profile_id": manifest.get("profile_id"),
+        "target_class": target_class,
+        "approved_command_class_required": True,
+        "safe_commands": commands,
+        "deferred_live_commands": deferred_live_commands,
+        "expected_artifact_class": artifact_class,
+        "missing_runtime_actuator": [
+            "expert_tensor_pin",
+            "expert_tensor_evict",
+            "expert_tensor_preload",
+            "load_only_routed_experts",
+        ],
+        "notes": [
+            "This is a planning artifact, not an execution API.",
+            "Runtime actuator work requires a future backend hook, patch, or fork.",
+        ],
+    }
+
+
 def build_plan(manifest: JSONDict, manifest_path: Path) -> JSONDict:
     errors = validate_manifest(manifest)
     target_class = selected_target_class(manifest) if not errors else "invalid_manifest"
@@ -237,6 +272,11 @@ def build_plan(manifest: JSONDict, manifest_path: Path) -> JSONDict:
         "honesty_note": honesty_note(manifest, target_class) if not errors else None,
         "safe_commands": commands,
         "deferred_live_commands": deferred_live_commands,
+        "planned_harness_run_request": (
+            planned_harness_run_request(manifest, target_class, commands, deferred_live_commands)
+            if not errors
+            else None
+        ),
         "safety_contract": [
             "planner does not start containers or model servers",
             "planner does not download models",
@@ -272,6 +312,14 @@ def print_human_plan(plan: JSONDict) -> None:
         print("Deferred live commands:")
         for command in plan["deferred_live_commands"]:
             print(f"  {command}")
+    request = plan["planned_harness_run_request"]
+    print("Planned harness run request:")
+    print(f"  Stage: {request['stage']}")
+    print(f"  Status: {request['status']}")
+    print(f"  Expected artifact class: {request['expected_artifact_class']}")
+    print("  Missing runtime actuator:")
+    for item in request["missing_runtime_actuator"]:
+        print(f"    - {item}")
     print("Safety contract:")
     for item in plan["safety_contract"]:
         print(f"  - {item}")

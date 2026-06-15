@@ -148,6 +148,8 @@ The forward-hook path can capture routed expert ids, expert weights or probabili
 - [data/toy_workload.json](data/toy_workload.json): simulator workload.
 - [docs/model-target-test-plan.md](docs/model-target-test-plan.md): target classes and live-test command gates.
 - [docs/model-plane-manifest-consumption.md](docs/model-plane-manifest-consumption.md): how agents consume Model Plane manifests and select runtime baseline, passive sidecar, or hookable semantic paths.
+- [docs/expert-paging-roadmap.md](docs/expert-paging-roadmap.md): phase roadmap from harness/probes to a future expert-paging actuator.
+- [data/expert_paging_roadmap.json](data/expert_paging_roadmap.json): machine-readable roadmap and actuator-spike checklist. Validate it from the repository root with `python3 scripts/plan_expert_paging.py`.
 - [../MODEL_CARD.md](../MODEL_CARD.md): model-card style scope, target-class, safety, and limitation summary for the harness.
 - [docs/portability-and-gpu-hosts.md](docs/portability-and-gpu-hosts.md): portable Tier 0 path, host preflight, GPU expectations, and live-machine dependencies.
 - [docs/probe-observability-notes.md](docs/probe-observability-notes.md): probe surfaces and `llama.cpp` observability knobs.

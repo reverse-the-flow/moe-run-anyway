@@ -2,16 +2,25 @@
 
 MoE Run Anyway consumes the Model Plane MoE probe manifest as the durable bridge
 from local runtime orchestration into probe planning. The manifest should come
-from Model Plane's backend API, not from values copied out of the human console.
+from Model Plane's backend API or callable functions, not from values copied out
+of the human console.
 
 The bridge flow is:
 
 ```text
-Model Plane profile -> validate -> launch/health/logs -> MoE probe manifest -> planner -> probe path
+Model Plane callable function or cron -> validate/launch/health/logs
+  -> run-scoped MoE probe manifest -> planner
+  -> planned harness_run_request -> approved probe path
 ```
 
 The human UI is useful for status and inspection. The machine-readable manifest
 is the contract agents should pass between repos.
+
+Model Plane owns cron/callable orchestration, profile validation, launch/health
+checks, log discovery, and run-scoped manifest export. MoE Run Anyway owns
+manifest consumption, safe probe planning, artifact contracts, and controller
+replay. The planner may describe a `harness_run_request`, but that request is a
+planning artifact, not a runtime executor.
 
 ## Planner Entry Point
 
@@ -30,6 +39,19 @@ python3 scripts/plan_moe_probe_manifest.py /path/to/moe-probe-manifest.json --js
 The planner validates only the bridge contract. It does not start model servers,
 download models, authenticate, inspect private tokens, run Docker, or send
 prompt traffic.
+
+Structured output includes a `planned_harness_run_request` object with:
+
+- `stage: harness_run_request`
+- `status: planned_only`
+- selected `target_class`
+- safe command class and deferred live command class
+- expected artifact class
+- missing actuator capabilities such as expert pin, evict, preload, and
+  load-only-routed-experts
+
+This planned stage exists so Model Plane agents and MoE agents can agree on the
+next harness step without implying that a live expert-paging actuator exists.
 
 ## Required Manifest Fields
 
@@ -113,13 +135,31 @@ A safe agent loop is:
 
 1. Ask Model Plane for `GET /profiles`.
 2. Choose a profile and call `POST /profiles/{profile_id}/validate`.
-3. Use Model Plane launch and health endpoints only when the user has approved
-   runtime actions.
-4. Fetch `GET /profiles/{profile_id}/moe-probe-manifest`.
+3. Use Model Plane callable launch, health, log-inspection, or cron functions
+   only when the user has approved runtime actions.
+4. Fetch or receive the run-scoped MoE probe manifest, such as
+   `GET /profiles/{profile_id}/moe-probe-manifest` or a callable-function
+   export artifact.
 5. Save the JSON manifest.
 6. Run `python3 scripts/plan_moe_probe_manifest.py manifest.json --json`.
-7. Present or execute only the returned command class the user has approved.
+7. Review the returned `planned_harness_run_request`.
+8. Present or execute only the returned command class the user has approved.
 
 This keeps Model Plane as the orchestration/control layer and MoE Run Anyway as
 the probe planner and harness. The user should not have to copy endpoints,
 ports, model ids, or log paths between applications.
+
+## Expert Paging Boundary
+
+The current bridge can plan runtime baselines, passive sidecar capture,
+hookable PyTorch semantic traces, and controller replay. It still cannot page
+experts. Real expert paging needs a future runtime actuator, hook, or patch
+that can control expert tensor residency or expert offload behavior.
+
+For `llama.cpp`, an external controller can schedule runs, select probe suites,
+consume artifacts, and recommend residency. Loading only routed experts requires
+a `llama.cpp` hook, controller patch, or fork that can prove routing visibility,
+tensor residency control, dense fallback, compatible artifacts, and cleanup.
+Those proof requirements are tracked in
+[expert-paging-roadmap.md](expert-paging-roadmap.md) and
+[../data/expert_paging_roadmap.json](../data/expert_paging_roadmap.json).

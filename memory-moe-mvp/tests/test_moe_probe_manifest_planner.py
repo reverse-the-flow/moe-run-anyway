@@ -46,6 +46,11 @@ class MoeProbeManifestPlannerTests(unittest.TestCase):
         self.assertIn("--backend-family llama_cpp", plan["safe_commands"][0])
         self.assertIn("--log-file-path /tmp/llama-server.log", plan["safe_commands"][0])
         self.assertIn("not semantic expert ids", plan["honesty_note"])
+        request = plan["planned_harness_run_request"]
+        self.assertEqual(request["stage"], "harness_run_request")
+        self.assertEqual(request["status"], "planned_only")
+        self.assertEqual(request["target_class"], "stock_llama_cpp_openai_compatible")
+        self.assertIn("expert_tensor_preload", request["missing_runtime_actuator"])
 
     def test_openai_compatible_manifest_passes_backend_family_to_runtime_plan(self) -> None:
         plan = planner.build_plan(

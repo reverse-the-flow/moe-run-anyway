@@ -1,0 +1,259 @@
+{
+  "schema_version": "moe-expert-paging-roadmap-v1",
+  "name": "MoE Run Anyway Expert Paging Roadmap",
+  "generated_for": "memory-moe-mvp",
+  "current_truth_table": [
+    {
+      "surface": "model_plane_manifest_handoff",
+      "status": "implemented",
+      "can_do": "Export run-scoped model, backend, endpoint, log, observability, and safety hints for MoE planning.",
+      "cannot_do": "Expose semantic expert ids unless the runtime exposes router outputs."
+    },
+    {
+      "surface": "runtime_baseline_planner",
+      "status": "implemented",
+      "can_do": "Plan dry-run and preflight-only baseline commands for llama.cpp, vLLM, Ollama, or OpenAI-compatible endpoints.",
+      "cannot_do": "Launch servers, send prompt traffic, or page experts."
+    },
+    {
+      "surface": "passive_sidecar",
+      "status": "implemented",
+      "can_do": "Capture request-boundary telemetry and upstream observability without invasive runtime changes.",
+      "cannot_do": "Alter expert residency or infer semantic routing from endpoint timing alone."
+    },
+    {
+      "surface": "forward_hook_probe",
+      "status": "implemented_for_hookable_runtimes",
+      "can_do": "Capture router outputs and semantic expert ids when Python modules expose them.",
+      "cannot_do": "Apply to stock llama.cpp GGUF execution."
+    },
+    {
+      "surface": "controller_replay_advisor",
+      "status": "implemented",
+      "can_do": "Score offline residency policies over synthetic or captured traces.",
+      "cannot_do": "Pin, evict, preload, or load only routed experts in a live backend."
+    },
+    {
+      "surface": "runtime_actuator",
+      "status": "missing",
+      "can_do": "Nothing yet.",
+      "cannot_do": "No live expert loading, eviction, pinning, preloading, or expert offload override exists."
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase_0",
+      "title": "Harness contract and Model Plane handoff",
+      "status": "in_progress",
+      "deliverables": [
+        "Roadmap document and machine-readable checklist.",
+        "Manifest planner remains planning-only and emits a planned harness_run_request stage.",
+        "Model Plane callable-function and cron handoff is documented.",
+        "Actuator spike proof checklist is tracked."
+      ],
+      "evidence_gates": [
+        "Roadmap JSON validates with scripts/plan_expert_paging.py.",
+        "Manifest planner output names the planned harness_run_request without executing it.",
+        "Dependency-free tests cover planner output and roadmap validation."
+      ],
+      "next_actions": [
+        "Run python3 scripts/plan_expert_paging.py.",
+        "Run python3 scripts/plan_moe_probe_manifest.py against a saved Model Plane manifest with --json.",
+        "Keep all probe execution behind explicit user approval."
+      ]
+    },
+    {
+      "id": "phase_1",
+      "title": "Artifact evidence from runtime baselines",
+      "status": "planned",
+      "deliverables": [
+        "llama.cpp runtime baseline artifact bundle.",
+        "vLLM or OpenAI-compatible runtime baseline artifact bundle.",
+        "Backend labels mapped to memory-moe-bridge-v1 fields.",
+        "Explicit separation of runtime evidence from semantic routing evidence."
+      ],
+      "evidence_gates": [
+        "At least one run-scoped artifact bundle exists for each selected backend class.",
+        "Artifacts include timing, readiness, observability, manifest metadata, and safety notes.",
+        "No artifact claims semantic expert ids unless router outputs are exposed."
+      ],
+      "next_actions": [
+        "Use Model Plane cron or callable functions to export manifests for approved runtime baselines.",
+        "Run only dry-run or preflight-only planning until the user approves prompt traffic.",
+        "Compare artifact fields across llama.cpp and OpenAI-compatible baselines."
+      ]
+    },
+    {
+      "id": "phase_2",
+      "title": "Hookable PyTorch semantic routing trace runner",
+      "status": "planned",
+      "deliverables": [
+        "Local hookable trace runner for a PyTorch/Transformers-style MoE.",
+        "Router output capture for layer, expert id, score or probability, entropy, prompt family, and token/window metadata.",
+        "Trace artifacts compatible with controller replay."
+      ],
+      "evidence_gates": [
+        "Semantic traces validate under memory-moe-bridge-v1.",
+        "Dense fallback output can be recorded or compared for the same prompt set.",
+        "Hooking failures are explicit and never downgraded into timing inference."
+      ],
+      "next_actions": [
+        "Select a local hookable MoE runtime only when dependencies and weights are already available.",
+        "Extend forward-hook tests with fixture-level semantic trace validation."
+      ]
+    },
+    {
+      "id": "phase_3",
+      "title": "Controller policy and replay audit with dense fallback comparison",
+      "status": "planned",
+      "deliverables": [
+        "Replay controller evaluates candidate residency policies over semantic traces.",
+        "Dense fallback comparison is part of the audit contract.",
+        "Policy output includes preload, keep, evict, fallback, and confidence fields."
+      ],
+      "evidence_gates": [
+        "Policy decisions are reproducible from artifacts.",
+        "Warm-hit or memory benefit is shown without unacceptable churn.",
+        "Dense fallback bounds behavior or quality drift."
+      ],
+      "next_actions": [
+        "Add replay fixtures from Phase 2 semantic traces.",
+        "Report churn, fallback rate, missed experts, and dense-baseline deltas."
+      ]
+    },
+    {
+      "id": "phase_4",
+      "title": "llama.cpp actuator feasibility spike / fork plan",
+      "status": "planned",
+      "deliverables": [
+        "Spike plan identifying llama.cpp control points.",
+        "Comparison of outside controller, small llama.cpp patch, and fork options.",
+        "Proof checklist for routing visibility, residency control, dense fallback, artifact shape, cleanup, and rollback."
+      ],
+      "evidence_gates": [
+        "A concrete runtime hook or patch point can influence expert residency or offload behavior.",
+        "The runtime can emit auditable artifacts without breaking dense baseline execution.",
+        "Cleanup and fallback are tested under failure."
+      ],
+      "next_actions": [
+        "Audit llama.cpp MoE loading/offload paths before writing a patch.",
+        "Prefer a small controller patch or fork over a custom runtime if llama.cpp is viable."
+      ]
+    },
+    {
+      "id": "phase_5",
+      "title": "Guarded runtime actuator experiment",
+      "status": "planned",
+      "deliverables": [
+        "Guarded actuator mode for preload, pin, evict, or expert residency restriction.",
+        "Kill switch, dense fallback, artifact export, and cleanup.",
+        "Automatic comparison against baseline and replay expectations."
+      ],
+      "evidence_gates": [
+        "Actuator behavior is externally observable and internally auditable.",
+        "Dense fallback remains available for every run.",
+        "A measurable memory or latency effect is shown without unacceptable regression."
+      ],
+      "next_actions": [
+        "Run only after Phase 4 proves a safe actuator point.",
+        "Keep the first experiment narrow, reversible, and artifact-first."
+      ]
+    }
+  ],
+  "decision_gates": [
+    {
+      "from": "phase_0",
+      "to": "phase_1",
+      "requires": "Manifest, roadmap, and planner checks pass locally."
+    },
+    {
+      "from": "phase_1",
+      "to": "phase_2",
+      "requires": "Runtime baselines establish artifact shape and explicit limits."
+    },
+    {
+      "from": "phase_2",
+      "to": "phase_3",
+      "requires": "Semantic traces exist from a hookable runtime."
+    },
+    {
+      "from": "phase_3",
+      "to": "phase_4",
+      "requires": "Replay policies show useful behavior against dense fallback comparisons."
+    },
+    {
+      "from": "phase_4",
+      "to": "phase_5",
+      "requires": "A runtime actuator point exists and has a rollback plan."
+    }
+  ],
+  "llama_cpp_options": [
+    {
+      "option": "external_controller",
+      "can_do": "Schedule runs, choose probe suites, analyze artifacts, and recommend residency.",
+      "cannot_do": "Load only routed experts or alter tensor residency without runtime support."
+    },
+    {
+      "option": "small_controller_patch_or_fork",
+      "can_do": "Expose routing and residency controls if llama.cpp internals support a narrow patch.",
+      "cannot_do": "Avoid maintenance cost; must be justified by Phase 1-3 evidence."
+    },
+    {
+      "option": "custom_runtime",
+      "can_do": "Potentially expose full control.",
+      "cannot_do": "Stay scoped; this is a last resort, not the starting point."
+    }
+  ],
+  "model_plane_handoff": {
+    "source": "Model Plane callable function or cron",
+    "artifact": "run-scoped MoE manifest",
+    "planned_stage": "harness_run_request",
+    "contract": "MoE consumes manifests and emits planning artifacts; Model Plane owns orchestration surfaces.",
+    "safety": [
+      "No model launch from roadmap/planner checks.",
+      "No downloads, authentication, Docker, or prompt traffic from roadmap/planner checks.",
+      "Probe execution requires explicit user approval."
+    ]
+  },
+  "actuator_spike_checklist": [
+    {
+      "id": "routing_visibility",
+      "question": "Can the runtime expose routed expert ids or sufficient router metadata at the decision point?",
+      "required_evidence": "Artifact showing layer, token or window, expert id, and routing score or rank."
+    },
+    {
+      "id": "tensor_residency_control",
+      "question": "Can policy pin, evict, preload, or alter expert offload behavior?",
+      "required_evidence": "Runtime proof that residency changes occur and are visible."
+    },
+    {
+      "id": "dense_fallback",
+      "question": "Can the run revert to normal dense/full-residency behavior?",
+      "required_evidence": "Fallback command or mode plus comparable artifact."
+    },
+    {
+      "id": "artifact_shape",
+      "question": "Can decisions and outcomes be exported in memory-moe-bridge-v1-compatible form?",
+      "required_evidence": "Validated artifact with policy decision and observed outcome fields."
+    },
+    {
+      "id": "cleanup",
+      "question": "Does interruption or failure restore runtime state?",
+      "required_evidence": "Failure-path cleanup test or rollback artifact."
+    }
+  ],
+  "risks": [
+    "Endpoint metrics may be overinterpreted as semantic routing.",
+    "A runtime patch may expose routing but not safe tensor residency control.",
+    "Replay policies may cause live churn or cleanup failures.",
+    "Backend artifact fields may drift without strict labels.",
+    "Fork maintenance cost may exceed the benefit if the patch is not small."
+  ],
+  "non_goals": [
+    "Claim live expert paging before an actuator exists.",
+    "Download models, use tokens, run Docker, launch model servers, or send prompt traffic from roadmap/planner checks.",
+    "Start with a large custom runtime rewrite.",
+    "Infer semantic expert ids from stock OpenAI-compatible endpoint telemetry.",
+    "Perform destructive cleanup or mutate user model caches."
+  ]
+}
