@@ -38,3 +38,6 @@ memory-moe-mvp/sidecar-runs/
 memory-moe-mvp/forward-probe-runs/
 memory-moe-mvp/controller-runs/
 memory-moe-mvp/sim-runs/
+
+# Local third-party source checkouts used only for inspiration.
+references/inspiration-code/checkouts/
