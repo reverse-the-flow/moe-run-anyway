@@ -3,6 +3,8 @@
   "name": "MoE Run Anyway Expert Paging Roadmap",
   "generated_for": "memory-moe-mvp",
   "managed_expert_loading_contract": "memory-moe-mvp/data/managed_expert_loading_plan.json",
+  "model_plane_manifest_fixture": "memory-moe-mvp/data/model_plane_moe_probe_manifest.runtime_baseline.fixture.json",
+  "runtime_baseline_artifact_contract": "memory-moe-mvp/data/runtime_baseline_artifact_contract.json",
   "current_truth_table": [
     {
       "surface": "model_plane_manifest_handoff",
@@ -21,6 +23,12 @@
       "status": "implemented",
       "can_do": "Plan dry-run and preflight-only baseline commands for llama.cpp, vLLM, Ollama, or OpenAI-compatible endpoints.",
       "cannot_do": "Launch servers, send prompt traffic, or page experts."
+    },
+    {
+      "surface": "runtime_baseline_artifact_contract",
+      "status": "implemented",
+      "can_do": "Validate Phase 1 baseline artifact classes and label runtime evidence separately from semantic routing evidence.",
+      "cannot_do": "Collect live runtime artifacts or prove semantic expert ids from stock endpoint telemetry."
     },
     {
       "surface": "passive_sidecar",
@@ -51,32 +59,32 @@
     {
       "id": "phase_0",
       "title": "Harness contract and Model Plane handoff",
-      "status": "in_progress",
+      "status": "complete",
       "deliverables": [
         "Roadmap document and machine-readable checklist.",
         "Managed expert loading contract defines inventory, routing visibility, residency state, policy decision, backend adapter, fallback, cleanup, and artifact requirements.",
         "Manifest planner remains planning-only and emits a planned harness_run_request stage.",
+        "Saved Model Plane runtime-baseline manifest fixture exercises the handoff planner.",
         "Model Plane callable-function and cron handoff is documented.",
         "Actuator spike proof checklist is tracked."
       ],
       "evidence_gates": [
         "Roadmap JSON validates with scripts/plan_expert_paging.py.",
         "Managed expert loading JSON validates with scripts/plan_managed_expert_loading.py.",
-        "Manifest planner output names the planned harness_run_request without executing it.",
+        "Manifest planner output names the planned harness_run_request without executing it when run against memory-moe-mvp/data/model_plane_moe_probe_manifest.runtime_baseline.fixture.json with --json.",
         "Dependency-free tests cover planner output and roadmap validation."
       ],
       "next_actions": [
-        "Run python3 scripts/plan_expert_paging.py.",
-        "Run python3 scripts/plan_managed_expert_loading.py.",
-        "Run python3 scripts/plan_moe_probe_manifest.py against a saved Model Plane manifest with --json.",
+        "Preserve the saved manifest fixture as the local Phase 0 handoff gate.",
         "Keep all probe execution behind explicit user approval."
       ]
     },
     {
       "id": "phase_1",
       "title": "Artifact evidence from runtime baselines",
-      "status": "planned",
+      "status": "in_progress",
       "deliverables": [
+        "Runtime baseline artifact contract that separates runtime evidence from semantic routing evidence.",
         "llama.cpp runtime baseline artifact bundle.",
         "vLLM or OpenAI-compatible runtime baseline artifact bundle.",
         "Backend labels mapped to memory-moe-bridge-v1 fields.",
@@ -84,11 +92,13 @@
         "Explicit separation of runtime evidence from semantic routing evidence."
       ],
       "evidence_gates": [
+        "Runtime baseline artifact contract validates with scripts/plan_runtime_baseline_artifacts.py.",
         "At least one run-scoped artifact bundle exists for each selected backend class.",
         "Artifacts include timing, readiness, observability, manifest metadata, and safety notes.",
         "No artifact claims semantic expert ids unless router outputs are exposed."
       ],
       "next_actions": [
+        "Run python3 scripts/plan_runtime_baseline_artifacts.py.",
         "Use Model Plane cron or callable functions to export manifests for approved runtime baselines.",
         "Run only dry-run or preflight-only planning until the user approves prompt traffic.",
         "Compare artifact fields across llama.cpp and OpenAI-compatible baselines."

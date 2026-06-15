@@ -79,6 +79,13 @@ server starts, Docker, or prompt traffic:
 python3 scripts/plan_managed_expert_loading.py
 ```
 
+To validate the Phase 1 runtime baseline artifact contract without live runtime
+side effects:
+
+```bash
+python3 scripts/plan_runtime_baseline_artifacts.py
+```
+
 After committing, verify the uploadable tree is clean:
 
 ```bash

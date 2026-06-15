@@ -18,6 +18,18 @@ Validate it with `python3 scripts/plan_managed_expert_loading.py`. The likely
 future path may require a small `llama.cpp` controller patch or fork if evidence
 shows `llama.cpp` is the right substrate.
 
+The saved Model Plane handoff fixture is
+[model_plane_moe_probe_manifest.runtime_baseline.fixture.json](../data/model_plane_moe_probe_manifest.runtime_baseline.fixture.json).
+Validate the Phase 0 handoff gate with:
+
+```bash
+python3 scripts/plan_moe_probe_manifest.py memory-moe-mvp/data/model_plane_moe_probe_manifest.runtime_baseline.fixture.json --json
+```
+
+The Phase 1 runtime baseline artifact contract is
+[runtime_baseline_artifact_contract.json](../data/runtime_baseline_artifact_contract.json).
+Validate it with `python3 scripts/plan_runtime_baseline_artifacts.py`.
+
 ## Current Truth Table
 
 | Surface | Exists now | What it can prove | What it cannot prove |
@@ -25,6 +37,7 @@ shows `llama.cpp` is the right substrate.
 | Model Plane MoE manifest handoff | Yes | Run-scoped model, backend, endpoint, log, observability, and safety hints can be exported for MoE planning. | It does not expose semantic expert ids unless the runtime does. |
 | Managed expert loading contract | Yes | Expert inventory, routing visibility, residency state, policy decision, backend adapter, fallback, cleanup, and artifact requirements are machine-checkable. | It cannot read or mutate live expert residency. |
 | Runtime baseline planner | Yes | Safe dry-run and preflight-only commands for `llama.cpp`, vLLM, Ollama, or OpenAI-compatible endpoints. | It does not launch servers, send prompt traffic, or page experts. |
+| Runtime baseline artifact contract | Yes | Phase 1 baseline artifact classes and evidence labels can be validated offline. | It does not collect live artifacts or prove semantic expert ids from stock endpoint telemetry. |
 | Passive sidecar | Yes | Request-boundary telemetry and upstream observability can be captured non-invasively. | It cannot alter expert residency or infer semantic routing from endpoint timing alone. |
 | Stock `llama.cpp` runtime probe | Yes | Metrics, slots, props, timings, and optional log growth can become runtime evidence. | Stock endpoint telemetry is not semantic expert routing. |
 | Forward-hook PyTorch probe | Yes for hookable runtimes | Router outputs, routed expert ids, weights, entropy, and per-layer hit counts can be captured when modules expose them. | It does not apply to stock `llama.cpp` GGUF execution. |
@@ -35,6 +48,10 @@ shows `llama.cpp` is the right substrate.
 ## Roadmap Phases
 
 ### Phase 0: Harness Contract And Model Plane Handoff
+
+Status: complete. The roadmap, managed-loading contract, saved Model Plane
+manifest fixture, and manifest planner handoff gate validate locally without
+runtime side effects.
 
 Goal: make the current boundary explicit and machine-checkable.
 
@@ -47,6 +64,8 @@ Deliverables:
   inventory discovery, semantic routing visibility, runtime capability
   detection, residency states, policy decisions, backend adapter boundaries,
   fallback, cleanup, and artifact compatibility.
+- A saved Model Plane manifest fixture exercises the runtime-baseline handoff
+  path with `--json`.
 - A planned `harness_run_request` stage describes what the harness would run
   after user approval, but remains planning-only.
 - Roadmap and actuator-spike requirements are tracked as artifacts.
@@ -61,6 +80,9 @@ Evidence gate:
 
 ### Phase 1: Artifact Evidence From Runtime Baselines
 
+Status: in progress at the contract/planning layer only. No live runtime has
+been launched and no prompt traffic is part of this phase start.
+
 Goal: collect comparable evidence from existing runtimes before designing an
 actuator.
 
@@ -69,6 +91,8 @@ Deliverables:
 - llama.cpp baseline artifacts from `/metrics`, `/slots`, `/props`, response
   timings, optional log growth, and Model Plane metadata.
 - vLLM and OpenAI-compatible baseline artifacts where readiness endpoints exist.
+- A runtime baseline artifact contract validated by
+  `scripts/plan_runtime_baseline_artifacts.py`.
 - Artifact shape mapped to `memory-moe-bridge-v1`.
 - Capability labels for managed loading: inventory, routing visibility,
   residency read/write, fallback, artifact export, and cleanup.
@@ -77,6 +101,7 @@ Deliverables:
 Evidence gate:
 
 - At least one run-scoped artifact bundle per backend class.
+- Runtime baseline artifact classes and evidence labels validate offline.
 - Baseline artifacts show reproducible timing and observability fields.
 - No artifact claims semantic expert ids unless the runtime explicitly exposes
   router outputs.

@@ -1,0 +1,29 @@
+{
+  "schema_version": "model-plane-moe-probe-manifest-v1",
+  "profile_id": "fixture-llama-cpp-runtime-baseline",
+  "model_id": "local/fixture-mixtral-gguf",
+  "model_path": "/models/fixture-mixtral.gguf",
+  "backend_family": "llama_cpp",
+  "base_url": "http://127.0.0.1:18080",
+  "health_url": "http://127.0.0.1:18080/health",
+  "log_file_path": "/tmp/fixture-llama-server.log",
+  "container_name": "model-plane-fixture-llama-cpp",
+  "primary_probe_hint": "runtime_baseline",
+  "semantic_expert_ids": "not_exposed",
+  "hookable_runtime_available": false,
+  "runtime_observability": {
+    "expected_paths": [
+      "/props",
+      "/metrics",
+      "/slots"
+    ],
+    "readiness_paths": [
+      "/health"
+    ]
+  },
+  "safety_notes": [
+    "Fixture only; do not launch a runtime from this manifest.",
+    "Runtime baseline evidence is not semantic expert routing evidence.",
+    "Probe execution remains behind explicit user approval."
+  ]
+}

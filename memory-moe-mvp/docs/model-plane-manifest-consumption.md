@@ -36,6 +36,13 @@ Add `--json` when another agent or script needs the plan as structured output:
 python3 scripts/plan_moe_probe_manifest.py /path/to/moe-probe-manifest.json --json
 ```
 
+The repository includes a saved runtime-baseline handoff fixture for local
+roadmap validation:
+
+```bash
+python3 scripts/plan_moe_probe_manifest.py memory-moe-mvp/data/model_plane_moe_probe_manifest.runtime_baseline.fixture.json --json
+```
+
 The planner validates only the bridge contract. It does not start model servers,
 download models, authenticate, inspect private tokens, run Docker, or send
 prompt traffic.

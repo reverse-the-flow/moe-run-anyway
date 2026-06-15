@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT_PATH = ROOT / "scripts" / "plan_moe_probe_manifest.py"
+FIXTURE_PATH = ROOT / "memory-moe-mvp" / "data" / "model_plane_moe_probe_manifest.runtime_baseline.fixture.json"
 SPEC = importlib.util.spec_from_file_location("plan_moe_probe_manifest", SCRIPT_PATH)
 planner = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
@@ -35,6 +36,20 @@ def base_manifest(**overrides):
 
 
 class MoeProbeManifestPlannerTests(unittest.TestCase):
+    def test_saved_model_plane_fixture_plans_phase_zero_handoff_gate(self) -> None:
+        status, plan, error = planner.plan_manifest_path(FIXTURE_PATH)
+
+        self.assertEqual(status, 0)
+        self.assertIsNone(error)
+        assert plan is not None
+        self.assertTrue(plan["valid"], plan["errors"])
+        self.assertEqual(plan["target_class"], "stock_llama_cpp_openai_compatible")
+        self.assertEqual(plan["planned_harness_run_request"]["stage"], "harness_run_request")
+        self.assertEqual(plan["planned_harness_run_request"]["status"], "planned_only")
+        self.assertIn("--dry-run", plan["safe_commands"][0])
+        self.assertIn("--preflight-only", plan["safe_commands"][1])
+        self.assertIn("not semantic expert ids", plan["honesty_note"])
+
     def test_runtime_manifest_plans_only_dry_run_and_preflight_commands(self) -> None:
         plan = planner.build_plan(base_manifest(), Path("manifest.json"))
 

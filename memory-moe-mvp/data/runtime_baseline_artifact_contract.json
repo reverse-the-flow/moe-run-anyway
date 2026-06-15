@@ -1,0 +1,91 @@
+{
+  "schema_version": "moe-runtime-baseline-artifact-contract-v1",
+  "name": "MoE Run Anyway Runtime Baseline Artifact Contract",
+  "generated_for": "memory-moe-mvp",
+  "phase": "phase_1",
+  "boundary": "Model Plane owns state, control, cron, and handoff; MoE Run Anyway owns baseline artifact shape, runtime evidence labels, and planning validation.",
+  "artifact_classes": [
+    {
+      "id": "runtime_baseline_preflight_bundle",
+      "description": "Planning or readiness-only output from run_live_baseline.py --dry-run or --preflight-only.",
+      "evidence_label_id": "runtime_readiness_evidence",
+      "required_fields": [
+        "mode",
+        "backend_family",
+        "base_url",
+        "model",
+        "preflight",
+        "traffic_gate",
+        "traffic_allowed",
+        "safety_notes"
+      ],
+      "required_files": [
+        "captured-plan-or-preflight.json"
+      ],
+      "may_include_prompt_traffic": false,
+      "may_claim_semantic_expert_ids": false
+    },
+    {
+      "id": "runtime_baseline_probe_bundle",
+      "description": "Approved runtime probe bundle from llama_runtime_probe.py against a user-supplied running endpoint.",
+      "evidence_label_id": "runtime_request_telemetry",
+      "required_fields": [
+        "manifest.config.backend_family",
+        "manifest.config.base_url",
+        "manifest.shared_contract_template",
+        "events.event_type",
+        "summary.request_count",
+        "summary.observability",
+        "semantic_expert_ids_claim"
+      ],
+      "required_files": [
+        "manifest.json",
+        "events.jsonl",
+        "summary.json"
+      ],
+      "may_include_prompt_traffic": true,
+      "may_claim_semantic_expert_ids": false
+    }
+  ],
+  "evidence_labels": [
+    {
+      "id": "runtime_readiness_evidence",
+      "evidence_type": "runtime_evidence",
+      "description": "Endpoint readiness, observability-path availability, traffic gate, and Model Plane manifest metadata.",
+      "may_claim_semantic_expert_ids": false
+    },
+    {
+      "id": "runtime_request_telemetry",
+      "evidence_type": "runtime_evidence",
+      "description": "Request timing, metrics deltas, slot snapshots, props, optional log growth, and backend labels.",
+      "may_claim_semantic_expert_ids": false
+    },
+    {
+      "id": "semantic_router_trace",
+      "evidence_type": "semantic_routing_evidence",
+      "description": "Router-output trace from a hookable runtime or future backend patch; not produced by stock endpoint baselines.",
+      "may_claim_semantic_expert_ids": true
+    }
+  ],
+  "capability_labels": [
+    "backend_family",
+    "runtime_observability_available",
+    "readiness_available",
+    "model_plane_manifest_metadata",
+    "semantic_expert_ids_claim",
+    "live_actuator_implemented"
+  ],
+  "safety_contract": [
+    "Contract validation does not start containers or model servers.",
+    "Contract validation does not download models.",
+    "Contract validation does not authenticate or inspect private tokens.",
+    "Contract validation does not run Docker.",
+    "Contract validation does not send prompt traffic.",
+    "Stock endpoint baseline artifacts are runtime evidence, not semantic routing evidence."
+  ],
+  "next_actions": [
+    "Use saved Model Plane manifests to plan baseline artifact capture.",
+    "Capture preflight or dry-run JSON before any user-approved prompt traffic.",
+    "Require semantic_router_trace evidence before claiming semantic expert ids."
+  ]
+}
