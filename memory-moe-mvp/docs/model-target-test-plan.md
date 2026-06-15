@@ -13,9 +13,13 @@ The registry in `data/model_target_registry.json` currently requires coverage
 for these classes:
 
 - `stock_llama_cpp_openai_compatible`: stock `llama-server` or another
-  OpenAI-compatible server. This path can validate request handling, usage,
-  timings, metrics, slots, props, and log-growth correlation. It should not
-  claim semantic expert ids.
+  OpenAI-compatible request surface served by llama.cpp. This path can validate
+  request handling, usage, timings, metrics, slots, props, and log-growth
+  correlation. It should not claim semantic expert ids.
+- `openai_compatible_runtime`: vLLM, Ollama, or generic OpenAI-compatible
+  request surface where `/v1/models` or `/models` is the readiness surface.
+  This path can validate guarded request/runtime evidence without requiring
+  llama.cpp-specific `/props`, `/metrics`, or `/slots`.
 - `passive_sidecar_proxy`: sidecar observation around a running backend. This
   proves non-invasive request/memory telemetry before a runtime fork or hook is
   justified.
@@ -56,6 +60,15 @@ Tier 2A is stock `llama.cpp` active observation:
 - user starts `llama-server` with `--metrics --slots --props --perf`
 - run `llama_runtime_probe.py` against `data/mixtral_probe_prompts.json`
 - assert shared-contract shape and prompt-family coverage
+- do not assert semantic expert ids
+
+Tier 2A-compatible OpenAI runtime observation:
+
+- user starts an OpenAI-compatible backend outside this repository
+- run `run_live_baseline.py --backend-family vllm_openai_compatible` or another
+  supported OpenAI-compatible family
+- allow preflight to pass on `/v1/models` or `/models`
+- keep `/metrics`, `/slots`, and `/props` as optional snapshots only
 - do not assert semantic expert ids
 
 Tier 2B is hookable semantic routing:

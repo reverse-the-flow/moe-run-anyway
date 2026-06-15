@@ -1,8 +1,9 @@
 {
   "schema_version": "memory-moe-target-registry-v1",
-  "updated_at": "2026-06-12",
+  "updated_at": "2026-06-14",
   "required_target_classes": [
     "stock_llama_cpp_openai_compatible",
+    "openai_compatible_runtime",
     "hookable_pytorch_moe",
     "passive_sidecar_proxy",
     "small_local_moe",
@@ -37,6 +38,34 @@
       ],
       "next_live_commands": [
         "python3 llama_runtime_probe.py --base-url http://127.0.0.1:18080 --output-dir runtime-probe-runs --label llama-cpp-observational --model dolphin-mixtral --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 2 --log-file-path /path/to/llama-server.log"
+      ]
+    },
+    {
+      "target_id": "openai_compatible_runtime_generic",
+      "target_class": "openai_compatible_runtime",
+      "backend_family": "openai_compatible",
+      "probe_tier": "internal_runtime",
+      "model_family": "openai_compatible_moe_or_dense",
+      "example_models": [
+        "user-started OpenAI-compatible backend",
+        "Model Plane profile exposing an OpenAI-compatible chat endpoint"
+      ],
+      "semantic_expert_ids": "not_exposed",
+      "local_only_status": "requires_user_running_server",
+      "primary_probe": "llama_runtime_probe.py",
+      "observable_signals": [
+        "readiness from /v1/models or /models",
+        "request and response usage",
+        "OpenAI-compatible response latency",
+        "optional metrics, slots, and props snapshots when exposed"
+      ],
+      "deferred_requirements": [
+        "user starts an OpenAI-compatible backend outside this validation pass",
+        "model weights are already available outside this validation pass",
+        "no semantic expert id assertion from stock OpenAI-compatible telemetry"
+      ],
+      "next_live_commands": [
+        "python3 scripts/run_live_baseline.py --base-url http://127.0.0.1:18080 --backend-family openai_compatible --output-dir memory-moe-mvp/runtime-probe-runs --label openai-compatible-runtime --model local-openai-compatible --suite-path memory-moe-mvp/data/mixtral_probe_prompts.json --max-prompts 4 --repeats 2 --preflight-timeout-seconds 2"
       ]
     },
     {

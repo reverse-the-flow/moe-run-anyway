@@ -48,7 +48,8 @@ The planner reports:
 - local cache hints from `MODEL_PATH`, `LLAMA_MODEL_PATH`, Hugging Face cache
   directories, `~/.cache/llama.cpp`, `~/models`, and `./models`
 - `.gguf` files found under those cache roots
-- local observability endpoints at `/props`, `/metrics`, and `/slots`, unless
+- local observability endpoints at `/props`, `/metrics`, and `/slots`
+- OpenAI-compatible readiness endpoints at `/v1/models` and `/models`, unless
   `--skip-network` is used
 
 Cache hints are only hints. The planner does not verify model compatibility,
@@ -63,6 +64,10 @@ The output follows the registry target classes:
   a guarded `run_live_baseline.py --preflight-only` command, and the runtime
   probe command. This path remains observational and does not claim semantic
   expert ids.
+- `openai_compatible_runtime`: suggests guarded preflight and runtime probe
+  commands for a user-started vLLM, Ollama, or generic OpenAI-compatible
+  backend. `/v1/models` or `/models` can satisfy readiness when llama.cpp
+  observability is absent.
 - `passive_sidecar_proxy`: suggests running `llama_sidecar.py` against a
   user-started upstream.
 - `hookable_pytorch_moe`: suggests the synthetic forward-hook smoke and the
@@ -94,13 +99,17 @@ python3 scripts/run_live_baseline.py \
   --preflight-timeout-seconds 2
 ```
 
-Only after that guarded preflight sees `/props`, `/metrics`, or `/slots` should
-the active runtime baseline send prompt traffic.
+Only after that guarded llama.cpp preflight sees `/props`, `/metrics`, or
+`/slots` should the active llama.cpp runtime baseline send prompt traffic. For
+OpenAI-compatible runtime families, pass `--backend-family` and use `/v1/models`
+or `/models` as the readiness gate.
 
 ## Honesty Boundary
 
 The planner improves readiness and orchestration. It is not proof of live MoE
 semantics. Stock `llama.cpp` endpoints can support request/runtime telemetry,
-metrics deltas, slot state, props snapshots, and logs, but not per-layer expert
-ids. Semantic expert traces require a hookable runtime or future backend patch
-that exposes router outputs.
+metrics deltas, slot state, props snapshots, and logs. Stock vLLM, Ollama, and
+generic OpenAI-compatible endpoints can support readiness and request/runtime
+evidence. Neither stock path should be treated as per-layer expert ids.
+Semantic expert traces require a hookable runtime or future backend patch that
+exposes router outputs.

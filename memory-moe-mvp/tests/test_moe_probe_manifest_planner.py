@@ -43,7 +43,27 @@ class MoeProbeManifestPlannerTests(unittest.TestCase):
         self.assertEqual(len(plan["safe_commands"]), 2)
         self.assertIn("--dry-run", plan["safe_commands"][0])
         self.assertIn("--preflight-only", plan["safe_commands"][1])
+        self.assertIn("--backend-family llama_cpp", plan["safe_commands"][0])
         self.assertIn("--log-file-path /tmp/llama-server.log", plan["safe_commands"][0])
+        self.assertIn("not semantic expert ids", plan["honesty_note"])
+
+    def test_openai_compatible_manifest_passes_backend_family_to_runtime_plan(self) -> None:
+        plan = planner.build_plan(
+            base_manifest(
+                backend_family="vllm_openai_compatible",
+                profile_id="gemma-vllm-profile",
+                model_id="local/openai-compatible",
+                log_file_path="",
+            ),
+            Path("manifest.json"),
+        )
+
+        self.assertTrue(plan["valid"])
+        self.assertEqual(plan["target_class"], "openai_compatible_runtime")
+        joined = "\n".join(plan["safe_commands"])
+        self.assertIn("--backend-family vllm_openai_compatible", joined)
+        self.assertIn("gemma-vllm-profile-openai-compatible-runtime", joined)
+        self.assertIn("--preflight-only", plan["safe_commands"][1])
         self.assertIn("not semantic expert ids", plan["honesty_note"])
 
     def test_passive_manifest_routes_to_sidecar(self) -> None:

@@ -67,14 +67,18 @@ selection, but the policy is intentionally simple:
 
 | Manifest signal | Selected target class | Meaning |
 | --- | --- | --- |
-| `primary_probe_hint=runtime_baseline` or unknown safe default | `stock_llama_cpp_openai_compatible` | Use guarded runtime baseline planning against the existing endpoint. |
+| `primary_probe_hint=runtime_baseline` with `backend_family=llama_cpp` or unknown safe default | `stock_llama_cpp_openai_compatible` | Use guarded llama.cpp runtime baseline planning against the existing endpoint. |
+| `backend_family=vllm_openai_compatible`, `ollama_openai_compatible`, or `openai_compatible` | `openai_compatible_runtime` | Use guarded OpenAI-compatible runtime planning where `/v1/models` or `/models` can satisfy readiness. |
 | `primary_probe_hint=passive_sidecar` | `passive_sidecar_proxy` | Put the passive sidecar between client traffic and the upstream endpoint. |
 | `primary_probe_hint=hookable_pytorch` and `hookable_runtime_available=true` | `hookable_pytorch_moe` | Use the hookable semantic path where router outputs may be captured. |
 | Hookable hint without `hookable_runtime_available=true` | invalid manifest | Refuse to plan semantic probing. |
 
 Runtime baseline plans emit only `run_live_baseline.py --dry-run` and
 `run_live_baseline.py --preflight-only` commands. These are planning and
-readiness commands, not prompt-traffic runs.
+readiness commands, not prompt-traffic runs. Runtime baseline commands pass the
+manifest `backend_family` through to the runner and runtime probe so artifacts
+do not claim `llama_cpp` when the profile is vLLM, Ollama, or another
+OpenAI-compatible backend.
 
 Passive sidecar plans emit the sidecar command because the sidecar itself is the
 non-invasive observation layer. A separate client must still choose to send

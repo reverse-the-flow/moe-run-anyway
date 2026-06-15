@@ -26,6 +26,8 @@ class ModelTargetRegistryTests(unittest.TestCase):
         self.assertEqual(summary["schema_version"], "memory-moe-target-registry-v1")
         self.assertEqual(summary["target_count"], len(registry["targets"]))
         self.assertIn("stock_llama_cpp_openai_compatible", summary["by_class"])
+        self.assertIn("openai_compatible_runtime", summary["by_class"])
+        self.assertIn("openai_compatible", summary["by_backend"])
         self.assertIn("pytorch_transformers", summary["by_backend"])
 
     def test_validator_rejects_missing_target_class(self) -> None:

@@ -14,7 +14,12 @@ sys.modules[SPEC.name] = plan_live_model
 SPEC.loader.exec_module(plan_live_model)
 
 
-def fake_capabilities(*, llama_server: bool = False, observability: bool = False) -> dict:
+def fake_capabilities(
+    *,
+    llama_server: bool = False,
+    observability: bool = False,
+    readiness: bool = False,
+) -> dict:
     return {
         "project_root": str(ROOT),
         "platform": {
@@ -49,7 +54,10 @@ def fake_capabilities(*, llama_server: bool = False, observability: bool = False
         "live_backend": {
             "base_url": "http://127.0.0.1:18080",
             "observability_available": observability,
+            "readiness_available": readiness,
             "available_paths": ["/props"] if observability else [],
+            "available_observability_paths": ["/props"] if observability else [],
+            "available_readiness_paths": ["/v1/models"] if readiness else [],
             "endpoints": [],
         },
     }
@@ -90,6 +98,23 @@ class LiveModelPlannerTests(unittest.TestCase):
         self.assertIn("not semantic expert ids", target["honesty_note"])
         joined_commands = "\n".join(target["commands"])
         self.assertIn("scripts/run_live_baseline.py", joined_commands)
+        self.assertIn("--preflight-only", joined_commands)
+
+    def test_openai_compatible_runtime_uses_readiness_gate_and_backend_family(self) -> None:
+        registry = plan_live_model.load_registry(plan_live_model.DEFAULT_REGISTRY_PATH)
+        plan = plan_live_model.build_plan(
+            registry,
+            fake_capabilities(readiness=True),
+            base_url="http://127.0.0.1:18080",
+            target_class="openai_compatible_runtime",
+        )
+
+        target = plan["target_plans"][0]
+        self.assertEqual(target["readiness_state"], "ready_for_openai_compatible_runtime_probe")
+        self.assertEqual(target["blockers"], [])
+        self.assertIn("not semantic expert ids", target["honesty_note"])
+        joined_commands = "\n".join(target["commands"])
+        self.assertIn("--backend-family openai_compatible", joined_commands)
         self.assertIn("--preflight-only", joined_commands)
 
     def test_hookable_plan_requires_local_runtime_for_semantic_traces(self) -> None:

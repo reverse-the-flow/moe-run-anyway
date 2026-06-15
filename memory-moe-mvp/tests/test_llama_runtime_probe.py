@@ -152,6 +152,7 @@ class LlamaRuntimeProbeTests(unittest.TestCase):
                 label="stub",
                 request_timeout_seconds=10.0,
                 model="mixtral",
+                backend_family="vllm_openai_compatible",
                 log_file_path=log_path,
             )
             probe = llama_runtime_probe.LlamaRuntimeProbe(config=config)
@@ -181,8 +182,16 @@ class LlamaRuntimeProbeTests(unittest.TestCase):
                 1.0,
             )
             self.assertTrue(event["observability"]["log_growth"]["available"])
+            self.assertEqual(event["shared_contract"]["backend_family"], "vllm_openai_compatible")
 
+            manifest = json.loads(probe.manifest_path.read_text(encoding="utf-8"))
+            self.assertEqual(manifest["config"]["backend_family"], "vllm_openai_compatible")
+            self.assertEqual(
+                manifest["shared_contract_template"]["defaults"]["backend_family"],
+                "vllm_openai_compatible",
+            )
             summary = json.loads(probe.summary_path.read_text(encoding="utf-8"))
+            self.assertEqual(summary["config"]["backend_family"], "vllm_openai_compatible")
             self.assertEqual(summary["totals"]["request_count"], 1)
             self.assertEqual(summary["breakdowns"]["by_family"]["english_prose"], 1)
 

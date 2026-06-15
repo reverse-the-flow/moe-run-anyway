@@ -11,6 +11,7 @@ run. The registry already covers the runtime surfaces this project can test
 without downloads, authentication, Docker, a live server, or GPU-heavy work:
 
 - stock `llama.cpp` or OpenAI-compatible observation
+- OpenAI-compatible runtime readiness from Model Plane profiles
 - passive sidecar proxy observation
 - hookable PyTorch MoE semantic routing
 - small local MoE checkpoints
@@ -30,7 +31,7 @@ checkpoint run.
   has been run in the uploadable validation path.
 - `memory-moe-mvp/README.md`: documents the implemented local surfaces and
   separates Tier 0 shape checks from Tier 1, Tier 2A, and Tier 2B live gates.
-- `memory-moe-mvp/data/model_target_registry.json`: contains five required
+- `memory-moe-mvp/data/model_target_registry.json`: contains required
   target classes, each with a primary probe, observable signals, deferred
   requirements, and command shapes.
 - `memory-moe-mvp/model_target_registry.py` and
@@ -57,8 +58,12 @@ These names do not require a new target class today:
 - OLMoE-style candidates are already covered by `small_local_moe`.
 - Tiny random Mixtral-style candidates are already covered by `mixtral_style`
   and `hookable_pytorch_moe` when a compatible local runtime exists.
-- Nemotron-style large local candidates are useful future evidence only after
-  cheaper stock-runtime and hookable baselines prove the probe path.
+- Large OpenAI-compatible candidates remain class-level runtime evidence unless
+  a hookable runtime or backend patch exposes semantic expert ids.
+
+The `openai_compatible_runtime` target class exists to test Model Plane
+profiles that expose vLLM, Ollama, or generic OpenAI-compatible readiness. It is
+not a request to add more named model inventory.
 
 ## What Would Trigger More Targets
 

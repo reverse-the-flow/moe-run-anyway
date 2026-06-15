@@ -22,6 +22,11 @@ DEFAULT_SUITE_ARG = "memory-moe-mvp/data/mixtral_probe_prompts.json"
 SUPPORTED_SCHEMA_VERSION = "model-plane-moe-probe-manifest-v1"
 PASSIVE_PROBE_HINTS = {"passive_sidecar", "passive_sidecar_proxy"}
 HOOKABLE_PROBE_HINTS = {"hookable_pytorch", "hookable_pytorch_moe", "small_local_moe"}
+OPENAI_COMPATIBLE_BACKEND_FAMILIES = {
+    "vllm_openai_compatible",
+    "ollama_openai_compatible",
+    "openai_compatible",
+}
 
 JSONDict = dict[str, Any]
 
@@ -83,10 +88,13 @@ def validate_manifest(manifest: JSONDict) -> list[str]:
 
 def selected_target_class(manifest: JSONDict) -> str:
     hint = str(manifest.get("primary_probe_hint", "runtime_baseline"))
+    backend_family = str(manifest.get("backend_family", ""))
     if hint in PASSIVE_PROBE_HINTS:
         return "passive_sidecar_proxy"
     if hint in HOOKABLE_PROBE_HINTS and bool(manifest.get("hookable_runtime_available")):
         return "hookable_pytorch_moe"
+    if backend_family in OPENAI_COMPATIBLE_BACKEND_FAMILIES:
+        return "openai_compatible_runtime"
     return "stock_llama_cpp_openai_compatible"
 
 
@@ -100,15 +108,23 @@ def optional_log_args(manifest: JSONDict) -> list[str]:
 def runtime_baseline_commands(manifest: JSONDict, label: str) -> list[str]:
     base_url = normalize_base_url(str(manifest["base_url"]))
     model_id = str(manifest["model_id"])
+    backend_family = str(manifest["backend_family"])
+    runtime_label = (
+        f"{label}-openai-compatible-runtime"
+        if backend_family in OPENAI_COMPATIBLE_BACKEND_FAMILIES
+        else f"{label}-runtime"
+    )
     common = [
         "--base-url",
         base_url,
+        "--backend-family",
+        backend_family,
         "--model",
         model_id,
         "--output-dir",
         "memory-moe-mvp/runtime-probe-runs",
         "--label",
-        f"{label}-runtime",
+        runtime_label,
         "--suite-path",
         DEFAULT_SUITE_ARG,
         "--max-prompts",

@@ -26,6 +26,14 @@ DEFAULT_OUTPUT_DIR = MVP_DIR / "runtime-probe-runs"
 
 
 JSONDict = dict[str, Any]
+LLAMA_CPP_BACKEND_FAMILY = "llama_cpp"
+OPENAI_COMPATIBLE_BACKEND_FAMILIES = {
+    "vllm_openai_compatible",
+    "ollama_openai_compatible",
+    "openai_compatible",
+}
+OBSERVABILITY_PATHS = ("/props", "/metrics", "/slots")
+READINESS_PATHS = ("/v1/models", "/models")
 
 
 @dataclass(frozen=True)
@@ -70,11 +78,7 @@ def probe_endpoint(base_url: str, path: str, timeout_seconds: float) -> Endpoint
 
 
 def preflight_observability(base_url: str, timeout_seconds: float) -> JSONDict:
-    probes = [
-        probe_endpoint(base_url, "/props", timeout_seconds),
-        probe_endpoint(base_url, "/metrics", timeout_seconds),
-        probe_endpoint(base_url, "/slots", timeout_seconds),
-    ]
+    probes = [probe_endpoint(base_url, path, timeout_seconds) for path in OBSERVABILITY_PATHS]
     available = [probe.path for probe in probes if probe.available]
     return {
         "base_url": normalize_base_url(base_url),
@@ -84,12 +88,57 @@ def preflight_observability(base_url: str, timeout_seconds: float) -> JSONDict:
     }
 
 
+def preflight_runtime(base_url: str, backend_family: str, timeout_seconds: float) -> JSONDict:
+    observability_probes = [
+        probe_endpoint(base_url, path, timeout_seconds) for path in OBSERVABILITY_PATHS
+    ]
+    readiness_probes = [probe_endpoint(base_url, path, timeout_seconds) for path in READINESS_PATHS]
+    observability_paths = [probe.path for probe in observability_probes if probe.available]
+    readiness_paths = [probe.path for probe in readiness_probes if probe.available]
+    observability_available = bool(observability_paths)
+    readiness_available = bool(readiness_paths)
+
+    if backend_family == LLAMA_CPP_BACKEND_FAMILY:
+        traffic_allowed = observability_available
+        traffic_gate = "observability" if traffic_allowed else "unavailable"
+    elif backend_family in OPENAI_COMPATIBLE_BACKEND_FAMILIES:
+        traffic_allowed = readiness_available or observability_available
+        if readiness_available:
+            traffic_gate = "readiness"
+        elif observability_available:
+            traffic_gate = "observability"
+        else:
+            traffic_gate = "unavailable"
+    else:
+        traffic_allowed = observability_available
+        traffic_gate = "observability" if traffic_allowed else "unavailable"
+
+    return {
+        "base_url": normalize_base_url(base_url),
+        "backend_family": backend_family,
+        "observability_available": observability_available,
+        "readiness_available": readiness_available,
+        "traffic_gate": traffic_gate,
+        "traffic_allowed": traffic_allowed,
+        "observability_paths": list(OBSERVABILITY_PATHS),
+        "readiness_paths": list(READINESS_PATHS),
+        "available_observability_paths": observability_paths,
+        "available_readiness_paths": readiness_paths,
+        "available_paths": observability_paths,
+        "observability_endpoints": [probe.as_dict() for probe in observability_probes],
+        "readiness_endpoints": [probe.as_dict() for probe in readiness_probes],
+        "endpoints": [probe.as_dict() for probe in [*observability_probes, *readiness_probes]],
+    }
+
+
 def build_runtime_probe_command(args: argparse.Namespace) -> list[str]:
     command = [
         sys.executable,
         str(MVP_DIR / "llama_runtime_probe.py"),
         "--base-url",
         normalize_base_url(args.base_url),
+        "--backend-family",
+        args.backend_family,
         "--output-dir",
         str(args.output_dir),
         "--label",
@@ -112,8 +161,9 @@ def build_runtime_probe_command(args: argparse.Namespace) -> list[str]:
 
 def build_plan(args: argparse.Namespace, preflight: JSONDict | None = None) -> JSONDict:
     return {
-        "mode": "live_llama_cpp_baseline",
+        "mode": "live_runtime_baseline",
         "base_url": normalize_base_url(args.base_url),
+        "backend_family": args.backend_family,
         "model": args.model,
         "suite_path": str(args.suite_path),
         "output_dir": str(args.output_dir),
@@ -128,7 +178,7 @@ def build_plan(args: argparse.Namespace, preflight: JSONDict | None = None) -> J
         "notes": [
             "Requires a user-started local llama-server or OpenAI-compatible backend.",
             "Does not start servers, download models, authenticate, or run Docker.",
-            "Semantic expert ids are not expected on the stock llama.cpp path.",
+            "Stock OpenAI-compatible telemetry is runtime/request evidence, not semantic expert ids.",
         ],
     }
 
@@ -136,6 +186,7 @@ def build_plan(args: argparse.Namespace, preflight: JSONDict | None = None) -> J
 def print_human_plan(plan: JSONDict) -> None:
     print("Live baseline plan")
     print(f"Base URL: {plan['base_url']}")
+    print(f"Backend family: {plan['backend_family']}")
     print(f"Model: {plan['model']}")
     print(f"Prompt suite: {plan['suite_path']}")
     print(f"Output directory: {plan['output_dir']}")
@@ -145,7 +196,16 @@ def print_human_plan(plan: JSONDict) -> None:
         preflight = plan["preflight"]
         print("Preflight:")
         print(f"  observability_available: {preflight['observability_available']}")
-        print(f"  available_paths: {', '.join(preflight['available_paths']) or 'none'}")
+        print(f"  readiness_available: {preflight.get('readiness_available', False)}")
+        print(f"  traffic_gate: {preflight.get('traffic_gate', 'unknown')}")
+        print(
+            "  available_observability_paths: "
+            f"{', '.join(preflight.get('available_observability_paths', preflight['available_paths'])) or 'none'}"
+        )
+        print(
+            "  available_readiness_paths: "
+            f"{', '.join(preflight.get('available_readiness_paths', [])) or 'none'}"
+        )
         for endpoint in preflight["endpoints"]:
             status = "ok" if endpoint["available"] else f"missing ({endpoint['error']})"
             print(f"  {endpoint['path']}: {status}")
@@ -158,6 +218,12 @@ def run_runtime_probe(command: list[str]) -> int:
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default="http://127.0.0.1:18080")
+    parser.add_argument(
+        "--backend-family",
+        default=LLAMA_CPP_BACKEND_FAMILY,
+        choices=sorted({LLAMA_CPP_BACKEND_FAMILY, *OPENAI_COMPATIBLE_BACKEND_FAMILIES}),
+        help="runtime family used for preflight gating and artifact metadata",
+    )
     parser.add_argument("--model", default="dolphin-mixtral")
     parser.add_argument("--suite-path", type=Path, default=DEFAULT_SUITE)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
@@ -175,7 +241,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--preflight-only",
         action="store_true",
-        help="check observability endpoints and stop before sending prompt traffic",
+        help="check runtime readiness and stop before sending prompt traffic",
     )
     parser.add_argument(
         "--skip-preflight",
@@ -200,21 +266,28 @@ def main() -> int:
 
     preflight = None
     if not args.skip_preflight:
-        preflight = preflight_observability(args.base_url, args.preflight_timeout_seconds)
+        preflight = preflight_runtime(
+            args.base_url,
+            args.backend_family,
+            args.preflight_timeout_seconds,
+        )
         if args.preflight_only:
             plan = build_plan(args, preflight=preflight)
             if args.json:
                 print(json.dumps(plan, indent=2, sort_keys=True))
             else:
                 print_human_plan(plan)
-            return 0 if preflight["observability_available"] else 1
-        if not preflight["observability_available"]:
+            return 0 if preflight["traffic_allowed"] else 1
+        if not preflight["traffic_allowed"]:
             plan = build_plan(args, preflight=preflight)
             if args.json:
                 print(json.dumps(plan, indent=2, sort_keys=True))
             else:
                 print_human_plan(plan)
-                print("Refusing to run prompt traffic until at least one observability endpoint is reachable.")
+                print(
+                    "Refusing to run prompt traffic until a required observability "
+                    "or readiness endpoint is reachable."
+                )
             return 1
 
     return run_runtime_probe(build_runtime_probe_command(args))

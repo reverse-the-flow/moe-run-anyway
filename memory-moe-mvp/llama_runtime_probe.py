@@ -40,6 +40,7 @@ class RuntimeProbeConfig:
     label: str
     request_timeout_seconds: float
     model: str
+    backend_family: str = "llama_cpp"
     metrics_path: str = "/metrics"
     slots_path: str = "/slots"
     props_path: str = "/props"
@@ -404,13 +405,14 @@ class RuntimeProbeAccumulator:
             "mode": "llama_runtime_probe",
             "shared_contract_template": contract_shell(
                 probe_tier="internal_runtime",
-                backend_family="llama_cpp",
+                backend_family=self.config.backend_family,
                 default_baseline_kind="observational",
             ),
             "config": {
                 "base_url": self.config.base_url,
                 "label": self.config.label,
                 "model": self.config.model,
+                "backend_family": self.config.backend_family,
                 "log_file_path": str(self.config.log_file_path) if self.config.log_file_path else None,
             },
             "totals": {
@@ -450,13 +452,14 @@ class LlamaRuntimeProbe:
                 "mode": "llama_runtime_probe",
                 "shared_contract_template": contract_shell(
                     probe_tier="internal_runtime",
-                    backend_family="llama_cpp",
+                    backend_family=self.config.backend_family,
                     default_baseline_kind="observational",
                 ),
                 "config": {
                     "base_url": self.config.base_url,
                     "label": self.config.label,
                     "model": self.config.model,
+                    "backend_family": self.config.backend_family,
                     "metrics_path": self.config.metrics_path,
                     "slots_path": self.config.slots_path,
                     "props_path": self.config.props_path,
@@ -530,7 +533,7 @@ class LlamaRuntimeProbe:
             },
             build_shared_contract(
                 probe_tier="internal_runtime",
-                backend_family="llama_cpp",
+                backend_family=self.config.backend_family,
                 prompt_family=case["family_id"],
                 baseline_kind="observational",
             ),
@@ -547,6 +550,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--label", default="llama-runtime-probe")
     parser.add_argument("--model", required=True)
+    parser.add_argument("--backend-family", default="llama_cpp")
     parser.add_argument("--suite-path", type=Path)
     parser.add_argument("--max-prompts", type=int, default=0)
     parser.add_argument("--repeats", type=int, default=1)
@@ -564,6 +568,7 @@ def main() -> int:
         label=args.label,
         request_timeout_seconds=args.timeout_seconds,
         model=args.model,
+        backend_family=args.backend_family,
         log_file_path=args.log_file_path,
     )
     probe = LlamaRuntimeProbe(config=config)

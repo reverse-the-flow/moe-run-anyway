@@ -11,6 +11,10 @@ The runner does not start a server, download a model, authenticate, run Docker,
 or use a Hugging Face token. It assumes the user has already started a local
 backend and supplied any model files outside the repository.
 
+Use `--backend-family` to select the runtime gate and artifact metadata. The
+default is `llama_cpp`. Supported OpenAI-compatible families are
+`vllm_openai_compatible`, `ollama_openai_compatible`, and `openai_compatible`.
+
 ## Dry Run
 
 From the repository root:
@@ -43,11 +47,23 @@ The preflight checks stock observability surfaces:
 At least one of those surfaces must be reachable before the runner will send
 prompt traffic, unless `--skip-preflight` is explicitly used.
 
+For OpenAI-compatible runtime families, the preflight also checks readiness
+surfaces:
+
+- `/v1/models`
+- `/models`
+
+Those families may proceed when a readiness endpoint is reachable even if
+llama.cpp-specific observability endpoints are absent. The preflight output
+separates `observability_available`, `readiness_available`, `traffic_gate`, and
+the available endpoint lists.
+
 ## Run The First Live Baseline
 
 ```bash
 python3 scripts/run_live_baseline.py \
   --base-url http://127.0.0.1:18080 \
+  --backend-family llama_cpp \
   --model dolphin-mixtral \
   --output-dir memory-moe-mvp/runtime-probe-runs \
   --label mixtral-live-baseline \
@@ -67,6 +83,10 @@ This launches `llama_runtime_probe.py`, which writes:
 The result is still observational. Stock `llama.cpp` does not expose semantic
 expert ids through these endpoints, so the baseline proves request/runtime
 telemetry and shared-contract shape, not per-layer expert routing.
+
+The same semantic boundary applies to stock vLLM, Ollama, and generic
+OpenAI-compatible endpoints. Their readiness and request telemetry are useful
+runtime evidence, not semantic expert ids.
 
 ## Automation Output
 

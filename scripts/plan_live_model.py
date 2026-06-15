@@ -30,7 +30,13 @@ DEFAULT_SUITE = MVP_DIR / "data" / "mixtral_probe_prompts.json"
 ROOT_SUITE_ARG = "memory-moe-mvp/data/mixtral_probe_prompts.json"
 DEFAULT_BASE_URL = "http://127.0.0.1:18080"
 DEFAULT_ENDPOINTS = ("/props", "/metrics", "/slots")
+DEFAULT_READINESS_ENDPOINTS = ("/v1/models", "/models")
 DEFAULT_CACHE_DIR_LIMIT = 2500
+OPENAI_COMPATIBLE_BACKEND_FAMILIES = {
+    "vllm_openai_compatible",
+    "ollama_openai_compatible",
+    "openai_compatible",
+}
 
 JSONDict = dict[str, Any]
 
@@ -158,12 +164,23 @@ def probe_endpoint(base_url: str, path: str, timeout_seconds: float) -> JSONDict
 
 def preflight_backend(base_url: str, timeout_seconds: float) -> JSONDict:
     endpoints = [probe_endpoint(base_url, path, timeout_seconds) for path in DEFAULT_ENDPOINTS]
+    readiness_endpoints = [
+        probe_endpoint(base_url, path, timeout_seconds) for path in DEFAULT_READINESS_ENDPOINTS
+    ]
     available_paths = [endpoint["path"] for endpoint in endpoints if endpoint["available"]]
+    available_readiness_paths = [
+        endpoint["path"] for endpoint in readiness_endpoints if endpoint["available"]
+    ]
     return {
         "base_url": normalize_base_url(base_url),
         "observability_available": bool(available_paths),
+        "readiness_available": bool(available_readiness_paths),
         "available_paths": available_paths,
-        "endpoints": endpoints,
+        "available_observability_paths": available_paths,
+        "available_readiness_paths": available_readiness_paths,
+        "observability_endpoints": endpoints,
+        "readiness_endpoints": readiness_endpoints,
+        "endpoints": [*endpoints, *readiness_endpoints],
     }
 
 
@@ -390,6 +407,7 @@ def readiness_state_for_target(target: JSONDict, capabilities: JSONDict) -> tupl
     target_class = target["target_class"]
     live_backend = capabilities.get("live_backend")
     observability = bool(live_backend and live_backend["observability_available"])
+    readiness = bool(live_backend and live_backend.get("readiness_available"))
     has_llama_server = capabilities["backend_tools"]["llama-server"]["available"]
     has_local_model = bool(
         capabilities["cached_model_hints"]["gguf_files"]
@@ -408,6 +426,14 @@ def readiness_state_for_target(target: JSONDict, capabilities: JSONDict) -> tupl
         if not first_gguf_path(capabilities):
             blockers.append("no local GGUF hint found")
         return "needs_user_started_observable_backend", blockers
+
+    if target_class == "openai_compatible_runtime":
+        if readiness or observability:
+            return "ready_for_openai_compatible_runtime_probe", []
+        return (
+            "needs_user_started_openai_compatible_backend",
+            ["no reachable /v1/models, /models, /props, /metrics, or /slots endpoint"],
+        )
 
     if target_class == "passive_sidecar_proxy":
         if observability:
@@ -437,6 +463,10 @@ def commands_for_target(target: JSONDict, capabilities: JSONDict, base_url: str)
     normalized_base_url = normalize_base_url(base_url)
     gguf_path = first_gguf_path(capabilities) or "$LLAMA_MODEL_PATH"
     model_path = local_model_path_hint(capabilities)
+    backend_family = str(target.get("backend_family", "llama_cpp"))
+    runtime_backend_family = (
+        backend_family if backend_family in {"llama_cpp", *OPENAI_COMPATIBLE_BACKEND_FAMILIES} else "llama_cpp"
+    )
 
     guarded_runtime = quote_command(
         [
@@ -444,6 +474,8 @@ def commands_for_target(target: JSONDict, capabilities: JSONDict, base_url: str)
             "scripts/run_live_baseline.py",
             "--base-url",
             normalized_base_url,
+            "--backend-family",
+            runtime_backend_family,
             "--model",
             "local-moe",
             "--output-dir",
@@ -468,6 +500,8 @@ def commands_for_target(target: JSONDict, capabilities: JSONDict, base_url: str)
             "scripts/run_live_baseline.py",
             "--base-url",
             normalized_base_url,
+            "--backend-family",
+            runtime_backend_family,
             "--model",
             "local-moe",
             "--preflight-only",
@@ -538,6 +572,9 @@ def commands_for_target(target: JSONDict, capabilities: JSONDict, base_url: str)
             )
         commands.extend([preflight, guarded_runtime])
         return commands
+
+    if target_class == "openai_compatible_runtime":
+        return [preflight, guarded_runtime]
 
     if target_class == "passive_sidecar_proxy":
         return [f"cd memory-moe-mvp && {sidecar}"]
@@ -653,8 +690,13 @@ def print_human_plan(plan: JSONDict) -> None:
     if live_backend is None:
         print("Live backend: skipped")
     else:
-        available = ", ".join(live_backend["available_paths"]) or "none"
-        print(f"Live backend: observability_available={live_backend['observability_available']} ({available})")
+        observable = ", ".join(live_backend["available_paths"]) or "none"
+        ready = ", ".join(live_backend.get("available_readiness_paths", [])) or "none"
+        print(
+            "Live backend: "
+            f"observability_available={live_backend['observability_available']} ({observable}); "
+            f"readiness_available={live_backend.get('readiness_available', False)} ({ready})"
+        )
 
     print("\nTarget plans")
     for target in plan["target_plans"]:
