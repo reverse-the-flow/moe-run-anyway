@@ -26,6 +26,7 @@ PRIMARY_DOCS = [
     MVP_DIR / "docs" / "live-baseline-runner.md",
     MVP_DIR / "docs" / "model-plane-manifest-consumption.md",
     MVP_DIR / "docs" / "expert-paging-roadmap.md",
+    MVP_DIR / "docs" / "managed-expert-loading.md",
     MVP_DIR / "docs" / "model-target-test-plan.md",
     MVP_DIR / "docs" / "portability-and-gpu-hosts.md",
     MVP_DIR / "docs" / "probe-observability-notes.md",
@@ -45,6 +46,10 @@ def validate_model_target_registry() -> int:
 
 def validate_expert_paging_roadmap() -> int:
     return run_command([sys.executable, str(ROOT / "scripts" / "plan_expert_paging.py")])
+
+
+def validate_managed_expert_loading_plan() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_managed_expert_loading.py")])
 
 
 def run_unit_tests() -> int:
@@ -126,6 +131,7 @@ def main() -> int:
     checks = [
         ("model target registry", validate_model_target_registry),
         ("expert paging roadmap", validate_expert_paging_roadmap),
+        ("managed expert loading plan", validate_managed_expert_loading_plan),
         ("unit tests", run_unit_tests),
         ("py_compile", compile_python_sources),
         ("docs portability", check_docs_portability),

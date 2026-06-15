@@ -2,12 +2,19 @@
   "schema_version": "moe-expert-paging-roadmap-v1",
   "name": "MoE Run Anyway Expert Paging Roadmap",
   "generated_for": "memory-moe-mvp",
+  "managed_expert_loading_contract": "memory-moe-mvp/data/managed_expert_loading_plan.json",
   "current_truth_table": [
     {
       "surface": "model_plane_manifest_handoff",
       "status": "implemented",
       "can_do": "Export run-scoped model, backend, endpoint, log, observability, and safety hints for MoE planning.",
       "cannot_do": "Expose semantic expert ids unless the runtime exposes router outputs."
+    },
+    {
+      "surface": "managed_expert_loading_contract",
+      "status": "implemented",
+      "can_do": "Validate expert inventory, routing visibility, residency states, policy decisions, backend adapter boundaries, fallback, cleanup, and memory-moe-bridge-v1 artifact expectations.",
+      "cannot_do": "Read or mutate live expert residency; the runtime actuator is still missing."
     },
     {
       "surface": "runtime_baseline_planner",
@@ -47,17 +54,20 @@
       "status": "in_progress",
       "deliverables": [
         "Roadmap document and machine-readable checklist.",
+        "Managed expert loading contract defines inventory, routing visibility, residency state, policy decision, backend adapter, fallback, cleanup, and artifact requirements.",
         "Manifest planner remains planning-only and emits a planned harness_run_request stage.",
         "Model Plane callable-function and cron handoff is documented.",
         "Actuator spike proof checklist is tracked."
       ],
       "evidence_gates": [
         "Roadmap JSON validates with scripts/plan_expert_paging.py.",
+        "Managed expert loading JSON validates with scripts/plan_managed_expert_loading.py.",
         "Manifest planner output names the planned harness_run_request without executing it.",
         "Dependency-free tests cover planner output and roadmap validation."
       ],
       "next_actions": [
         "Run python3 scripts/plan_expert_paging.py.",
+        "Run python3 scripts/plan_managed_expert_loading.py.",
         "Run python3 scripts/plan_moe_probe_manifest.py against a saved Model Plane manifest with --json.",
         "Keep all probe execution behind explicit user approval."
       ]
@@ -70,6 +80,7 @@
         "llama.cpp runtime baseline artifact bundle.",
         "vLLM or OpenAI-compatible runtime baseline artifact bundle.",
         "Backend labels mapped to memory-moe-bridge-v1 fields.",
+        "Managed-loading capability labels for inventory, routing visibility, residency read/write, fallback, artifact export, and cleanup.",
         "Explicit separation of runtime evidence from semantic routing evidence."
       ],
       "evidence_gates": [
@@ -104,12 +115,12 @@
     },
     {
       "id": "phase_3",
-      "title": "Controller policy and replay audit with dense fallback comparison",
+      "title": "Managed loading policy and replay audit with dense fallback comparison",
       "status": "planned",
       "deliverables": [
         "Replay controller evaluates candidate residency policies over semantic traces.",
         "Dense fallback comparison is part of the audit contract.",
-        "Policy output includes preload, keep, evict, fallback, and confidence fields."
+        "Policy output uses the managed-loading vocabulary: observe_only, preload, pin, keep, evict, demote, fallback_dense, abort_run, and confidence fields."
       ],
       "evidence_gates": [
         "Policy decisions are reproducible from artifacts.",
@@ -123,15 +134,15 @@
     },
     {
       "id": "phase_4",
-      "title": "llama.cpp actuator feasibility spike / fork plan",
+      "title": "Managed expert loading backend adapter feasibility spike",
       "status": "planned",
       "deliverables": [
-        "Spike plan identifying llama.cpp control points.",
-        "Comparison of outside controller, small llama.cpp patch, and fork options.",
+        "Spike plan identifying backend-specific control points for llama.cpp first, then vllm_openai_compatible, hookable_pytorch, moe_infinity_style, or prototype_offload_system adapters as evidence permits.",
+        "Comparison of outside controller, small llama.cpp patch, fork, backend plugin, and hookable runtime adapter options.",
         "Proof checklist for routing visibility, residency control, dense fallback, artifact shape, cleanup, and rollback."
       ],
       "evidence_gates": [
-        "A concrete runtime hook or patch point can influence expert residency or offload behavior.",
+        "A concrete runtime hook, adapter, or patch point can read and influence expert residency or offload behavior.",
         "The runtime can emit auditable artifacts without breaking dense baseline execution.",
         "Cleanup and fallback are tested under failure."
       ],
@@ -164,7 +175,7 @@
     {
       "from": "phase_0",
       "to": "phase_1",
-      "requires": "Manifest, roadmap, and planner checks pass locally."
+      "requires": "Manifest, roadmap, managed-loading contract, and planner checks pass locally."
     },
     {
       "from": "phase_1",
@@ -179,14 +190,21 @@
     {
       "from": "phase_3",
       "to": "phase_4",
-      "requires": "Replay policies show useful behavior against dense fallback comparisons."
+      "requires": "Replay policies use managed-loading decision vocabulary and show useful behavior against dense fallback comparisons."
     },
     {
       "from": "phase_4",
       "to": "phase_5",
-      "requires": "A runtime actuator point exists and has a rollback plan."
+      "requires": "A backend adapter or runtime actuator point exists, can read/write residency state, and has a rollback plan."
     }
   ],
+  "managed_expert_loading": {
+    "plan": "memory-moe-mvp/data/managed_expert_loading_plan.json",
+    "planner": "scripts/plan_managed_expert_loading.py",
+    "doc": "memory-moe-mvp/docs/managed-expert-loading.md",
+    "role": "Concrete contract layer between roadmap-only expert paging and a future live runtime actuator.",
+    "current_limit": "Planning and validation only; no live expert residency mutation exists."
+  },
   "llama_cpp_options": [
     {
       "option": "external_controller",

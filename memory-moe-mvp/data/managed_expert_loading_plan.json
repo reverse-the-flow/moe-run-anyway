@@ -1,0 +1,409 @@
+{
+  "schema_version": "moe-managed-expert-loading-plan-v1",
+  "name": "MoE Run Anyway Managed Expert Loading Contract",
+  "generated_for": "memory-moe-mvp",
+  "live_expert_loading_implemented": false,
+  "boundary": {
+    "summary": "Model Plane owns state, control, cron, and handoff; MoE Run Anyway owns harness/runtime evidence and planning artifacts.",
+    "owners": [
+      {
+        "owner": "Model Plane",
+        "owns": [
+          "run state",
+          "control APIs",
+          "cron/callable orchestration",
+          "profile validation",
+          "launch, health, and log inspection",
+          "run-scoped MoE manifest handoff"
+        ],
+        "does_not_own": [
+          "MoE Run Anyway replay policy scoring",
+          "MoE harness planner output",
+          "offline controller evidence"
+        ]
+      },
+      {
+        "owner": "MoE Run Anyway",
+        "owns": [
+          "harness planning",
+          "runtime evidence classification",
+          "expert loading contract validation",
+          "replay and simulation policy audit",
+          "artifact compatibility checks"
+        ],
+        "does_not_own": [
+          "Model Plane state mutation",
+          "cron scheduling",
+          "server launch orchestration",
+          "live expert residency mutation"
+        ]
+      }
+    ]
+  },
+  "modes": [
+    {
+      "id": "observe_only",
+      "description": "Collect capability labels, inventory hints, telemetry, and missing actuator fields without changing runtime state.",
+      "may_mutate_runtime": false,
+      "allowed_outputs": [
+        "capability summary",
+        "missing actuator capabilities",
+        "runtime evidence labels"
+      ]
+    },
+    {
+      "id": "replay_simulate",
+      "description": "Apply managed-loading policy vocabulary to recorded or synthetic traces and compare against dense fallback.",
+      "may_mutate_runtime": false,
+      "allowed_outputs": [
+        "policy decision trace",
+        "warm-hit and churn metrics",
+        "dense fallback comparison"
+      ]
+    },
+    {
+      "id": "live_actuator",
+      "description": "Future guarded mode that would apply residency actions to a backend after all actuator capabilities are proven.",
+      "may_mutate_runtime": true,
+      "allowed_outputs": [
+        "live residency before/after artifact",
+        "cleanup and restore artifact",
+        "dense fallback proof"
+      ]
+    }
+  ],
+  "artifact_compatibility": {
+    "contract_version": "memory-moe-bridge-v1",
+    "dense_fallback_field": "dense_baseline_delta",
+    "extends_fields": [
+      "probe_tier",
+      "backend_family",
+      "prompt_family",
+      "window_size_tokens",
+      "policy_name",
+      "resident_budget_fraction",
+      "fallback_used",
+      "warm_hit_rate",
+      "miss_rate",
+      "churn",
+      "eviction_regret",
+      "context_retention",
+      "dense_baseline_delta"
+    ],
+    "managed_loading_fields": [
+      "mode",
+      "expert_inventory",
+      "routing_visibility_source",
+      "residency_state_before",
+      "policy_action",
+      "residency_state_after",
+      "capability_gaps",
+      "dense_fallback_available",
+      "cleanup_restore_status",
+      "live_actuator_implemented"
+    ]
+  },
+  "state_vocab": [
+    {
+      "id": "resident",
+      "description": "The expert is currently available in the active execution memory tier."
+    },
+    {
+      "id": "offloaded_cpu",
+      "description": "The expert is staged in host memory and may be promoted if an actuator exists."
+    },
+    {
+      "id": "offloaded_disk",
+      "description": "The expert is staged on local disk or SSD and may be promoted if an actuator exists."
+    },
+    {
+      "id": "loading",
+      "description": "A future actuator has accepted a load request and the residency transition is not complete."
+    },
+    {
+      "id": "evicting",
+      "description": "A future actuator has accepted an eviction or demotion request and the transition is not complete."
+    },
+    {
+      "id": "unknown",
+      "description": "The harness cannot prove the current residency tier."
+    }
+  ],
+  "policy_actions": [
+    {
+      "id": "observe_only",
+      "requires_capability": "artifact_export",
+      "description": "Emit observations and missing-capability fields without attempting runtime mutation."
+    },
+    {
+      "id": "preload",
+      "requires_capability": "residency_control",
+      "description": "Request an expert load before the policy expects it to be routed."
+    },
+    {
+      "id": "pin",
+      "requires_capability": "residency_control",
+      "description": "Keep an expert resident across a policy window or request boundary."
+    },
+    {
+      "id": "keep",
+      "requires_capability": "policy_application",
+      "description": "Leave an expert in its current residency state."
+    },
+    {
+      "id": "evict",
+      "requires_capability": "residency_control",
+      "description": "Remove an expert from the active resident set."
+    },
+    {
+      "id": "demote",
+      "requires_capability": "residency_control",
+      "description": "Move an expert to a lower residency tier such as CPU or disk."
+    },
+    {
+      "id": "fallback_dense",
+      "requires_capability": "dense_fallback",
+      "description": "Use normal dense or full-residency execution instead of managed loading."
+    },
+    {
+      "id": "abort_run",
+      "requires_capability": "cleanup_restore",
+      "description": "Stop the managed-loading attempt when required capabilities or safety checks are missing."
+    }
+  ],
+  "backend_adapters": [
+    {
+      "id": "llama_cpp",
+      "display_name": "llama.cpp / llama-server",
+      "description": "Stock llama.cpp evidence path and possible future small-patch substrate.",
+      "class": "stock_endpoint_or_small_patch_candidate",
+      "mode": "observe_only",
+      "adapter_boundary": "Stock endpoint observability can provide runtime evidence; real managed loading would require a narrow runtime patch or upstream-supported control point.",
+      "evidence_sources": [
+        "metrics endpoint",
+        "slots endpoint",
+        "props endpoint",
+        "server logs"
+      ],
+      "capability_status": {
+        "expert_inventory": "missing",
+        "routing_visibility": "missing",
+        "residency_observation": "missing",
+        "residency_control": "missing",
+        "policy_application": "planned",
+        "dense_fallback": "available",
+        "cleanup_restore": "missing",
+        "artifact_export": "planned"
+      },
+      "missing_actuator_capabilities": [
+        "expert_inventory",
+        "routing_visibility",
+        "residency_observation",
+        "residency_control",
+        "cleanup_restore"
+      ]
+    },
+    {
+      "id": "vllm_openai_compatible",
+      "display_name": "vLLM or OpenAI-compatible endpoint",
+      "description": "Endpoint-compatible backend class that needs a plugin or extension for MoE internals.",
+      "class": "endpoint_or_plugin_candidate",
+      "mode": "observe_only",
+      "adapter_boundary": "OpenAI-compatible request telemetry is runtime evidence only unless a backend plugin exposes MoE internals.",
+      "evidence_sources": [
+        "readiness endpoint",
+        "request timing",
+        "backend metadata",
+        "Model Plane manifest"
+      ],
+      "capability_status": {
+        "expert_inventory": "missing",
+        "routing_visibility": "missing",
+        "residency_observation": "missing",
+        "residency_control": "missing",
+        "policy_application": "planned",
+        "dense_fallback": "available",
+        "cleanup_restore": "missing",
+        "artifact_export": "planned"
+      },
+      "missing_actuator_capabilities": [
+        "expert_inventory",
+        "routing_visibility",
+        "residency_observation",
+        "residency_control",
+        "cleanup_restore"
+      ]
+    },
+    {
+      "id": "hookable_pytorch",
+      "display_name": "Hookable PyTorch / Transformers MoE runtime",
+      "description": "Local Python-module runtime class that can expose semantic routing traces through hooks.",
+      "class": "semantic_trace_source",
+      "mode": "replay_simulate",
+      "adapter_boundary": "Forward hooks and module inspection can expose inventory and routing when a local runtime already provides Python modules.",
+      "evidence_sources": [
+        "module walk",
+        "forward hook router outputs",
+        "local trace fixture"
+      ],
+      "capability_status": {
+        "expert_inventory": "partial",
+        "routing_visibility": "partial",
+        "residency_observation": "missing",
+        "residency_control": "missing",
+        "policy_application": "planned",
+        "dense_fallback": "planned",
+        "cleanup_restore": "missing",
+        "artifact_export": "planned"
+      },
+      "missing_actuator_capabilities": [
+        "residency_observation",
+        "residency_control",
+        "cleanup_restore"
+      ]
+    },
+    {
+      "id": "moe_infinity_style",
+      "display_name": "MoE-Infinity-style offload runtime",
+      "description": "External offload-capable runtime class that could become an adapter target if already installed.",
+      "class": "external_offload_adapter_candidate",
+      "mode": "live_actuator_missing",
+      "adapter_boundary": "A candidate adapter class for an already installed offload-capable runtime; this plan does not vendor, install, or launch it.",
+      "evidence_sources": [
+        "runtime-exported inventory",
+        "runtime-exported routing metadata",
+        "runtime offload controller state"
+      ],
+      "capability_status": {
+        "expert_inventory": "planned",
+        "routing_visibility": "planned",
+        "residency_observation": "planned",
+        "residency_control": "planned",
+        "policy_application": "planned",
+        "dense_fallback": "planned",
+        "cleanup_restore": "missing",
+        "artifact_export": "planned"
+      },
+      "missing_actuator_capabilities": [
+        "cleanup_restore",
+        "artifact_export"
+      ]
+    },
+    {
+      "id": "prototype_offload_system",
+      "display_name": "Prototype offload system",
+      "description": "Local prototype class for exercising the contract before a production backend actuator exists.",
+      "class": "local_experiment_adapter_candidate",
+      "mode": "live_actuator_missing",
+      "adapter_boundary": "A future local prototype may exercise the contract, but it must prove the same safety, fallback, cleanup, and artifact requirements as other backends.",
+      "evidence_sources": [
+        "fixture inventory",
+        "simulated residency transitions",
+        "local replay trace"
+      ],
+      "capability_status": {
+        "expert_inventory": "planned",
+        "routing_visibility": "planned",
+        "residency_observation": "planned",
+        "residency_control": "planned",
+        "policy_application": "planned",
+        "dense_fallback": "planned",
+        "cleanup_restore": "planned",
+        "artifact_export": "planned"
+      },
+      "missing_actuator_capabilities": [
+        "real backend control point",
+        "failure-path cleanup proof",
+        "dense fallback comparison under live conditions"
+      ]
+    }
+  ],
+  "capability_requirements": [
+    {
+      "id": "expert_inventory",
+      "required_for_live_actuator": true,
+      "current_status": "partial",
+      "description": "Produce model id, backend family, layer id, expert id, storage/residency cost, and load capability from a real or fixture source."
+    },
+    {
+      "id": "routing_visibility",
+      "required_for_live_actuator": true,
+      "current_status": "partial",
+      "description": "Expose semantic layer/expert routing scores or ranks from hooks, runtime exports, or trace fixtures."
+    },
+    {
+      "id": "residency_observation",
+      "required_for_live_actuator": true,
+      "current_status": "missing",
+      "description": "Read an expert's current residency state from the runtime."
+    },
+    {
+      "id": "residency_control",
+      "required_for_live_actuator": true,
+      "current_status": "missing",
+      "description": "Apply preload, pin, evict, demote, and related residency transitions in a live backend."
+    },
+    {
+      "id": "policy_application",
+      "required_for_live_actuator": true,
+      "current_status": "planned",
+      "description": "Translate replay decisions into guarded backend adapter calls only when the adapter has required capabilities."
+    },
+    {
+      "id": "dense_fallback",
+      "required_for_live_actuator": true,
+      "current_status": "planned",
+      "description": "Keep normal dense or full-residency execution available as the comparison and escape path."
+    },
+    {
+      "id": "cleanup_restore",
+      "required_for_live_actuator": true,
+      "current_status": "missing",
+      "description": "Restore runtime state after abort, failed mutation, interruption, or dense fallback."
+    },
+    {
+      "id": "artifact_export",
+      "required_for_live_actuator": true,
+      "current_status": "planned",
+      "description": "Emit memory-moe-bridge-v1-compatible managed-loading artifacts with before/after state and capability gaps."
+    }
+  ],
+  "current_capability_gaps": [
+    {
+      "capability_id": "residency_observation",
+      "impact": "The harness cannot prove where live expert tensors reside.",
+      "needed_before_live": "Backend adapter must expose auditable residency state for each expert."
+    },
+    {
+      "capability_id": "residency_control",
+      "impact": "The harness cannot load, pin, evict, demote, or otherwise move live experts.",
+      "needed_before_live": "Backend adapter must provide guarded mutation calls and visible before/after state."
+    },
+    {
+      "capability_id": "cleanup_restore",
+      "impact": "A failed live actuator experiment could leave runtime state ambiguous.",
+      "needed_before_live": "Abort paths must restore dense/full-residency behavior or prove no mutation occurred."
+    },
+    {
+      "capability_id": "routing_visibility",
+      "impact": "Stock endpoint telemetry cannot be treated as semantic expert routing.",
+      "needed_before_live": "Selected backend must expose routed layer/expert ids and scores at the decision point."
+    }
+  ],
+  "safety_contract": [
+    "Planner does not download models.",
+    "Planner does not authenticate or inspect private tokens.",
+    "Planner does not run Docker.",
+    "Planner does not launch model servers.",
+    "Planner does not send prompt traffic.",
+    "Planner does not mutate runtime state or model caches.",
+    "Live expert loading is not implemented yet."
+  ],
+  "next_actions": [
+    "Keep the current pass observe-only and replay/simulate only.",
+    "Use runtime baseline artifacts to label backend capability gaps.",
+    "Use hookable PyTorch traces only when local modules and weights already exist.",
+    "Design a backend adapter only after inventory, routing visibility, residency observation, dense fallback, artifact export, and cleanup requirements are proven.",
+    "Do not claim live managed expert loading until a live actuator is implemented and tested."
+  ]
+}

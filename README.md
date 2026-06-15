@@ -24,6 +24,7 @@ Live model work is intentionally deferred until a user supplies a running backen
 - `memory-moe-mvp/docs/live-model-readiness-planner.md`: no-secrets planner for host, cache, backend-tool, and target-class readiness.
 - `memory-moe-mvp/docs/live-baseline-runner.md`: guarded entrypoint for the first live runtime baseline.
 - `memory-moe-mvp/docs/model-plane-manifest-consumption.md`: agent contract for consuming Model Plane MoE probe manifests.
+- `memory-moe-mvp/docs/managed-expert-loading.md`: planning-only managed expert loading contract and backend adapter vocabulary.
 - `memory-moe-mvp/docs/portability-and-gpu-hosts.md`: host portability, GPU preflight, and live-machine dependency notes.
 - `MODEL_CARD.md`: model-card style scope, target-class, safety, and limitation summary for the harness.
 - `context-pack/`: archived conversation/context notes that explain the project direction.
@@ -70,6 +71,13 @@ declares `hookable_runtime_available=true`; stock endpoint telemetry remains
 runtime evidence, not semantic expert ids.
 Read [memory-moe-mvp/docs/model-plane-manifest-consumption.md](memory-moe-mvp/docs/model-plane-manifest-consumption.md)
 for the agent decision contract.
+
+To validate the managed expert loading contract without models, downloads,
+server starts, Docker, or prompt traffic:
+
+```bash
+python3 scripts/plan_managed_expert_loading.py
+```
 
 After committing, verify the uploadable tree is clean:
 

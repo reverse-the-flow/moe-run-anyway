@@ -5,15 +5,25 @@ plan probes, collect comparable artifacts, replay routing traces, and audit
 controller policies. It is not yet a runtime actuator.
 
 The current objective is to move from harness/probes to real expert paging
-without pretending the missing runtime control exists. The likely future path
-may require a small `llama.cpp` controller patch or fork if evidence shows
-`llama.cpp` is the right substrate.
+without pretending the missing runtime control exists. The practical next
+abstraction is managed expert loading: explicit expert inventory discovery,
+semantic routing visibility requirements, runtime capability detection,
+residency state, policy decisions, backend adapter boundaries, dense fallback,
+cleanup, and `memory-moe-bridge-v1` artifact compatibility.
+
+The managed loading contract lives in
+[managed-expert-loading.md](managed-expert-loading.md) and
+[managed_expert_loading_plan.json](../data/managed_expert_loading_plan.json).
+Validate it with `python3 scripts/plan_managed_expert_loading.py`. The likely
+future path may require a small `llama.cpp` controller patch or fork if evidence
+shows `llama.cpp` is the right substrate.
 
 ## Current Truth Table
 
 | Surface | Exists now | What it can prove | What it cannot prove |
 | --- | --- | --- | --- |
 | Model Plane MoE manifest handoff | Yes | Run-scoped model, backend, endpoint, log, observability, and safety hints can be exported for MoE planning. | It does not expose semantic expert ids unless the runtime does. |
+| Managed expert loading contract | Yes | Expert inventory, routing visibility, residency state, policy decision, backend adapter, fallback, cleanup, and artifact requirements are machine-checkable. | It cannot read or mutate live expert residency. |
 | Runtime baseline planner | Yes | Safe dry-run and preflight-only commands for `llama.cpp`, vLLM, Ollama, or OpenAI-compatible endpoints. | It does not launch servers, send prompt traffic, or page experts. |
 | Passive sidecar | Yes | Request-boundary telemetry and upstream observability can be captured non-invasively. | It cannot alter expert residency or infer semantic routing from endpoint timing alone. |
 | Stock `llama.cpp` runtime probe | Yes | Metrics, slots, props, timings, and optional log growth can become runtime evidence. | Stock endpoint telemetry is not semantic expert routing. |
@@ -33,6 +43,10 @@ Deliverables:
 - Model Plane run-scoped MoE manifests remain the durable handoff contract.
 - MoE planners consume manifests without launching models, downloading weights,
   authenticating, running Docker, or sending prompt traffic.
+- Managed expert loading requirements are explicit and machine-checkable:
+  inventory discovery, semantic routing visibility, runtime capability
+  detection, residency states, policy decisions, backend adapter boundaries,
+  fallback, cleanup, and artifact compatibility.
 - A planned `harness_run_request` stage describes what the harness would run
   after user approval, but remains planning-only.
 - Roadmap and actuator-spike requirements are tracked as artifacts.
@@ -41,6 +55,8 @@ Evidence gate:
 
 - `scripts/plan_moe_probe_manifest.py` and `scripts/plan_expert_paging.py`
   validate local artifacts and print next actions without side effects.
+- `scripts/plan_managed_expert_loading.py` validates the managed loading
+  contract and reports missing capabilities before any runtime work.
 - Dependency-free unit tests cover the roadmap and planner outputs.
 
 ### Phase 1: Artifact Evidence From Runtime Baselines
@@ -54,6 +70,8 @@ Deliverables:
   timings, optional log growth, and Model Plane metadata.
 - vLLM and OpenAI-compatible baseline artifacts where readiness endpoints exist.
 - Artifact shape mapped to `memory-moe-bridge-v1`.
+- Capability labels for managed loading: inventory, routing visibility,
+  residency read/write, fallback, artifact export, and cleanup.
 - Clear labels for runtime evidence versus semantic routing evidence.
 
 Evidence gate:
@@ -81,7 +99,7 @@ Evidence gate:
 - Hooking failure modes are explicit and do not silently downgrade to timing
   inference.
 
-### Phase 3: Controller Policy And Replay Audit
+### Phase 3: Managed Loading Policy And Replay Audit
 
 Goal: prove controller policies offline before touching live runtime residency.
 
@@ -89,7 +107,9 @@ Deliverables:
 
 - Replay controller evaluates candidate residency policies over semantic traces.
 - Dense fallback comparison is part of the audit contract.
-- Policy outputs include preload, keep, evict, fallback, and confidence fields.
+- Policy outputs use the managed-loading vocabulary: `observe_only`,
+  `preload`, `pin`, `keep`, `evict`, `demote`, `fallback_dense`, `abort_run`,
+  and confidence fields.
 - Failure-mode reports cover churn, missed experts, fallback frequency, and
   quality deltas.
 
@@ -99,23 +119,26 @@ Evidence gate:
 - Dense fallback comparison bounds quality or behavior drift.
 - Replay artifacts are sufficient to reproduce policy decisions.
 
-### Phase 4: llama.cpp Actuator Feasibility Spike / Fork Plan
+### Phase 4: Managed Expert Loading Backend Adapter Feasibility Spike
 
-Goal: decide whether `llama.cpp` can support guarded live expert paging with a
-small patch, controller hook, or fork.
+Goal: decide whether a backend adapter can support guarded live managed loading
+with residency read/write, fallback, artifacts, and cleanup. `llama.cpp` remains
+the first likely substrate, but the same proof applies to
+`vllm_openai_compatible` extensions, `hookable_pytorch` runtimes,
+`moe_infinity_style` adapters, and `prototype_offload_system` prototypes.
 
 Deliverables:
 
-- A spike document or branch plan identifying exact `llama.cpp` control points.
+- A spike document or branch plan identifying exact backend control points.
 - Proof requirements for routing visibility, tensor residency control, dense
   fallback, artifact shape, cleanup, and rollback.
-- A comparison between a controller outside `llama.cpp`, a small controller
-  patch, and a fork.
+- A comparison between a controller outside the runtime, a small `llama.cpp`
+  patch or fork, a backend plugin, and a hookable runtime adapter.
 
 Evidence gate:
 
-- There is a concrete runtime hook or patch point for pin/evict/preload or
-  expert offload behavior.
+- There is a concrete runtime hook, adapter, or patch point for residency read,
+  pin, evict, preload, demote, or expert offload behavior.
 - The patch can produce auditable artifacts without breaking dense baseline
   execution.
 - Cleanup and fallback are tested under failure.
@@ -144,12 +167,14 @@ Evidence gate:
 Do not advance from a phase until its evidence gate is satisfied by artifacts,
 not by intent.
 
-- Phase 0 to Phase 1: manifest, roadmap, and planner checks pass locally.
+- Phase 0 to Phase 1: manifest, roadmap, managed-loading contract, and planner
+  checks pass locally.
 - Phase 1 to Phase 2: runtime baselines establish artifact shape and limits.
 - Phase 2 to Phase 3: semantic traces exist from a hookable runtime.
-- Phase 3 to Phase 4: replay policies show useful behavior against dense
-  fallback comparisons.
-- Phase 4 to Phase 5: a runtime actuator point exists and has a rollback plan.
+- Phase 3 to Phase 4: replay policies use managed-loading decision vocabulary
+  and show useful behavior against dense fallback comparisons.
+- Phase 4 to Phase 5: a backend adapter or runtime actuator point exists, can
+  read/write residency state, and has a rollback plan.
 
 ## llama.cpp Controller And Fork Options
 
