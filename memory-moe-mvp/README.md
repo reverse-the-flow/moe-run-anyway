@@ -152,6 +152,8 @@ The forward-hook path can capture routed expert ids, expert weights or probabili
 - [data/expert_paging_roadmap.json](data/expert_paging_roadmap.json): machine-readable roadmap and actuator-spike checklist. Validate it from the repository root with `python3 scripts/plan_expert_paging.py`.
 - [docs/managed-expert-loading.md](docs/managed-expert-loading.md): first managed expert loading contract pass, including observe-only, replay/simulate, and future live-actuator boundaries.
 - [data/managed_expert_loading_plan.json](data/managed_expert_loading_plan.json): machine-readable managed-loading contract. Validate it from the repository root with `python3 scripts/plan_managed_expert_loading.py`.
+- [docs/edge-hardware-quickstart.md](docs/edge-hardware-quickstart.md): feasibility tiers for CPU, GPU, Apple Silicon, Jetson/ARM, and Android phone/emulator targets, with small dense models treated as near-term routable experts.
+- [data/edge_hardware_quickstart.json](data/edge_hardware_quickstart.json): machine-readable edge hardware and small-model routing matrix. Validate it from the repository root with `python3 scripts/plan_edge_hardware_quickstart.py`.
 - [../MODEL_CARD.md](../MODEL_CARD.md): model-card style scope, target-class, safety, and limitation summary for the harness.
 - [docs/portability-and-gpu-hosts.md](docs/portability-and-gpu-hosts.md): portable Tier 0 path, host preflight, GPU expectations, and live-machine dependencies.
 - [docs/probe-observability-notes.md](docs/probe-observability-notes.md): probe surfaces and `llama.cpp` observability knobs.
@@ -216,3 +218,7 @@ The maintained cross-platform live command shapes are in [docs/model-target-test
 ## Next Work
 
 The grounded next step is a real shared baseline report from a user-supplied live MoE backend. After that, decide whether to stay at the probe/advisor layer, wire a hookable PyTorch bridge, or descend into a backend-specific runtime patch.
+
+For edge devices, the lower-risk path is to compare small dense models as
+routable experts first, then revisit true expert paging only after runtime
+actuator evidence exists.

@@ -1,0 +1,465 @@
+{
+  "schema_version": "moe-edge-hardware-quickstart-v1",
+  "name": "MoE Run Anyway Edge Hardware Quickstart",
+  "generated_for": "memory-moe-mvp",
+  "scope": [
+    "Feasibility guidance for edge and local hardware targets.",
+    "Small-model routing is the near-term path: route among small dense models, small MoEs, and smoke models at the harness layer before attempting true expert paging.",
+    "Hardware tiers are compatibility and planning tiers, not guaranteed support statements.",
+    "Phone emulators are API, UI, client, and packaging smoke targets; they do not replace real mobile GPU, NPU, memory, battery, or thermal testing."
+  ],
+  "safety_contract": [
+    "Planner validates local JSON only.",
+    "Planner does not download models.",
+    "Planner does not authenticate.",
+    "Planner does not run Docker.",
+    "Planner does not launch model servers.",
+    "Planner does not inspect devices.",
+    "Planner does not send prompt traffic."
+  ],
+  "routing_strategy": {
+    "near_term": [
+      "Route by task family, prompt family, latency budget, memory budget, and hardware tier.",
+      "Treat small dense models as routable experts or subagents at the harness layer.",
+      "Record router decisions, selected model class, artifact labels, fallback use, timing, and runtime evidence separately.",
+      "Do not claim semantic expert routing unless trace artifacts expose router outputs, expert ids, and layer/window metadata."
+    ],
+    "later": [
+      "Connect harness-level routing to true MoE expert paging only after a runtime actuator proves expert inventory, residency observation, residency control, fallback, cleanup, and artifact export.",
+      "Use Qwen3-30B-A3B, DeepSeek-V2-Lite, Mixtral, or larger MoE targets only where memory and runtime evidence make them plausible."
+    ]
+  },
+  "runtime_families": [
+    {
+      "id": "llama_cpp",
+      "display_name": "llama.cpp / GGUF",
+      "notes": "Useful for CPU, Apple Silicon, CUDA/ROCm, Jetson builds, and Android experiments when a compatible binary exists. Stock endpoint telemetry is runtime evidence, not semantic expert routing."
+    },
+    {
+      "id": "openai_compatible",
+      "display_name": "OpenAI-compatible endpoint",
+      "notes": "Useful for passive sidecar and baseline readiness when a user-managed local endpoint already exists."
+    },
+    {
+      "id": "ollama",
+      "display_name": "Ollama",
+      "notes": "Practical local dense-model route target where installed by the user; MoE internals are generally not exposed."
+    },
+    {
+      "id": "vllm",
+      "display_name": "vLLM",
+      "notes": "Useful for server-class GPU baselines and some OpenAI-compatible flows; semantic expert ids require explicit runtime support."
+    },
+    {
+      "id": "transformers_hookable",
+      "display_name": "Transformers / hookable PyTorch",
+      "notes": "Preferred semantic trace path when a model remains hookable and local dependencies already exist."
+    },
+    {
+      "id": "mlc_llm",
+      "display_name": "MLC LLM",
+      "notes": "Candidate mobile and edge runtime family; treat as a compatibility target until artifact support is proven."
+    },
+    {
+      "id": "executorch",
+      "display_name": "ExecuTorch",
+      "notes": "Candidate mobile and edge runtime family for small dense models; not an expert-paging actuator by itself."
+    },
+    {
+      "id": "coreml_mlx",
+      "display_name": "Core ML / MLX",
+      "notes": "Candidate Apple Silicon family for unified-memory dense or smaller MoE experiments."
+    },
+    {
+      "id": "tensorrt_llm",
+      "display_name": "TensorRT-LLM / Jetson-oriented builds",
+      "notes": "Candidate NVIDIA edge family when the target device has compatible JetPack, CUDA, and memory headroom."
+    },
+    {
+      "id": "android_emulator_client",
+      "display_name": "Android emulator client",
+      "notes": "Client and smoke-test target only; not a substitute for real Android GPU/NPU or thermal testing."
+    }
+  ],
+  "model_classes": [
+    {
+      "id": "tiny_smoke_models",
+      "display_name": "Tiny smoke models",
+      "examples": [
+        "toy local model",
+        "TinyLlama-class dense model",
+        "sub-1B instruct model"
+      ],
+      "routing_role": "Exercise harness shape, artifact labels, fallback paths, and client compatibility."
+    },
+    {
+      "id": "small_dense_routable_experts",
+      "display_name": "Small dense models as routable experts/subagents",
+      "examples": [
+        "Qwen2.5 or Qwen3 0.5B-7B class",
+        "Phi 3/4 mini class",
+        "Gemma 2B/3 1B-4B class",
+        "Llama 3.2 1B/3B class"
+      ],
+      "routing_role": "Near-term practical path: choose a small model by task family, latency budget, and device budget."
+    },
+    {
+      "id": "medium_dense_models",
+      "display_name": "Medium dense models",
+      "examples": [
+        "7B dense quantized",
+        "8B dense quantized",
+        "14B dense quantized"
+      ],
+      "routing_role": "Single-model baseline or one of several route targets on stronger local devices."
+    },
+    {
+      "id": "small_moe_smoke_models",
+      "display_name": "Small MoE or MoE-shaped smoke models",
+      "examples": [
+        "small local MoE fixture",
+        "hookable toy MoE",
+        "low-parameter sparse smoke checkpoint"
+      ],
+      "routing_role": "Validate semantic trace shape when hooks expose router outputs."
+    },
+    {
+      "id": "qwen3_30b_a3b",
+      "display_name": "Qwen3-30B-A3B class",
+      "examples": [
+        "Qwen3-30B-A3B quantized local target"
+      ],
+      "routing_role": "Large sparse target for high-memory local tests only after baseline readiness and memory headroom are proven."
+    },
+    {
+      "id": "deepseek_v2_lite",
+      "display_name": "DeepSeek-V2-Lite class",
+      "examples": [
+        "DeepSeek-V2-Lite quantized local target"
+      ],
+      "routing_role": "MoE-class target for stronger GPUs or high-memory CPU/Apple Silicon hosts when runtime support is available."
+    },
+    {
+      "id": "mixtral_class",
+      "display_name": "Mixtral-class MoE",
+      "examples": [
+        "Mixtral 8x7B quantized",
+        "Dolphin Mixtral GGUF class"
+      ],
+      "routing_role": "Higher-memory MoE baseline target; stock endpoints still do not prove semantic expert routing."
+    }
+  ],
+  "hardware_tiers": [
+    {
+      "id": "cpu_high_ram",
+      "display_name": "CPU-only / high RAM",
+      "target_type": "local_workstation",
+      "minimum_memory": "32GB system RAM for small dense smoke tests; 64GB+ for larger quantized dense or MoE feasibility checks.",
+      "comfortable_memory": "96GB to 128GB+ system RAM when testing Mixtral-class or DeepSeek-V2-Lite-class quantized targets slowly.",
+      "storage_notes": [
+        "Keep at least 2x the largest model file size free for downloads performed outside this repo, conversions, and run artifacts.",
+        "Use SSD storage for large GGUF or checkpoint files; HDD-backed paging can dominate timings."
+      ],
+      "context_kv_cache_notes": [
+        "Long context can exceed model-weight memory through KV cache growth.",
+        "Reduce context, batch, parallel slots, and prompt count before interpreting failures as model incompatibility."
+      ],
+      "candidate_runtime_families": [
+        "llama_cpp",
+        "openai_compatible",
+        "ollama"
+      ],
+      "candidate_model_classes": [
+        "tiny_smoke_models",
+        "small_dense_routable_experts",
+        "medium_dense_models",
+        "small_moe_smoke_models",
+        "deepseek_v2_lite",
+        "mixtral_class"
+      ],
+      "risk_notes": [
+        "CPU-only runs can be valid compatibility baselines while still being too slow for product use.",
+        "Operating-system swap may make a run appear feasible while hiding unusable latency."
+      ],
+      "recommended_first_test": "Run baseline readiness planning, then a tiny/smoke route with short context and explicit artifact labels."
+    },
+    {
+      "id": "vram_8gb",
+      "display_name": "8GB VRAM",
+      "target_type": "consumer_gpu",
+      "minimum_memory": "8GB VRAM plus 16GB to 32GB system RAM for small dense quantized targets.",
+      "comfortable_memory": "Small dense 0.5B-7B quantized route targets; leave headroom for KV cache and display memory.",
+      "storage_notes": [
+        "Reserve SSD space for multiple small candidate models if comparing routed experts.",
+        "Avoid assuming a model fits because the weight file is below 8GB."
+      ],
+      "context_kv_cache_notes": [
+        "KV cache, graph buffers, batch size, and concurrent slots can push an apparently fitting model over the edge.",
+        "Start with short context and one slot."
+      ],
+      "candidate_runtime_families": [
+        "llama_cpp",
+        "openai_compatible",
+        "ollama"
+      ],
+      "candidate_model_classes": [
+        "tiny_smoke_models",
+        "small_dense_routable_experts",
+        "medium_dense_models"
+      ],
+      "risk_notes": [
+        "This tier is better for routing among small dense experts than for large MoE paging.",
+        "Partial CPU offload may work but can change latency enough to affect routing decisions."
+      ],
+      "recommended_first_test": "Compare two or three small dense models as harness-level experts with the same prompt family and short context."
+    },
+    {
+      "id": "vram_12gb",
+      "display_name": "12GB VRAM",
+      "target_type": "consumer_gpu",
+      "minimum_memory": "12GB VRAM plus 32GB system RAM for small and medium dense quantized tests.",
+      "comfortable_memory": "7B-14B dense quantized targets or several small dense route targets, depending on context length.",
+      "storage_notes": [
+        "Plan storage for model variants at different quantization levels.",
+        "Keep baseline artifacts separate by model, quantization, context, and runtime."
+      ],
+      "context_kv_cache_notes": [
+        "Context length remains a first-class memory budget item.",
+        "Router comparisons should pin context and batch settings before comparing latency."
+      ],
+      "candidate_runtime_families": [
+        "llama_cpp",
+        "openai_compatible",
+        "ollama",
+        "vllm"
+      ],
+      "candidate_model_classes": [
+        "tiny_smoke_models",
+        "small_dense_routable_experts",
+        "medium_dense_models",
+        "small_moe_smoke_models"
+      ],
+      "risk_notes": [
+        "Some sparse models may load only with aggressive quantization or CPU spill.",
+        "Do not infer semantic expert selection from timing differences."
+      ],
+      "recommended_first_test": "Run a small-model routing matrix by prompt family, latency budget, and artifact label; defer larger MoE tests until readiness artifacts are stable."
+    },
+    {
+      "id": "vram_16gb",
+      "display_name": "16GB VRAM",
+      "target_type": "consumer_gpu",
+      "minimum_memory": "16GB VRAM plus 32GB to 64GB system RAM for medium dense targets and limited sparse smoke tests.",
+      "comfortable_memory": "Several small dense experts or one larger quantized dense target with moderate context.",
+      "storage_notes": [
+        "Store one baseline bundle per candidate route target.",
+        "Track quantization, GPU layers, context, and offload settings in labels."
+      ],
+      "context_kv_cache_notes": [
+        "Long context and parallel slots can be the limiting factor even when weights fit.",
+        "Use small context for first-pass routing evidence."
+      ],
+      "candidate_runtime_families": [
+        "llama_cpp",
+        "openai_compatible",
+        "ollama",
+        "vllm",
+        "transformers_hookable"
+      ],
+      "candidate_model_classes": [
+        "small_dense_routable_experts",
+        "medium_dense_models",
+        "small_moe_smoke_models",
+        "deepseek_v2_lite"
+      ],
+      "risk_notes": [
+        "DeepSeek-V2-Lite-class targets are feasibility candidates, not default assumptions.",
+        "Runtime support and quantization quality matter as much as nominal VRAM."
+      ],
+      "recommended_first_test": "Capture runtime baseline readiness, then test small dense expert routing before trying a sparse target."
+    },
+    {
+      "id": "vram_24gb",
+      "display_name": "24GB VRAM",
+      "target_type": "prosumer_gpu",
+      "minimum_memory": "24GB VRAM plus 64GB system RAM for larger dense quantized and selected sparse feasibility tests.",
+      "comfortable_memory": "14B dense, multiple small dense route targets, and some Qwen3-30B-A3B or DeepSeek-V2-Lite quantized experiments.",
+      "storage_notes": [
+        "Expect tens of GB per larger sparse or dense model variant.",
+        "Keep failed-load manifests; memory failures are useful compatibility evidence."
+      ],
+      "context_kv_cache_notes": [
+        "KV cache can decide whether Qwen3-30B-A3B-class tests fit.",
+        "Run short-context smoke tests before increasing context."
+      ],
+      "candidate_runtime_families": [
+        "llama_cpp",
+        "openai_compatible",
+        "ollama",
+        "vllm",
+        "transformers_hookable"
+      ],
+      "candidate_model_classes": [
+        "small_dense_routable_experts",
+        "medium_dense_models",
+        "small_moe_smoke_models",
+        "qwen3_30b_a3b",
+        "deepseek_v2_lite",
+        "mixtral_class"
+      ],
+      "risk_notes": [
+        "Mixtral-class feasibility depends on quantization, offload split, runtime, and context.",
+        "Large sparse tests still need trace evidence before any semantic expert-routing claim."
+      ],
+      "recommended_first_test": "Run a routed small-dense baseline first, then a short-context sparse smoke load with artifact labels that separate runtime and semantic evidence."
+    },
+    {
+      "id": "vram_48gb_plus",
+      "display_name": "48GB+ VRAM",
+      "target_type": "workstation_or_server_gpu",
+      "minimum_memory": "48GB VRAM plus 128GB system RAM for comfortable larger sparse-model feasibility work.",
+      "comfortable_memory": "48GB to 80GB+ VRAM for Mixtral-class, DeepSeek-V2-Lite-class, Qwen3-30B-A3B-class, and richer route comparisons.",
+      "storage_notes": [
+        "Plan hundreds of GB if retaining multiple checkpoints, quantizations, traces, and baseline bundles.",
+        "Separate model cache storage from artifact output storage where possible."
+      ],
+      "context_kv_cache_notes": [
+        "High VRAM does not remove the need to label context, batch, parallel slots, and KV-cache policy.",
+        "Long-context comparisons should be a separate test axis from model routing."
+      ],
+      "candidate_runtime_families": [
+        "llama_cpp",
+        "openai_compatible",
+        "vllm",
+        "transformers_hookable"
+      ],
+      "candidate_model_classes": [
+        "small_dense_routable_experts",
+        "medium_dense_models",
+        "small_moe_smoke_models",
+        "qwen3_30b_a3b",
+        "deepseek_v2_lite",
+        "mixtral_class"
+      ],
+      "risk_notes": [
+        "Server-class memory makes larger baselines plausible but does not prove actuator control.",
+        "Hookable runtimes are still required for semantic traces unless the serving runtime exposes router outputs."
+      ],
+      "recommended_first_test": "Capture baseline readiness and run a small routed suite, then compare one larger sparse target with explicit trace-evidence labels."
+    },
+    {
+      "id": "apple_silicon_unified_memory",
+      "display_name": "Apple Silicon unified memory",
+      "target_type": "apple_silicon",
+      "minimum_memory": "16GB unified memory for small dense smoke tests; 32GB+ for more useful local routing; 64GB+ for larger sparse feasibility.",
+      "comfortable_memory": "32GB to 128GB unified memory, depending on model size, context, and runtime.",
+      "storage_notes": [
+        "Model files and converted artifacts can consume large local SSD space quickly.",
+        "Record runtime family because llama.cpp, MLX, and Core ML paths expose different evidence."
+      ],
+      "context_kv_cache_notes": [
+        "Unified memory avoids a hard VRAM boundary but not total memory pressure.",
+        "Thermal throttling can affect latency budgets during repeated routing tests."
+      ],
+      "candidate_runtime_families": [
+        "llama_cpp",
+        "openai_compatible",
+        "ollama",
+        "coreml_mlx"
+      ],
+      "candidate_model_classes": [
+        "tiny_smoke_models",
+        "small_dense_routable_experts",
+        "medium_dense_models",
+        "small_moe_smoke_models",
+        "qwen3_30b_a3b",
+        "deepseek_v2_lite",
+        "mixtral_class"
+      ],
+      "risk_notes": [
+        "Unified memory capacity is shared with the OS and applications.",
+        "Larger MoE tests are feasibility targets and may require aggressive quantization."
+      ],
+      "recommended_first_test": "Use small dense route targets first, then test larger sparse candidates only with short context and clear memory labels."
+    },
+    {
+      "id": "jetson_arm_edge",
+      "display_name": "Jetson/ARM edge devices",
+      "target_type": "edge_device",
+      "minimum_memory": "8GB unified/device memory for tiny smoke models; 16GB+ for small dense routing; 32GB+ for more useful edge experiments.",
+      "comfortable_memory": "Orin-class 32GB to 64GB devices for sustained small dense routing and selected optimized sparse feasibility checks.",
+      "storage_notes": [
+        "Use fast local storage where available; removable media can distort timings.",
+        "Retain build/runtime metadata such as JetPack, CUDA, TensorRT, and architecture."
+      ],
+      "context_kv_cache_notes": [
+        "Edge memory is shared across runtime, OS, display, and other services.",
+        "Sustained thermal and power modes matter for repeatability."
+      ],
+      "candidate_runtime_families": [
+        "llama_cpp",
+        "openai_compatible",
+        "tensorrt_llm",
+        "mlc_llm"
+      ],
+      "candidate_model_classes": [
+        "tiny_smoke_models",
+        "small_dense_routable_experts",
+        "small_moe_smoke_models"
+      ],
+      "risk_notes": [
+        "Build compatibility can dominate model compatibility.",
+        "Thermal throttling makes emulator or desktop results poor predictors."
+      ],
+      "recommended_first_test": "Run an edge smoke route with tiny or small dense models, recording power mode, context, runtime, and artifact labels."
+    },
+    {
+      "id": "android_phone_emulator",
+      "display_name": "Android phone/emulator targets",
+      "target_type": "mobile_client_or_device",
+      "minimum_memory": "Emulator: enough host RAM for client smoke tests. Real phone: device-specific memory and accelerator limits, usually tiny or small dense only.",
+      "comfortable_memory": "Real high-end devices with enough RAM and supported runtime for small dense local inference; emulator for API/UI/client compatibility only.",
+      "storage_notes": [
+        "Emulator storage checks are packaging and file-access checks, not proof of phone storage performance.",
+        "Real devices need available app storage and model placement planned explicitly."
+      ],
+      "context_kv_cache_notes": [
+        "Mobile KV cache, thermal limits, and battery constraints can dominate feasibility.",
+        "Use tiny context for first tests and increase only after real-device evidence."
+      ],
+      "candidate_runtime_families": [
+        "android_emulator_client",
+        "llama_cpp",
+        "mlc_llm",
+        "executorch"
+      ],
+      "candidate_model_classes": [
+        "tiny_smoke_models",
+        "small_dense_routable_experts"
+      ],
+      "risk_notes": [
+        "Emulator smoke tests do not validate real mobile GPU, NPU, memory bandwidth, battery, or thermal behavior.",
+        "A passing emulator test is only compatibility evidence unless repeated on real hardware."
+      ],
+      "recommended_first_test": "Use the emulator for client/API smoke, then repeat a tiny real-device route before claiming mobile feasibility."
+    }
+  ],
+  "recommended_test_path": [
+    {
+      "id": "baseline_readiness",
+      "description": "Capture or plan baseline readiness from local manifests without endpoint checks or prompt traffic."
+    },
+    {
+      "id": "tiny_smoke_route",
+      "description": "Run a tiny or small dense route only after explicit runtime approval; keep prompt family, context, and route labels fixed."
+    },
+    {
+      "id": "router_artifact_compare",
+      "description": "Compare selected model class, router decision, fallback use, runtime family, timing, and artifact labels."
+    },
+    {
+      "id": "semantic_claim_gate",
+      "description": "Do not claim semantic expert routing unless trace evidence includes router outputs, expert ids, and layer/window metadata."
+    }
+  ]
+}

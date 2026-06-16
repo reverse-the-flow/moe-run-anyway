@@ -27,6 +27,7 @@ PRIMARY_DOCS = [
     MVP_DIR / "docs" / "model-plane-manifest-consumption.md",
     MVP_DIR / "docs" / "expert-paging-roadmap.md",
     MVP_DIR / "docs" / "managed-expert-loading.md",
+    MVP_DIR / "docs" / "edge-hardware-quickstart.md",
     MVP_DIR / "docs" / "model-target-test-plan.md",
     MVP_DIR / "docs" / "portability-and-gpu-hosts.md",
     MVP_DIR / "docs" / "probe-observability-notes.md",
@@ -58,6 +59,10 @@ def validate_runtime_baseline_artifact_contract() -> int:
 
 def validate_runtime_baseline_capture_plan() -> int:
     return run_command([sys.executable, str(ROOT / "scripts" / "plan_runtime_baseline_capture.py")])
+
+
+def validate_edge_hardware_quickstart() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_edge_hardware_quickstart.py")])
 
 
 def run_unit_tests() -> int:
@@ -142,6 +147,7 @@ def main() -> int:
         ("managed expert loading plan", validate_managed_expert_loading_plan),
         ("runtime baseline artifact contract", validate_runtime_baseline_artifact_contract),
         ("runtime baseline capture plan", validate_runtime_baseline_capture_plan),
+        ("edge hardware quickstart", validate_edge_hardware_quickstart),
         ("unit tests", run_unit_tests),
         ("py_compile", compile_python_sources),
         ("docs portability", check_docs_portability),
