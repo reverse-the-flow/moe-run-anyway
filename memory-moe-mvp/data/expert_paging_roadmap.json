@@ -39,8 +39,8 @@
     {
       "surface": "forward_hook_probe",
       "status": "implemented_for_hookable_runtimes",
-      "can_do": "Capture router outputs and semantic expert ids when Python modules expose them.",
-      "cannot_do": "Apply to stock llama.cpp GGUF execution."
+      "can_do": "Capture router outputs and semantic expert ids when Python modules expose them; dry-run a local-only Transformers hookable target path.",
+      "cannot_do": "Apply to stock llama.cpp GGUF execution or download/load remote model ids."
     },
     {
       "surface": "controller_replay_advisor",
@@ -124,7 +124,8 @@
       "next_actions": [
         "Run the synthetic forward-hook smoke after hookable-probe edits.",
         "Select one local, user-provided, or cloud hookable MoE runtime.",
-        "Build the thinnest real-model runner around ForwardHookMoEProbe without changing artifact shape.",
+        "Run run_transformers_forward_probe.py --dry-run against the selected local Transformers model directory.",
+        "Run the same command without --dry-run only after local path and optional dependencies are ready.",
         "Extend forward-hook tests with fixture-level semantic trace validation."
       ]
     },

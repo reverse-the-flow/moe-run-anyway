@@ -69,7 +69,9 @@ class LiveModelPlannerTests(unittest.TestCase):
             root = Path(temp_dir)
             hf_model = root / "models--org--mixtral-test"
             hf_model.mkdir()
-            (hf_model / "snapshots").mkdir()
+            snapshot = hf_model / "snapshots" / "abc123"
+            snapshot.mkdir(parents=True)
+            (snapshot / "config.json").write_text("{}", encoding="utf-8")
             lock_model = root / ".locks" / "models--org--lock-only"
             lock_model.mkdir(parents=True)
             gguf = root / "weights" / "model.Q4_K_M.gguf"
@@ -79,6 +81,7 @@ class LiveModelPlannerTests(unittest.TestCase):
             hints = plan_live_model.scan_cached_model_hints([root], max_hints=8)
 
         self.assertEqual(hints["huggingface_models"][0]["model_id"], "org/mixtral-test")
+        self.assertEqual(hints["huggingface_models"][0]["snapshot_path"], str(snapshot))
         self.assertEqual(len(hints["huggingface_models"]), 1)
         self.assertEqual(hints["gguf_files"][0]["path"], str(gguf))
         self.assertFalse(hints["truncated"])
@@ -130,7 +133,10 @@ class LiveModelPlannerTests(unittest.TestCase):
         self.assertEqual(target["readiness_state"], "needs_local_hookable_runtime")
         self.assertIn("torch module not detected", target["blockers"])
         self.assertIn("router outputs", target["honesty_note"])
-        self.assertIn("run_forward_probe_demo.py", "\n".join(target["commands"]))
+        joined_commands = "\n".join(target["commands"])
+        self.assertIn("run_forward_probe_demo.py", joined_commands)
+        self.assertIn("run_transformers_forward_probe.py", joined_commands)
+        self.assertIn("--dry-run", joined_commands)
 
 
 if __name__ == "__main__":

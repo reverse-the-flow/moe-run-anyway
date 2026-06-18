@@ -48,11 +48,25 @@ The current implementation surface is:
 
 - `moe_forward_probe.py`
 - `run_forward_probe_demo.py`
+- `run_transformers_forward_probe.py`
 - `ForwardHookMoEProbe`
 - synthetic no-model hook smoke artifacts
+- guarded local-only Transformers dry-run planning
 
 The next real blocker is target availability: a small local hookable MoE, a
 user-provided checkpoint/runtime, or a cloud run with enough memory.
+
+The safe local hookable preflight is:
+
+```sh
+cd memory-moe-mvp && python3 run_transformers_forward_probe.py --model-path /path/to/local/transformers-moe --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 1 --window-size-events 2 --dry-run
+```
+
+That command refuses remote identifiers, missing local directories, missing
+`torch`/`transformers`, and Hugging Face token environment variables. The first
+real semantic routing artifact still needs the same command without
+`--dry-run`, pointed at a local Transformers-style MoE directory whose router or
+gate modules expose expert ids, weights, or logits through forward hooks.
 
 ## Level 3: Fork, Runtime Actuator, Or Controller
 
@@ -74,6 +88,6 @@ Fork/controller work should start only when:
 1. Keep passive sidecar as Phase 1 evidence, not as semantic proof.
 2. Run the synthetic hook smoke whenever hookable code changes.
 3. Select one small hookable MoE target.
-4. Build the thinnest target runner around `ForwardHookMoEProbe`.
+4. Dry-run `run_transformers_forward_probe.py` against the local model path.
 5. Capture one semantic routing artifact bundle.
 6. Only then revisit controller policies or backend forks.

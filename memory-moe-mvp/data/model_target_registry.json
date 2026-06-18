@@ -123,11 +123,12 @@
       "deferred_requirements": [
         "torch and transformers are available in the user's environment",
         "model is already cached or mounted locally",
-        "a thin runner loads the target and wraps generation with ForwardHookMoEProbe"
+        "run_transformers_forward_probe.py loads the target and wraps generation with ForwardHookMoEProbe after a local-only dry run"
       ],
       "next_live_commands": [
         "python3 run_forward_probe_demo.py --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 2 --window-size-events 2 --label synthetic-hook-smoke",
-        "MODEL_PATH=/path/to/local/mixtral python3 path/to/future_transformers_runner.py --model-path \"$MODEL_PATH\" --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 2"
+        "MODEL_PATH=/path/to/local/mixtral python3 run_transformers_forward_probe.py --model-path \"$MODEL_PATH\" --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 1 --window-size-events 2 --dry-run",
+        "MODEL_PATH=/path/to/local/mixtral python3 run_transformers_forward_probe.py --model-path \"$MODEL_PATH\" --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 1 --window-size-events 2"
       ]
     },
     {
@@ -156,7 +157,8 @@
         "user supplies a local checkpoint and compatible runtime"
       ],
       "next_live_commands": [
-        "MODEL_PATH=/path/to/local/olmoe python3 path/to/future_transformers_runner.py --model-path \"$MODEL_PATH\" --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 2"
+        "MODEL_PATH=/path/to/local/olmoe python3 run_transformers_forward_probe.py --model-path \"$MODEL_PATH\" --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 1 --window-size-events 2 --dry-run",
+        "MODEL_PATH=/path/to/local/olmoe python3 run_transformers_forward_probe.py --model-path \"$MODEL_PATH\" --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 1 --window-size-events 2"
       ]
     },
     {

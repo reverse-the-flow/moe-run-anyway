@@ -209,6 +209,19 @@ def is_huggingface_cache_model_dir(path: Path) -> bool:
     return any((path / child).exists() for child in ("snapshots", "refs", "blobs"))
 
 
+def first_huggingface_snapshot_path(path: Path) -> str | None:
+    snapshots = path / "snapshots"
+    if not snapshots.is_dir():
+        return None
+    try:
+        candidates = sorted(item for item in snapshots.iterdir() if item.is_dir())
+    except OSError:
+        return None
+    with_config = [item for item in candidates if (item / "config.json").exists()]
+    selected = (with_config or candidates)[:1]
+    return str(selected[0]) if selected else None
+
+
 def default_cache_roots() -> list[Path]:
     candidates: list[Path] = []
     for name in ("MODEL_PATH", "LLAMA_MODEL_PATH"):
@@ -283,7 +296,13 @@ def scan_cached_model_hints(
         model_id = decode_huggingface_model_dir(directory.name)
         if model_id and model_id not in seen_hf:
             seen_hf.add(model_id)
-            hf_models.append({"model_id": model_id, "path": str(directory)})
+            hf_models.append(
+                {
+                    "model_id": model_id,
+                    "path": str(directory),
+                    "snapshot_path": first_huggingface_snapshot_path(directory),
+                }
+            )
             if len(hf_models) >= max_hints:
                 break
 
@@ -399,7 +418,7 @@ def local_model_path_hint(capabilities: JSONDict) -> str:
             return env_path["path"]
     hf_models = capabilities["cached_model_hints"]["huggingface_models"]
     if hf_models:
-        return hf_models[0]["path"]
+        return hf_models[0].get("snapshot_path") or hf_models[0]["path"]
     return "/path/to/local/model"
 
 
@@ -540,6 +559,43 @@ def commands_for_target(target: JSONDict, capabilities: JSONDict, base_url: str)
             "synthetic-hook-smoke",
         ]
     )
+    hookable_dry_run = quote_command(
+        [
+            "python3",
+            "run_transformers_forward_probe.py",
+            "--model-path",
+            model_path,
+            "--output-dir",
+            "forward-probe-runs",
+            "--suite-path",
+            "data/mixtral_probe_prompts.json",
+            "--max-prompts",
+            "4",
+            "--repeats",
+            "1",
+            "--window-size-events",
+            "2",
+            "--dry-run",
+        ]
+    )
+    hookable_run = quote_command(
+        [
+            "python3",
+            "run_transformers_forward_probe.py",
+            "--model-path",
+            model_path,
+            "--output-dir",
+            "forward-probe-runs",
+            "--suite-path",
+            "data/mixtral_probe_prompts.json",
+            "--max-prompts",
+            "4",
+            "--repeats",
+            "1",
+            "--window-size-events",
+            "2",
+        ]
+    )
 
     if target_class == "stock_llama_cpp_openai_compatible":
         commands = []
@@ -582,11 +638,8 @@ def commands_for_target(target: JSONDict, capabilities: JSONDict, base_url: str)
     if target_class in {"hookable_pytorch_moe", "small_local_moe"}:
         return [
             f"cd memory-moe-mvp && {hook_demo}",
-            "MODEL_PATH="
-            + shlex.quote(model_path)
-            + " python3 path/to/future_transformers_runner.py --model-path \"$MODEL_PATH\" "
-            "--output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json "
-            "--max-prompts 4 --repeats 2",
+            f"cd memory-moe-mvp && {hookable_dry_run}",
+            f"cd memory-moe-mvp && {hookable_run}",
         ]
 
     if target_class == "mixtral_style":

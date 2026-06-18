@@ -60,7 +60,7 @@ controller, or live actuator work.
 | --- | --- | --- | --- |
 | Confirm synthetic hook smoke path. | done | `run_forward_probe_demo.py` exercises hook attach, router event capture, spans, and window summaries without a model. | None. |
 | Select a hookable MoE target. | active | Expected: target note with model family, runtime, memory needs, and hook points. | Needs a local small MoE, a cloud box, or a user-supplied checkpoint/runtime. |
-| Build a thin target runner around `ForwardHookMoEProbe`. | planned | Expected: runner loads one user-provided local model, attaches hooks, runs prompt cases, writes existing probe artifacts, and does not create a new artifact shape. | Needs selected target. |
+| Build a thin target runner around `ForwardHookMoEProbe`. | active | `run_transformers_forward_probe.py --dry-run` validates a user-provided local Transformers model path, reports missing deps, refuses token-env/download paths, and emits the guarded run command. | Needs selected target to execute without `--dry-run`. |
 | Capture router outputs with hooks. | planned | Expected: layer id, expert ids, scores/probabilities, entropy, token/window metadata. | Needs selected hookable runtime. |
 | Capture dense or full-runtime fallback output. | planned | Expected: baseline outputs for the same prompt set. | Needs runnable target. |
 | Validate trace artifacts against the shared contract. | planned | Expected: trace validation report. | Needs trace artifacts. |
@@ -114,6 +114,8 @@ trustworthy routing traces.
 
 1. Run the synthetic hook smoke after hookable-probe edits.
 2. Select one small hookable MoE target for semantic routing traces.
-3. Build the thinnest real-model runner around `ForwardHookMoEProbe`.
+3. Dry-run `run_transformers_forward_probe.py` against the selected local
+   Transformers model directory, then run it without `--dry-run` once the local
+   path and optional dependencies are ready.
 4. Capture one approved runtime baseline from a running backend.
 5. Add the expert inventory manifest schema as a supporting offline track.
