@@ -6,9 +6,10 @@ Date: 2026-06-13
 
 Do not add more model targets yet.
 
-The current target matrix is sufficient until the first live baseline gates are
-run. The registry already covers the runtime surfaces this project can test
-without downloads, authentication, Docker, a live server, or GPU-heavy work:
+The current target matrix is sufficient while the project works through
+passive observation and hookable semantic tracing. The registry already covers
+the runtime surfaces this project can test without downloads, authentication,
+Docker, a live server, or GPU-heavy work:
 
 - stock `llama.cpp` or OpenAI-compatible observation
 - OpenAI-compatible runtime readiness from Model Plane profiles
@@ -80,22 +81,23 @@ actionable because of it. Concrete triggers:
 - A backend family with materially different observability is available locally
   and can be exercised without downloads, credentials, Docker, or GPU-heavy
   setup.
-- The first live baseline shows that model-family-specific prompt suites are
+- A live baseline shows that model-family-specific prompt suites are
   needed before controller replay can compare routing stability.
 
 ## Next Recommended Model Order
 
 1. Run the existing Tier 0 dependency-free checks and synthetic hook smoke.
-2. Run a user-started stock `llama-server` Mixtral-style or other local MoE GGUF
-   through `llama_runtime_probe.py` to establish the opaque baseline.
-3. Run `llama_sidecar.py` against the same upstream to compare passive request
-   telemetry with active runtime probe artifacts.
-4. If the local environment already has compatible Python dependencies, try the
+2. Select one small hookable MoE target for semantic routing traces. Prefer a
+   local or cloud target that exposes router or gate modules through Python.
+3. If the local environment already has compatible Python dependencies, try the
    cached tiny random Mixtral-style checkpoint as a hook-shape smoke through a
    future thin Transformers runner.
-5. Try the cached OLMoE-style checkpoint next for a small semantic MoE routing
+4. Try the cached OLMoE-style checkpoint next for a small semantic MoE routing
    baseline, still only from a local path and only if dependencies already
    exist.
+5. Run a user-started stock `llama-server` Mixtral-style or other local MoE GGUF
+   through `llama_runtime_probe.py` and `llama_sidecar.py` when an approved
+   upstream backend exists.
 6. Defer larger candidates such as the observed Nemotron-style cache entry until
    the smaller opaque and hookable paths have produced contract-compatible
    artifacts.

@@ -105,5 +105,5 @@ Use this after:
 2. `python3 scripts/check_host.py --require-gpu`
 3. starting a compatible local model server yourself
 
-Use the forward-hook path later for semantic routing traces from hookable
-PyTorch-style MoE checkpoints.
+Use the forward-hook path separately for semantic routing traces from hookable
+PyTorch-style MoE checkpoints; it does not depend on a stock endpoint baseline.

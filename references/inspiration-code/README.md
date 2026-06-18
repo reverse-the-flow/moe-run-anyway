@@ -4,7 +4,9 @@ This folder is for MoE runtime and expert-offload references that can inform MoE
 Run Anyway design. Do not vendor third-party code into this repository. Local
 source checkouts belong under `references/inspiration-code/checkouts/`, which is
 ignored by Git. Keep durable project notes here as links, design observations,
-or small original summaries.
+or small original summaries. Use these repositories for architecture, workflow,
+and data-structure inspiration; do not copy implementation code or project text
+unless the license and attribution requirements are clear.
 
 ## Local Scratch Checkouts
 
@@ -55,5 +57,19 @@ references/inspiration-code/
     tests and future expert-paging experiments inspired by FluxMoE/ReMoE.
   - Useful for: API compatibility, scheduler behavior, expert-parallel serving,
     and GPU-box deployments.
+
+- [Flash-MoE](https://github.com/danveloper/flash-moe)
+  - Apple Silicon/Metal prototype for running Qwen3.5-397B-A17B from SSD on a
+    48 GB MacBook Pro by streaming only routed experts.
+  - Relevant idea: pack experts into contiguous per-layer files, load the active
+    experts with parallel positional reads, keep non-expert weights memory
+    mapped, and use per-layer timing to separate routing, expert I/O, and GPU
+    compute costs.
+  - Useful for: managed expert loading design, measurement targets for an
+    expert paging actuator, and negative results around custom caches,
+    compression, prefetch hints, and speculative routing.
+  - Caution: no repository-level license file was found in the checkout, so use
+    it for architecture, workflow, and data-structure inspiration only unless
+    licensing is clarified.
 
 ## Paper-First References To Watch

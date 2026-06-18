@@ -162,7 +162,10 @@ def validate_roadmap(roadmap: JSONDict) -> list[str]:
 
 def current_phase(phases: list[JSONDict]) -> JSONDict | None:
     for phase in phases:
-        if phase.get("status") in {"in_progress", "blocked"}:
+        if phase.get("status") == "in_progress":
+            return phase
+    for phase in phases:
+        if phase.get("status") == "blocked":
             return phase
     for phase in phases:
         if phase.get("status") == "planned":

@@ -16,14 +16,16 @@ SPEC.loader.exec_module(planner)
 
 
 class ExpertPagingPlannerTests(unittest.TestCase):
-    def test_default_roadmap_validates_and_reports_phase_one(self) -> None:
+    def test_default_roadmap_validates_and_reports_hookable_focus(self) -> None:
         roadmap = planner.load_roadmap(planner.DEFAULT_ROADMAP_PATH)
         summary = planner.build_summary(roadmap, planner.DEFAULT_ROADMAP_PATH)
 
         self.assertTrue(summary["valid"], summary["errors"])
         self.assertEqual(summary["schema_version"], planner.SUPPORTED_SCHEMA_VERSION)
-        self.assertEqual(summary["current_phase"]["id"], "phase_1")
+        self.assertEqual(summary["current_phase"]["id"], "phase_2")
         self.assertEqual(roadmap["phases"][0]["status"], "complete")
+        self.assertEqual(roadmap["phases"][1]["status"], "blocked")
+        self.assertEqual(roadmap["phases"][2]["status"], "in_progress")
         self.assertEqual(summary["planned_stage"], "harness_run_request")
         self.assertIn("planner does not send prompt traffic", summary["safety_contract"])
 

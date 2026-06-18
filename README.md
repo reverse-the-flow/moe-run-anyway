@@ -25,6 +25,8 @@ Live model work is intentionally deferred until a user supplies a running backen
 - `memory-moe-mvp/docs/live-baseline-runner.md`: guarded entrypoint for the first live runtime baseline.
 - `memory-moe-mvp/docs/model-plane-manifest-consumption.md`: agent contract for consuming Model Plane MoE probe manifests.
 - `memory-moe-mvp/docs/managed-expert-loading.md`: planning-only managed expert loading contract and backend adapter vocabulary.
+- `memory-moe-mvp/docs/expert-paging-step-breakdown.md`: small-step roadmap checklist for execution evidence and blockers.
+- `memory-moe-mvp/docs/hookable-progression.md`: passive external, internal hookable, then fork/controller progression.
 - `memory-moe-mvp/docs/edge-hardware-quickstart.md`: edge feasibility tiers and small-model routing guidance for CPU, GPU, Apple Silicon, Jetson/ARM, and Android phone/emulator targets.
 - `memory-moe-mvp/docs/portability-and-gpu-hosts.md`: host portability, GPU preflight, and live-machine dependency notes.
 - `MODEL_CARD.md`: model-card style scope, target-class, safety, and limitation summary for the harness.

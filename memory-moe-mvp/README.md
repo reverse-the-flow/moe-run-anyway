@@ -149,6 +149,8 @@ The forward-hook path can capture routed expert ids, expert weights or probabili
 - [docs/model-target-test-plan.md](docs/model-target-test-plan.md): target classes and live-test command gates.
 - [docs/model-plane-manifest-consumption.md](docs/model-plane-manifest-consumption.md): how agents consume Model Plane manifests and select runtime baseline, passive sidecar, or hookable semantic paths.
 - [docs/expert-paging-roadmap.md](docs/expert-paging-roadmap.md): phase roadmap from harness/probes to a future expert-paging actuator.
+- [docs/expert-paging-step-breakdown.md](docs/expert-paging-step-breakdown.md): small-step execution checklist for roadmap phases, evidence, and blockers.
+- [docs/hookable-progression.md](docs/hookable-progression.md): intended progression from passive external observation to internal hookable semantic tracing before fork/controller work.
 - [data/expert_paging_roadmap.json](data/expert_paging_roadmap.json): machine-readable roadmap and actuator-spike checklist. Validate it from the repository root with `python3 scripts/plan_expert_paging.py`.
 - [docs/managed-expert-loading.md](docs/managed-expert-loading.md): first managed expert loading contract pass, including observe-only, replay/simulate, and future live-actuator boundaries.
 - [data/managed_expert_loading_plan.json](data/managed_expert_loading_plan.json): machine-readable managed-loading contract. Validate it from the repository root with `python3 scripts/plan_managed_expert_loading.py`.
@@ -217,8 +219,11 @@ The maintained cross-platform live command shapes are in [docs/model-target-test
 
 ## Next Work
 
-The grounded next step is a real shared baseline report from a user-supplied live MoE backend. After that, decide whether to stay at the probe/advisor layer, wire a hookable PyTorch bridge, or descend into a backend-specific runtime patch.
+The grounded next step is the hookable semantic trace layer: keep the passive
+sidecar as external runtime evidence, run the synthetic hook smoke after
+hookable-probe changes, select one small local or cloud hookable MoE target, and
+build the thinnest real-model runner around `ForwardHookMoEProbe`.
 
-For edge devices, the lower-risk path is to compare small dense models as
-routable experts first, then revisit true expert paging only after runtime
-actuator evidence exists.
+For edge devices, the lower-risk path is still to compare small dense models as
+routable experts first, then revisit true expert paging only after hookable
+traces and runtime actuator evidence exist.

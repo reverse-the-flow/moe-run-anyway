@@ -82,9 +82,10 @@
     {
       "id": "phase_1",
       "title": "Artifact evidence from runtime baselines",
-      "status": "in_progress",
+      "status": "blocked",
       "deliverables": [
         "Runtime baseline artifact contract that separates runtime evidence from semantic routing evidence.",
+        "Passive sidecar artifact bundle from an approved running upstream.",
         "llama.cpp runtime baseline artifact bundle.",
         "vLLM or OpenAI-compatible runtime baseline artifact bundle.",
         "Backend labels mapped to memory-moe-bridge-v1 fields.",
@@ -99,16 +100,18 @@
       ],
       "next_actions": [
         "Run python3 scripts/plan_runtime_baseline_artifacts.py.",
+        "Capture a passive sidecar artifact bundle when an approved upstream endpoint is running.",
         "Use Model Plane cron or callable functions to export manifests for approved runtime baselines.",
         "Run only dry-run or preflight-only planning until the user approves prompt traffic.",
-        "Compare artifact fields across llama.cpp and OpenAI-compatible baselines."
+        "Compare artifact fields across sidecar, llama.cpp, and OpenAI-compatible baselines."
       ]
     },
     {
       "id": "phase_2",
       "title": "Hookable PyTorch semantic routing trace runner",
-      "status": "planned",
+      "status": "in_progress",
       "deliverables": [
+        "Synthetic no-model hook smoke path that exercises hook attach, router event capture, spans, and window summaries.",
         "Local hookable trace runner for a PyTorch/Transformers-style MoE.",
         "Router output capture for layer, expert id, score or probability, entropy, prompt family, and token/window metadata.",
         "Trace artifacts compatible with controller replay."
@@ -119,7 +122,9 @@
         "Hooking failures are explicit and never downgraded into timing inference."
       ],
       "next_actions": [
-        "Select a local hookable MoE runtime only when dependencies and weights are already available.",
+        "Run the synthetic forward-hook smoke after hookable-probe edits.",
+        "Select one local, user-provided, or cloud hookable MoE runtime.",
+        "Build the thinnest real-model runner around ForwardHookMoEProbe without changing artifact shape.",
         "Extend forward-hook tests with fixture-level semantic trace validation."
       ]
     },
@@ -190,7 +195,7 @@
     {
       "from": "phase_1",
       "to": "phase_2",
-      "requires": "Runtime baselines establish artifact shape and explicit limits."
+      "requires": "Passive external observation surfaces and limitations are explicit; live baseline artifact capture can continue in parallel while hookable tracing advances."
     },
     {
       "from": "phase_2",

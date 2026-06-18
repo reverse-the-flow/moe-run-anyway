@@ -26,6 +26,8 @@ PRIMARY_DOCS = [
     MVP_DIR / "docs" / "live-baseline-runner.md",
     MVP_DIR / "docs" / "model-plane-manifest-consumption.md",
     MVP_DIR / "docs" / "expert-paging-roadmap.md",
+    MVP_DIR / "docs" / "expert-paging-step-breakdown.md",
+    MVP_DIR / "docs" / "hookable-progression.md",
     MVP_DIR / "docs" / "managed-expert-loading.md",
     MVP_DIR / "docs" / "edge-hardware-quickstart.md",
     MVP_DIR / "docs" / "model-target-test-plan.md",

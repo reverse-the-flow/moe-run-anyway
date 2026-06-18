@@ -11,6 +11,15 @@ semantic routing visibility requirements, runtime capability detection,
 residency state, policy decisions, backend adapter boundaries, dense fallback,
 cleanup, and `memory-moe-bridge-v1` artifact compatibility.
 
+For execution tracking, use
+[expert-paging-step-breakdown.md](expert-paging-step-breakdown.md). It splits
+each phase into small steps with current status, evidence, and blockers.
+
+The intended progression is passive external observation, then internal
+hookable semantic tracing, then fork/runtime-actuator or controller work only
+after hookable evidence. See
+[hookable-progression.md](hookable-progression.md) for that boundary.
+
 The managed loading contract lives in
 [managed-expert-loading.md](managed-expert-loading.md) and
 [managed_expert_loading_plan.json](../data/managed_expert_loading_plan.json).
@@ -86,7 +95,8 @@ Evidence gate:
 
 ### Phase 1: Artifact Evidence From Runtime Baselines
 
-Status: in progress at the contract/planning layer only. No live runtime has
+Status: blocked on approved live upstream artifacts. The contract/planning
+layer exists, and passive sidecar implementation exists, but no live runtime has
 been launched and no prompt traffic is part of this phase start.
 
 Goal: collect comparable evidence from existing runtimes before designing an
@@ -94,6 +104,7 @@ actuator.
 
 Deliverables:
 
+- Passive sidecar artifacts from an approved running upstream.
 - llama.cpp baseline artifacts from `/metrics`, `/slots`, `/props`, response
   timings, optional log growth, and Model Plane metadata.
 - vLLM and OpenAI-compatible baseline artifacts where readiness endpoints exist.
@@ -106,6 +117,8 @@ Deliverables:
 
 Evidence gate:
 
+- At least one sidecar artifact bundle or runtime baseline artifact bundle from
+  an approved running backend.
 - At least one run-scoped artifact bundle per backend class.
 - Runtime baseline artifact classes and evidence labels validate offline.
 - Baseline artifacts show reproducible timing and observability fields.
@@ -114,10 +127,14 @@ Evidence gate:
 
 ### Phase 2: Hookable PyTorch Semantic Routing Trace Runner
 
+Status: in progress as the current active focus. The synthetic hook smoke path
+exists; the next blocker is selecting a real hookable target.
+
 Goal: capture semantic routing traces in a runtime where hooks are legitimate.
 
 Deliverables:
 
+- The synthetic no-model hook smoke path remains green.
 - A real local hookable trace runner for a PyTorch/Transformers-style MoE.
 - Router output capture for layer id, expert id, score or probability, entropy,
   prompt family, and token/window metadata.
@@ -200,7 +217,9 @@ not by intent.
 
 - Phase 0 to Phase 1: manifest, roadmap, managed-loading contract, and planner
   checks pass locally.
-- Phase 1 to Phase 2: runtime baselines establish artifact shape and limits.
+- Phase 1 to Phase 2: passive external observation surfaces and limitations are
+  explicit; live baseline artifact capture can continue in parallel while
+  hookable tracing advances.
 - Phase 2 to Phase 3: semantic traces exist from a hookable runtime.
 - Phase 3 to Phase 4: replay policies use managed-loading decision vocabulary
   and show useful behavior against dense fallback comparisons.

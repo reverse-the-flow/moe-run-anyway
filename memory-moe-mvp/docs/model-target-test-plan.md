@@ -7,6 +7,10 @@ surface depends on how the model is served. The durable test direction is a
 small target registry plus probe-specific validation tiers that reuse the
 current sidecar, llama runtime probe, forward-hook probe, and shared contract.
 
+The working progression is passive external observation first, internal
+hookable semantic tracing second, and fork/controller work only after hookable
+evidence exists.
+
 ## Target Classes
 
 The registry in `data/model_target_registry.json` currently requires coverage
