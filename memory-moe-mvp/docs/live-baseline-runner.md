@@ -70,6 +70,7 @@ python3 scripts/run_live_baseline.py \
   --suite-path memory-moe-mvp/data/mixtral_probe_prompts.json \
   --max-prompts 4 \
   --repeats 2 \
+  --request-max-tokens 512 \
   --preflight-timeout-seconds 2 \
   --log-file-path /path/to/llama-server.log
 ```
@@ -87,6 +88,11 @@ telemetry and shared-contract shape, not per-layer expert routing.
 The same semantic boundary applies to stock vLLM, Ollama, and generic
 OpenAI-compatible endpoints. Their readiness and request telemetry are useful
 runtime evidence, not semantic expert ids.
+
+Use `--request-max-tokens` when the default prompt-suite cap is too small fo
+the current model family. This is especially useful for reasoning-heavy models
+where a short cap can produce a successful request with `finish_reason=length`
+before the answer is complete.
 
 ## Automation Output
 

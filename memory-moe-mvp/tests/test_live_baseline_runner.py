@@ -147,6 +147,8 @@ class LiveBaselineRunnerTests(unittest.TestCase):
                 "2",
                 "--repeats",
                 "3",
+                "--request-max-tokens",
+                "512",
                 "--preflight-timeout-seconds",
                 "1.5",
                 "--dry-run",
@@ -160,6 +162,8 @@ class LiveBaselineRunnerTests(unittest.TestCase):
         self.assertIn("mixtral-test", command)
         self.assertIn("2", command)
         self.assertIn("3", command)
+        self.assertIn("--request-max-tokens", command)
+        self.assertIn("512", command)
         self.assertNotIn("1.5", command)
 
 

@@ -7,6 +7,7 @@ RUN apt-get update \
 WORKDIR /opt/memory-moe
 
 COPY llama_sidecar.py /opt/memory-moe/llama_sidecar.py
+COPY moe_shared_contract.py /opt/memory-moe/moe_shared_contract.py
 COPY docker/llama-with-sidecar-entrypoint.sh /opt/memory-moe/llama-with-sidecar-entrypoint.sh
 
 RUN chmod +x /opt/memory-moe/llama-with-sidecar-entrypoint.sh

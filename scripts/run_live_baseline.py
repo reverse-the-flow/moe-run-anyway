@@ -154,6 +154,8 @@ def build_runtime_probe_command(args: argparse.Namespace) -> list[str]:
         "--timeout-seconds",
         str(args.timeout_seconds),
     ]
+    if args.request_max_tokens:
+        command.extend(["--request-max-tokens", str(args.request_max_tokens)])
     if args.log_file_path:
         command.extend(["--log-file-path", str(args.log_file_path)])
     return command
@@ -171,6 +173,7 @@ def build_plan(args: argparse.Namespace, preflight: JSONDict | None = None) -> J
         "max_prompts": args.max_prompts,
         "repeats": args.repeats,
         "timeout_seconds": args.timeout_seconds,
+        "request_max_tokens": args.request_max_tokens,
         "preflight_timeout_seconds": args.preflight_timeout_seconds,
         "log_file_path": str(args.log_file_path) if args.log_file_path else None,
         "runtime_probe_command": build_runtime_probe_command(args),
@@ -231,6 +234,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-prompts", type=int, default=4)
     parser.add_argument("--repeats", type=int, default=2)
     parser.add_argument("--timeout-seconds", type=float, default=300.0)
+    parser.add_argument(
+        "--request-max-tokens",
+        type=int,
+        help="override the prompt suite max_tokens for this run",
+    )
     parser.add_argument("--preflight-timeout-seconds", type=float, default=2.0)
     parser.add_argument("--log-file-path", type=Path)
     parser.add_argument(

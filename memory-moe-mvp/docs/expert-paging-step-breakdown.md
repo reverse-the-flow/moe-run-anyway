@@ -27,10 +27,10 @@ manifest, report, or test output.
 | --- | --- | --- | --- |
 | Validate runtime baseline artifact shape. | active | `scripts/plan_runtime_baseline_artifacts.py`. | None. |
 | Confirm passive sidecar implementation. | done | `llama_sidecar.py` forwards traffic, captures request/response summaries, optional upstream observability, and shared-contract artifacts. | None. |
-| Capture a passive sidecar artifact bundle. | blocked | Expected: sidecar `manifest.json`, `events.jsonl`, `summary.json`, upstream observability snapshots when available, and Model Plane run metadata. | Needs an approved running upstream endpoint and traffic routed through the sidecar. |
-| Capture a llama.cpp baseline artifact bundle. | blocked | Expected: metrics, slots, props, timings, log-growth summary, Model Plane manifest. | Needs a user-approved running `llama-server` with observability enabled. |
-| Capture a vLLM or OpenAI-compatible baseline artifact bundle. | blocked | Expected: readiness, model metadata, timing, endpoint behavior, run manifest. | Needs an approved running endpoint. |
-| Compare backend observability fields. | planned | Expected: report labeling what each backend can and cannot prove. | Needs at least one artifact bundle per selected backend. |
+| Capture a passive sidecar artifact bundle. | active | Mixtral sidecar smoke bundle captured; expected bundle shape remains sidecar `manifest.json`, `events.jsonl`, `summary.json`, upstream observability snapshots when available, and Model Plane run metadata. | Needs repeated sidecar traffic for each selected backend if comparing sidecar behavior. |
+| Capture a llama.cpp baseline artifact bundle. | active | Mixtral and Qwen3 GGUF baseline bundles captured; Nemotron Super GGUF failed at llama.cpp load due tensor-shape compatibility. | Needs no new prompt traffic for Nemotron Super until runtime compatibility is inspected. |
+| Capture a vLLM or OpenAI-compatible baseline artifact bundle. | active | Nemotron Omni NVFP4 vLLM readiness and one-prompt baselines captured, including a 512-token-cap rerun with `finish_reason=stop`. | Needs repeated prompt-family coverage if comparing behavior, not just runtime compatibility. |
+| Compare backend observability fields. | active | `docs/calliope-moe-architecture-pass.md` records first backend differences. | Needs a compact comparison report across Mixtral, Qwen3, and Nemotron Omni artifacts. |
 | Produce a Phase 1 blocker report. | planned | Expected: missing capability list for inventory, routing visibility, residency read/write, fallback, cleanup, and artifact export. | Needs baseline artifacts. |
 
 ## Phase 1B: Offline Expert Store Preparation
@@ -60,7 +60,7 @@ controller, or live actuator work.
 | --- | --- | --- | --- |
 | Confirm synthetic hook smoke path. | done | `run_forward_probe_demo.py` exercises hook attach, router event capture, spans, and window summaries without a model. | None. |
 | Select a hookable MoE target. | active | Expected: target note with model family, runtime, memory needs, and hook points. | Needs a local small MoE, a cloud box, or a user-supplied checkpoint/runtime. |
-| Build a thin target runner around `ForwardHookMoEProbe`. | active | `run_transformers_forward_probe.py --dry-run` validates a user-provided local Transformers model path, reports missing deps, refuses token-env/download paths, and emits the guarded run command. | Needs selected target to execute without `--dry-run`. |
+| Build a thin target runner around `ForwardHookMoEProbe`. | planned | Expected: runner loads one user-provided local model, attaches hooks, runs prompt cases, writes existing probe artifacts, and does not create a new artifact shape. | Needs selected target. |
 | Capture router outputs with hooks. | planned | Expected: layer id, expert ids, scores/probabilities, entropy, token/window metadata. | Needs selected hookable runtime. |
 | Capture dense or full-runtime fallback output. | planned | Expected: baseline outputs for the same prompt set. | Needs runnable target. |
 | Validate trace artifacts against the shared contract. | planned | Expected: trace validation report. | Needs trace artifacts. |
@@ -104,18 +104,18 @@ trustworthy routing traces.
 1. Hookable semantic routing needs a runnable target: local small MoE,
    user-provided checkpoint/runtime, or cloud run.
 2. Stock endpoints do not expose semantic expert routing.
-3. No live runtime actuator exists.
-4. Residency observation and residency control are missing.
-5. Cleanup/restore proof is missing.
-6. Processed expert-store work needs real checkpoint files and disk, but should
+3. Nemotron-H GGUF loading is blocked on current llama.cpp tensor-layout
+   compatibility.
+4. No live runtime actuator exists.
+5. Residency observation and residency control are missing.
+6. Cleanup/restore proof is missing.
+7. Processed expert-store work needs real checkpoint files and disk, but should
    not require loading the full model into RAM.
 
 ## Next Achievable Steps
 
 1. Run the synthetic hook smoke after hookable-probe edits.
 2. Select one small hookable MoE target for semantic routing traces.
-3. Dry-run `run_transformers_forward_probe.py` against the selected local
-   Transformers model directory, then run it without `--dry-run` once the local
-   path and optional dependencies are ready.
-4. Capture one approved runtime baseline from a running backend.
-5. Add the expert inventory manifest schema as a supporting offline track.
+3. Build the thinnest real-model runner around `ForwardHookMoEProbe`.
+4. Add the expert inventory manifest schema as a supporting offline track.
+5. Produce the backend observability comparison from captured artifacts.

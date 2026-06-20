@@ -1,0 +1,180 @@
+{
+  "schema_version": "calliope-moe-phase2-evidence-v1",
+  "updated_at": "2026-06-20",
+  "scope": "Local MoE targets observed under /mnt/Calliope/models for phase-2 artifact generation.",
+  "honesty_boundary": "These artifacts prove backend compatibility, request behavior, response shape, and runtime observability only. They do not prove semantic expert routing or expert residency control.",
+  "targets": [
+    {
+      "target_id": "dolphin_mixtral_8x7b_gguf_llama_cpp",
+      "display_name": "Dolphin Mixtral 8x7B GGUF",
+      "model_format": "gguf",
+      "backend_family": "llama_cpp",
+      "expert_metadata": {
+        "architecture": "llama",
+        "expert_count": 8,
+        "expert_used_count": 2
+      },
+      "artifact_paths": {
+        "summary": "/tmp/moe-llama-cpp-smoke/20260619-190524-dolphin-mixtral-8x7b-llama-sidecar/summary.json",
+        "log_file": "/home/codexlab/model-plane-runtime/logs/llama-cpp/dolphin-mixtral-8x7b.log"
+      },
+      "run_summary": {
+        "request_count": 1,
+        "failure_count": 0,
+        "mean_latency_ms": 44215.737,
+        "finish_reason": "stop",
+        "changed_metric_count": 9
+      },
+      "observability": {
+        "readiness_surface": "llama.cpp server plus sidecar",
+        "metric_surface": "llama.cpp metrics",
+        "sample_changed_metrics": [
+          "llamacpp:n_busy_slots_per_decode",
+          "llamacpp:n_decode_total",
+          "llamacpp:n_tokens_max",
+          "llamacpp:predicted_tokens_seconds",
+          "llamacpp:prompt_seconds_total",
+          "llamacpp:prompt_tokens_seconds",
+          "llamacpp:prompt_tokens_total",
+          "llamacpp:tokens_predicted_seconds_total",
+          "llamacpp:tokens_predicted_total"
+        ]
+      },
+      "semantic_expert_ids_observed": false,
+      "phase2_use": "Stable stock llama.cpp regression baseline."
+    },
+    {
+      "target_id": "qwen3_30b_a3b_gguf_llama_cpp",
+      "display_name": "Qwen3 30B A3B GGUF",
+      "model_format": "gguf",
+      "backend_family": "llama_cpp",
+      "expert_metadata": {
+        "architecture": "qwen3moe",
+        "expert_count": 128,
+        "expert_used_count": 8
+      },
+      "artifact_paths": {
+        "summary": "/tmp/model-plane-moe-test-runs/20260619-203514-qwen3-30b-llama-sidecar-reasoning-capture/summary.json",
+        "events": "/tmp/model-plane-moe-test-runs/20260619-203514-qwen3-30b-llama-sidecar-reasoning-capture/events.jsonl",
+        "log_file": "/home/codexlab/model-plane-runtime/logs/llama-cpp/qwen3-30b.log"
+      },
+      "run_summary": {
+        "request_count": 1,
+        "failure_count": 0,
+        "mean_latency_ms": 92593.824,
+        "finish_reason": "length",
+        "changed_metric_count": 7
+      },
+      "response_shape": {
+        "message_content_chars": 0,
+        "reasoning_content_present": true,
+        "reasoning_content_chars": 1173,
+        "completion_tokens": 220,
+        "prompt_tokens": 113
+      },
+      "observability": {
+        "readiness_surface": "llama.cpp server plus sidecar",
+        "metric_surface": "llama.cpp metrics",
+        "sample_changed_metrics": [
+          "llamacpp:n_decode_total",
+          "llamacpp:predicted_tokens_seconds",
+          "llamacpp:prompt_seconds_total",
+          "llamacpp:prompt_tokens_seconds",
+          "llamacpp:prompt_tokens_total",
+          "llamacpp:tokens_predicted_seconds_total",
+          "llamacpp:tokens_predicted_total"
+        ]
+      },
+      "semantic_expert_ids_observed": false,
+      "phase2_use": "Non-Mixtral GGUF MoE baseline and reasoning-channel artifact test."
+    },
+    {
+      "target_id": "nemotron_3_super_120b_gguf_llama_cpp",
+      "display_name": "Nemotron 3 Super 120B GGUF",
+      "model_format": "gguf",
+      "backend_family": "llama_cpp",
+      "expert_metadata": {
+        "architecture": "nemotron_h_moe",
+        "expert_count": 512,
+        "expert_used_count": 22,
+        "expert_shared_count": 1
+      },
+      "artifact_paths": {
+        "sidecar_manifest": "/home/codexlab/model-plane-runtime/logs/moe-sidecar/20260620-014706-nemotron-3-super-120b-sidecar-cpu-mmap-baseline/manifest.json",
+        "sidecar_summary": "/home/codexlab/model-plane-runtime/logs/moe-sidecar/20260620-014706-nemotron-3-super-120b-sidecar-cpu-mmap-baseline/summary.json",
+        "log_file": "/home/codexlab/model-plane-runtime/logs/llama-cpp/nemotron-3-super-120b.log"
+      },
+      "run_summary": {
+        "request_count": 0,
+        "failure_count": 0,
+        "finish_reason": "model_load_failed",
+        "changed_metric_count": 0
+      },
+      "failure": {
+        "kind": "llama_cpp_tensor_shape_mismatch",
+        "message": "tensor 'blk.1.ffn_down_exps.weight' has wrong shape; expected 2688, 4096, 512, got 2688, 1024, 512, 1"
+      },
+      "observability": {
+        "readiness_surface": "sidecar saw upstream 503 loading responses before llama.cpp exited",
+        "metric_surface": "no request metrics; model never became ready"
+      },
+      "semantic_expert_ids_observed": false,
+      "phase2_use": "Backend compatibility blocker for nemotron_h_moe GGUF in the current llama.cpp image."
+    },
+    {
+      "target_id": "nemotron_3_nano_omni_30b_a3b_nvfp4_vllm",
+      "display_name": "Nemotron 3 Nano Omni 30B A3B NVFP4",
+      "model_format": "hf_checkpoint",
+      "backend_family": "vllm_openai_compatible",
+      "expert_metadata": {
+        "architecture": "nemotron_h",
+        "expert_count": 128,
+        "expert_used_count": 6,
+        "expert_shared_count": 1
+      },
+      "artifact_paths": {
+        "summary": "/tmp/model-plane-moe-test-runs/20260619-211310-nemotron-omni-30b-a3b-vllm-512/summary.json",
+        "events": "/tmp/model-plane-moe-test-runs/20260619-211310-nemotron-omni-30b-a3b-vllm-512/events.jsonl"
+      },
+      "run_summary": {
+        "request_count": 1,
+        "failure_count": 0,
+        "mean_latency_ms": 6375.167,
+        "finish_reason": "stop",
+        "changed_metric_count": 60
+      },
+      "response_shape": {
+        "message_content_chars": 1804,
+        "reasoning_content_present": false,
+        "reasoning_content_chars": 0,
+        "completion_tokens": 351,
+        "prompt_tokens": 121,
+        "request_max_tokens": 512
+      },
+      "observability": {
+        "readiness_surface": "/v1/models",
+        "metric_surface": "vLLM /metrics",
+        "sample_changed_metrics": [
+          "http_requests_total",
+          "process_cpu_seconds_total",
+          "vllm:e2e_request_latency_seconds_count",
+          "vllm:generation_tokens_total",
+          "vllm:prompt_tokens_total",
+          "vllm:request_decode_time_seconds_count",
+          "vllm:request_generation_tokens_count",
+          "vllm:request_prefill_time_seconds_count",
+          "vllm:request_success_total",
+          "vllm:time_to_first_token_seconds_count"
+        ]
+      },
+      "semantic_expert_ids_observed": false,
+      "phase2_use": "First-class non-llama.cpp backend baseline with rich runtime metrics but no semantic expert-id surface."
+    }
+  ],
+  "next_steps": [
+    "Build a backend observability comparison from these rows.",
+    "Add reasoning-oriented prompt profiles for Qwen-like outputs.",
+    "Inspect llama.cpp nemotron_h_moe tensor layout support before retrying Nemotron Super.",
+    "Build the thin hookable PyTorch runner around ForwardHookMoEProbe for semantic expert ids."
+  ]
+}

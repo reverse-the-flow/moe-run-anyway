@@ -59,6 +59,25 @@ class LlamaSidecarTests(unittest.TestCase):
         self.assertEqual(summary["usage"]["prompt_tokens"], 10)
         self.assertEqual(summary["timings"]["prompt_ms"], 12.5)
 
+    def test_summarize_response_body_extracts_reasoning_channel(self) -> None:
+        body = (
+            b'{"choices":[{"finish_reason":"length","message":{"role":"assistant",'
+            b'"content":"","reasoning_content":"thinking through the answer"}}],'
+            b'"usage":{"completion_tokens":12}}'
+        )
+        summary = llama_sidecar.summarize_response_body(
+            body=body,
+            headers={"Content-Type": "application/json"},
+            streaming=False,
+            store_body=False,
+        )
+
+        self.assertEqual(summary["finish_reason"], "length")
+        self.assertEqual(summary["response_chars"], 0)
+        self.assertTrue(summary["reasoning_content_present"])
+        self.assertEqual(summary["reasoning_content_chars"], len("thinking through the answer"))
+        self.assertIn("thinking", summary["reasoning_content_preview"])
+
     def test_run_accumulator_updates_totals(self) -> None:
         config = llama_sidecar.SidecarConfig(
             listen_host="127.0.0.1",

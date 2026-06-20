@@ -522,10 +522,18 @@ def summarize_response_body(
     first_choice = choices[0] if isinstance(choices, list) and choices else {}
     message = first_choice.get("message") if isinstance(first_choice, dict) else {}
     content = ""
+    reasoning_content = ""
     if isinstance(message, dict):
         maybe_content = message.get("content")
         if isinstance(maybe_content, str):
             content = maybe_content
+        maybe_reasoning = message.get("reasoning_content")
+        if isinstance(maybe_reasoning, str):
+            reasoning_content = maybe_reasoning
+        else:
+            maybe_reasoning = message.get("reasoning")
+            if isinstance(maybe_reasoning, str):
+                reasoning_content = maybe_reasoning
     usage = payload.get("usage") if isinstance(payload.get("usage"), dict) else {}
     timings = payload.get("timings") if isinstance(payload.get("timings"), dict) else {}
     response.update(
@@ -533,6 +541,11 @@ def summarize_response_body(
             "finish_reason": first_choice.get("finish_reason") if isinstance(first_choice, dict) else None,
             "response_chars": len(content),
             "response_preview": preview_text(content) if content else None,
+            "message_content_chars": len(content),
+            "message_content_preview": preview_text(content) if content else None,
+            "reasoning_content_chars": len(reasoning_content),
+            "reasoning_content_preview": preview_text(reasoning_content) if reasoning_content else None,
+            "reasoning_content_present": bool(reasoning_content),
             "usage": usage,
             "timings": timings,
             "raw_body": payload if store_body else None,

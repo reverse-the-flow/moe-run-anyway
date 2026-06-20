@@ -11,6 +11,9 @@ The working progression is passive external observation first, internal
 hookable semantic tracing second, and fork/controller work only after hookable
 evidence exists.
 
+See `calliope-moe-architecture-pass.md` for the first local architecture pass
+across Mixtral, Qwen3, and Nemotron MoE targets.
+
 ## Target Classes
 
 The registry in `data/model_target_registry.json` currently requires coverage

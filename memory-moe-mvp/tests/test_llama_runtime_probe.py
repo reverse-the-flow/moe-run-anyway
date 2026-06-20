@@ -141,6 +141,58 @@ class LlamaRuntimeProbeTests(unittest.TestCase):
         self.assertEqual(diff["changed_metrics"]["a"], 2.5)
         self.assertEqual(diff["changed_metrics"]["c"], 1.0)
 
+    def test_summarize_chat_response_preserves_reasoning_channel(self) -> None:
+        summary = llama_runtime_probe.summarize_chat_response(
+            {
+                "choices": [
+                    {
+                        "finish_reason": "length",
+                        "message": {
+                            "role": "assistant",
+                            "content": "",
+                            "reasoning_content": "thinking through the answer",
+                        },
+                    }
+                ],
+                "usage": {"completion_tokens": 12},
+            }
+        )
+
+        self.assertEqual(summary["finish_reason"], "length")
+        self.assertEqual(summary["response_chars"], 0)
+        self.assertEqual(summary["message_content_chars"], 0)
+        self.assertTrue(summary["reasoning_content_present"])
+        self.assertEqual(summary["reasoning_content_chars"], len("thinking through the answer"))
+        self.assertIn("thinking", summary["reasoning_content_preview"])
+
+    def test_build_request_cases_can_override_max_tokens(self) -> None:
+        cases = llama_runtime_probe.build_request_cases_from_suite(
+            suite_path=ROOT / "data" / "mixtral_probe_prompts.json",
+            model="nemotron-test",
+            max_prompts=1,
+            repeats=1,
+            request_max_tokens=512,
+        )
+
+        self.assertEqual(len(cases), 1)
+        self.assertEqual(cases[0]["body"]["model"], "nemotron-test")
+        self.assertEqual(cases[0]["body"]["max_tokens"], 512)
+
+    def test_arg_parser_accepts_request_max_tokens(self) -> None:
+        parser = llama_runtime_probe.build_arg_parser()
+        args = parser.parse_args(
+            [
+                "--output-dir",
+                "runtime-probe-runs",
+                "--model",
+                "nemotron-test",
+                "--request-max-tokens",
+                "512",
+            ]
+        )
+
+        self.assertEqual(args.request_max_tokens, 512)
+
     def test_probe_runs_against_stub_server(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             log_path = Path(temp_dir) / "server.log"

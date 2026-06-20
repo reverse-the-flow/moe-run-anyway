@@ -41,6 +41,7 @@ class RuntimeProbeConfig:
     request_timeout_seconds: float
     model: str
     backend_family: str = "llama_cpp"
+    request_max_tokens: int | None = None
     metrics_path: str = "/metrics"
     slots_path: str = "/slots"
     props_path: str = "/props"
@@ -317,20 +318,33 @@ def summarize_chat_response(payload: JSONDict) -> JSONDict:
     usage = payload.get("usage") if isinstance(payload.get("usage"), dict) else {}
     timings = payload.get("timings") if isinstance(payload.get("timings"), dict) else {}
     response_text = ""
+    message_content = ""
+    reasoning_content = ""
     finish_reason = None
     if isinstance(payload.get("choices"), list) and payload["choices"]:
         choice = payload["choices"][0]
         if isinstance(choice, dict):
             finish_reason = choice.get("finish_reason")
             message = choice.get("message")
-            if isinstance(message, dict) and isinstance(message.get("content"), str):
-                response_text = message["content"]
+            if isinstance(message, dict):
+                if isinstance(message.get("content"), str):
+                    message_content = message["content"]
+                    response_text = message_content
+                if isinstance(message.get("reasoning_content"), str):
+                    reasoning_content = message["reasoning_content"]
+                elif isinstance(message.get("reasoning"), str):
+                    reasoning_content = message["reasoning"]
             elif isinstance(choice.get("text"), str):
                 response_text = choice["text"]
     return {
         "finish_reason": finish_reason,
         "response_chars": len(response_text),
         "response_preview": preview_text(response_text) if response_text else None,
+        "message_content_chars": len(message_content),
+        "message_content_preview": preview_text(message_content) if message_content else None,
+        "reasoning_content_chars": len(reasoning_content),
+        "reasoning_content_preview": preview_text(reasoning_content) if reasoning_content else None,
+        "reasoning_content_present": bool(reasoning_content),
         "usage": usage,
         "timings": timings,
     }
@@ -345,9 +359,11 @@ def build_request_cases_from_suite(
     model: str,
     max_prompts: int,
     repeats: int,
+    request_max_tokens: int | None = None,
 ) -> list[JSONDict]:
     suite = load_prompt_suite(suite_path)
     cases: list[JSONDict] = []
+    max_tokens = request_max_tokens or suite["default_request"]["max_tokens"]
     for family in suite["families"]:
         for prompt in family["prompts"]:
             for repeat in range(1, repeats + 1):
@@ -362,7 +378,7 @@ def build_request_cases_from_suite(
                             "messages": prompt["messages"],
                             "temperature": suite["default_request"]["temperature"],
                             "top_p": suite["default_request"]["top_p"],
-                            "max_tokens": suite["default_request"]["max_tokens"],
+                            "max_tokens": max_tokens,
                             "stream": suite["default_request"]["stream"],
                         },
                     }
@@ -414,6 +430,7 @@ class RuntimeProbeAccumulator:
                 "model": self.config.model,
                 "backend_family": self.config.backend_family,
                 "log_file_path": str(self.config.log_file_path) if self.config.log_file_path else None,
+                "request_max_tokens": self.config.request_max_tokens,
             },
             "totals": {
                 "request_count": self.request_count,
@@ -464,6 +481,7 @@ class LlamaRuntimeProbe:
                     "slots_path": self.config.slots_path,
                     "props_path": self.config.props_path,
                     "log_file_path": str(self.config.log_file_path) if self.config.log_file_path else None,
+                    "request_max_tokens": self.config.request_max_tokens,
                 },
             },
         )
@@ -555,6 +573,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-prompts", type=int, default=0)
     parser.add_argument("--repeats", type=int, default=1)
     parser.add_argument("--timeout-seconds", type=float, default=300.0)
+    parser.add_argument(
+        "--request-max-tokens",
+        type=int,
+        help="override the prompt suite max_tokens for this run",
+    )
     parser.add_argument("--log-file-path", type=Path)
     return parser
 
@@ -569,6 +592,7 @@ def main() -> int:
         request_timeout_seconds=args.timeout_seconds,
         model=args.model,
         backend_family=args.backend_family,
+        request_max_tokens=args.request_max_tokens,
         log_file_path=args.log_file_path,
     )
     probe = LlamaRuntimeProbe(config=config)
@@ -579,6 +603,7 @@ def main() -> int:
             model=args.model,
             max_prompts=args.max_prompts,
             repeats=args.repeats,
+            request_max_tokens=args.request_max_tokens,
         )
         for case in cases:
             probe.run_case(case)
