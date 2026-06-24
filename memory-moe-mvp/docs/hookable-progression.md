@@ -49,6 +49,7 @@ The current implementation surface is:
 - `moe_forward_probe.py`
 - `run_forward_probe_demo.py`
 - `run_transformers_forward_probe.py`
+- `scripts/plan_hook_trace_capture.py`
 - `ForwardHookMoEProbe`
 - synthetic no-model hook smoke artifacts
 - guarded local-only Transformers dry-run planning
@@ -59,12 +60,14 @@ user-provided checkpoint/runtime, or a cloud run with enough memory.
 The safe local hookable preflight is:
 
 ```sh
-cd memory-moe-mvp && python3 run_transformers_forward_probe.py --model-path /path/to/local/transformers-moe --output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json --max-prompts 4 --repeats 1 --window-size-events 2 --dry-run
+python3 scripts/plan_hook_trace_capture.py --model-path /path/to/local/transformers-moe --label local-hookable-moe --json
 ```
 
-That command refuses remote identifiers, missing local directories, missing
+That planner emits three command classes: synthetic hook smoke, local
+Transformers dry-run, and deferred approved local hook trace. The dry-run
+refuses remote identifiers, missing local directories, missing
 `torch`/`transformers`, and Hugging Face token environment variables. The first
-real semantic routing artifact still needs the same command without
+real semantic routing artifact still needs the approved command without
 `--dry-run`, pointed at a local Transformers-style MoE directory whose router or
 gate modules expose expert ids, weights, or logits through forward hooks.
 

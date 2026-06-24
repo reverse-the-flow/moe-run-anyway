@@ -1,0 +1,16 @@
+{
+  "schema_version": "model-plane-moe-probe-manifest-v1",
+  "profile_id": "fixture-hookable-transformers-moe",
+  "model_id": "local/fixture-hookable-moe",
+  "model_path": "memory-moe-mvp/data/fixture-hookable-model",
+  "backend_family": "pytorch_transformers",
+  "base_url": "local-process",
+  "primary_probe_hint": "hookable_pytorch",
+  "semantic_expert_ids": "expected_when_router_outputs_are_exposed",
+  "hookable_runtime_available": true,
+  "safety_notes": [
+    "Fixture only; planner tests create the local model directory at runtime.",
+    "Hook trace evidence must come from completed forward-hook artifacts.",
+    "The planner itself does not claim semantic expert ids."
+  ]
+}

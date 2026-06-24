@@ -183,12 +183,31 @@ def hookable_pytorch_commands(manifest: JSONDict, label: str) -> list[str]:
     ]
     model_path = manifest.get("model_path")
     if isinstance(model_path, str) and model_path.strip():
+        common = [
+            "python3",
+            "run_transformers_forward_probe.py",
+            "--model-path",
+            model_path,
+            "--output-dir",
+            "forward-probe-runs",
+            "--suite-path",
+            "data/mixtral_probe_prompts.json",
+            "--label",
+            f"{label}-transformers-hook-trace",
+            "--max-prompts",
+            "4",
+            "--repeats",
+            "2",
+            "--window-size-events",
+            "2",
+        ]
         commands.append(
-            "MODEL_PATH="
-            + shlex.quote(model_path)
-            + " python3 path/to/future_transformers_runner.py --model-path \"$MODEL_PATH\" "
-            "--output-dir forward-probe-runs --suite-path data/mixtral_probe_prompts.json "
-            "--max-prompts 4 --repeats 2"
+            "cd memory-moe-mvp && "
+            + quote_command([*common, "--dry-run"])
+        )
+        commands.append(
+            "cd memory-moe-mvp && "
+            + quote_command(common)
         )
     return commands
 
@@ -249,8 +268,8 @@ def build_plan(manifest: JSONDict, manifest_path: Path) -> JSONDict:
             commands = passive_sidecar_commands(manifest, label)
         elif target_class == "hookable_pytorch_moe":
             hookable_commands = hookable_pytorch_commands(manifest, label)
-            commands = hookable_commands[:1]
-            deferred_live_commands = hookable_commands[1:]
+            commands = hookable_commands[:2]
+            deferred_live_commands = hookable_commands[2:]
         else:
             commands = runtime_baseline_commands(manifest, label)
 

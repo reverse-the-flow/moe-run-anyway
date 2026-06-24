@@ -120,7 +120,10 @@ class MoeProbeManifestPlannerTests(unittest.TestCase):
         self.assertTrue(valid["valid"])
         self.assertEqual(valid["target_class"], "hookable_pytorch_moe")
         self.assertIn("run_forward_probe_demo.py", valid["safe_commands"][0])
-        self.assertIn("future_transformers_runner.py", valid["deferred_live_commands"][0])
+        self.assertIn("run_transformers_forward_probe.py", valid["safe_commands"][1])
+        self.assertIn("--dry-run", valid["safe_commands"][1])
+        self.assertIn("run_transformers_forward_probe.py", valid["deferred_live_commands"][0])
+        self.assertNotIn("future_transformers_runner", "\n".join(valid["safe_commands"] + valid["deferred_live_commands"]))
 
     def test_cli_returns_nonzero_for_invalid_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

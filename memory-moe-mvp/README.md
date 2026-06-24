@@ -12,6 +12,7 @@ Implemented local surfaces:
 - [llama_runtime_probe.py](llama_runtime_probe.py): active stock `llama.cpp` runtime probe using `/metrics`, `/slots`, `/props`, response timings, and optional log growth.
 - [moe_forward_probe.py](moe_forward_probe.py): forward-hook probe for hookable PyTorch-style MoE runtimes.
 - [run_forward_probe_demo.py](run_forward_probe_demo.py): no-model synthetic hook driver.
+- [run_transformers_forward_probe.py](run_transformers_forward_probe.py): guarded local-only Transformers runner for hookable MoE targets.
 - [model_target_registry.py](model_target_registry.py): dependency-free validator for [data/model_target_registry.json](data/model_target_registry.json).
 
 Not implemented yet:
@@ -141,6 +142,22 @@ probe.close()
 
 The forward-hook path can capture routed expert ids, expert weights or probabilities, routing entropy, per-layer hit counts, and window summaries when the backend exposes those values.
 
+From the repository root, use the hook trace planner before touching a real
+local model:
+
+```bash
+python3 scripts/plan_hook_trace_capture.py \
+  --model-path /path/to/local/transformers-moe \
+  --label local-hookable-moe \
+  --json
+```
+
+The planner emits a synthetic hook smoke command, a guarded
+`run_transformers_forward_probe.py --dry-run` command, and a deferred approved
+local trace command. The plan itself does not claim semantic expert ids; only a
+completed hook trace bundle with nonzero `hook_count`, `router_events.jsonl`,
+and `summary.json` router events can support that claim.
+
 ## Fixtures And Docs
 
 - [data/mixtral_probe_prompts.json](data/mixtral_probe_prompts.json): prompt corpus for Mixtral-style routing and runtime probes.
@@ -222,7 +239,7 @@ The maintained cross-platform live command shapes are in [docs/model-target-test
 The grounded next step is the hookable semantic trace layer: keep the passive
 sidecar as external runtime evidence, run the synthetic hook smoke after
 hookable-probe changes, select one small local or cloud hookable MoE target, and
-build the thinnest real-model runner around `ForwardHookMoEProbe`.
+run `scripts/plan_hook_trace_capture.py` before approved local hook execution.
 
 For edge devices, the lower-risk path is still to compare small dense models as
 routable experts first, then revisit true expert paging only after hookable
