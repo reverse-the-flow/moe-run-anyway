@@ -87,6 +87,35 @@ class TransformersForwardProbeRunnerTests(unittest.TestCase):
         self.assertNotIn("secret-value", str(plan))
         self.assertIn("Hugging Face token environment variables", "\n".join(plan["blockers"]))
 
+    def test_trust_remote_code_scans_local_auto_map_dependencies(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            model_dir = Path(temp_dir)
+            (model_dir / "config.json").write_text(
+                '{"auto_map": {"AutoModelForCausalLM": "modeling.FixtureModel"}}\n',
+                encoding="utf-8",
+            )
+            (model_dir / "tokenizer_config.json").write_text("{}", encoding="utf-8")
+            (model_dir / "modeling.py").write_text("from .modeling_inner import FixtureModel\n", encoding="utf-8")
+            (model_dir / "modeling_inner.py").write_text(
+                "from definitely_missing_hook_dep.ops import thing\n"
+                "class FixtureModel: pass\n",
+                encoding="utf-8",
+            )
+            args = make_args(model_path=model_dir, trust_remote_code=True)
+
+            with patch.object(runner, "module_presence", side_effect=present_module):
+                with patch.dict(os.environ, {}, clear=True):
+                    plan = runner.plan_transformers_forward_probe(args)
+
+        self.assertFalse(plan["ready_to_run"])
+        blockers = "\n".join(plan["blockers"])
+        self.assertIn("trusted remote-code dependency not detected", blockers)
+        self.assertIn("definitely_missing_hook_dep", blockers)
+        dependency_check = plan["trusted_code_dependency_check"]
+        self.assertTrue(dependency_check["checked"])
+        self.assertTrue(any("modeling_inner.py" in item for item in dependency_check["visited_files"]))
+        self.assertEqual(dependency_check["missing_modules"][0]["module"], "definitely_missing_hook_dep")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -10,10 +10,12 @@ wraps generation with ForwardHookMoEProbe spans.
 from __future__ import annotations
 
 import argparse
+import ast
 import importlib.util
 import json
 import os
 import shlex
+import sys
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -40,6 +42,14 @@ MODEL_CONFIG_HINTS = (
     "tokenizer_config.json",
     "model.safetensors.index.json",
     "pytorch_model.bin.index.json",
+)
+REMOTE_CODE_AUTOMAP_KEYS = (
+    "AutoConfig",
+    "AutoModel",
+    "AutoModelForCausalLM",
+    "AutoModelForVision2Seq",
+    "AutoProcessor",
+    "AutoTokenizer",
 )
 
 
@@ -82,6 +92,121 @@ def local_model_path_report(raw_path: str) -> JSONDict:
 
 def load_probe_suite(path: Path) -> JSONDict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_config_json(model_path: Path) -> JSONDict:
+    config_path = model_path / "config.json"
+    if not config_path.exists():
+        return {}
+    try:
+        data = json.loads(config_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def module_ref_to_file(model_path: Path, module_ref: str) -> Path | None:
+    module_part = str(module_ref).split(":", 1)[0].rsplit(".", 1)[0]
+    if not module_part:
+        return None
+    candidate = model_path / Path(*module_part.split(".")).with_suffix(".py")
+    return candidate if candidate.exists() else None
+
+
+def auto_map_code_files(model_path: Path, config: JSONDict) -> list[Path]:
+    auto_map = config.get("auto_map")
+    if not isinstance(auto_map, dict):
+        return []
+    files: list[Path] = []
+    for key in REMOTE_CODE_AUTOMAP_KEYS:
+        value = auto_map.get(key)
+        refs = value if isinstance(value, list) else [value]
+        for ref in refs:
+            if isinstance(ref, str):
+                path = module_ref_to_file(model_path, ref)
+                if path is not None and path not in files:
+                    files.append(path)
+    return files
+
+
+def relative_import_file(current_file: Path, module_name: str | None, level: int) -> Path | None:
+    if level <= 0:
+        return None
+    base = current_file.parent
+    for _ in range(max(0, level - 1)):
+        base = base.parent
+    if not module_name:
+        return None
+    candidate = base / Path(*module_name.split(".")).with_suffix(".py")
+    return candidate if candidate.exists() else None
+
+
+def import_root(name: str) -> str:
+    return name.split(".", 1)[0]
+
+
+def is_stdlib_module(root: str) -> bool:
+    stdlib_names = getattr(sys, "stdlib_module_names", set())
+    return root in stdlib_names or root in sys.builtin_module_names
+
+
+def collect_trusted_code_imports(model_path: Path) -> JSONDict:
+    config = load_config_json(model_path)
+    pending = auto_map_code_files(model_path, config)
+    visited: set[Path] = set()
+    absolute_imports: dict[str, list[str]] = {}
+    parse_errors: list[str] = []
+
+    while pending:
+        path = pending.pop(0)
+        if path in visited:
+            continue
+        visited.add(path)
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        except (OSError, SyntaxError) as exc:
+            parse_errors.append(f"{path.name}: {exc}")
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    root = import_root(alias.name)
+                    if root:
+                        absolute_imports.setdefault(root, []).append(f"{path.name}:{node.lineno}")
+            elif isinstance(node, ast.ImportFrom):
+                if node.level:
+                    relative = relative_import_file(path, node.module, node.level)
+                    if relative is not None and relative not in visited and relative not in pending:
+                        pending.append(relative)
+                    continue
+                if node.module:
+                    root = import_root(node.module)
+                    absolute_imports.setdefault(root, []).append(f"{path.name}:{node.lineno}")
+
+    missing: list[JSONDict] = []
+    present: list[str] = []
+    ignored: list[str] = []
+    for root, locations in sorted(absolute_imports.items()):
+        if is_stdlib_module(root):
+            ignored.append(root)
+            continue
+        if (model_path / f"{root}.py").exists() or (model_path / root).is_dir():
+            ignored.append(root)
+            continue
+        if importlib.util.find_spec(root) is not None:
+            present.append(root)
+            continue
+        missing.append({"module": root, "locations": sorted(set(locations))})
+
+    return {
+        "checked": bool(visited),
+        "entry_files": [str(path) for path in auto_map_code_files(model_path, config)],
+        "visited_files": [str(path) for path in sorted(visited)],
+        "present_modules": sorted(set(present)),
+        "ignored_modules": sorted(set(ignored)),
+        "missing_modules": missing,
+        "parse_errors": parse_errors,
+    }
 
 
 def iter_selected_prompts(suite: JSONDict, max_prompts: int) -> list[JSONDict]:
@@ -189,6 +314,27 @@ def plan_transformers_forward_probe(args: argparse.Namespace) -> JSONDict:
     if model_path["exists"] and model_path["is_dir"] and "config.json" not in model_path["config_hints"]:
         warnings.append("model directory does not contain config.json")
 
+    trusted_code_dependency_check: JSONDict = {
+        "checked": False,
+        "entry_files": [],
+        "visited_files": [],
+        "present_modules": [],
+        "ignored_modules": [],
+        "missing_modules": [],
+        "parse_errors": [],
+    }
+    if args.trust_remote_code and model_path["exists"] and model_path["is_dir"]:
+        trusted_code_dependency_check = collect_trusted_code_imports(Path(model_path["path"]))
+        for missing in trusted_code_dependency_check["missing_modules"]:
+            blockers.append(
+                "trusted remote-code dependency not detected: "
+                f"{missing['module']} referenced by {', '.join(missing['locations'])}"
+            )
+        if not trusted_code_dependency_check["checked"]:
+            warnings.append("trust_remote_code requested, but no local auto_map Python files were found")
+        for parse_error in trusted_code_dependency_check["parse_errors"]:
+            warnings.append(f"could not parse trusted code file: {parse_error}")
+
     suite_prompt_count = None
     if args.suite_path.exists():
         suite_prompt_count = len(iter_selected_prompts(load_probe_suite(args.suite_path), args.max_prompts))
@@ -223,6 +369,7 @@ def plan_transformers_forward_probe(args: argparse.Namespace) -> JSONDict:
         "suite_path": str(args.suite_path),
         "selected_prompt_count": suite_prompt_count,
         "optional_dependencies": optional_dependencies,
+        "trusted_code_dependency_check": trusted_code_dependency_check,
         "token_env_names_present": token_env_names_present,
         "trust_remote_code": bool(args.trust_remote_code),
         "blockers": blockers,
