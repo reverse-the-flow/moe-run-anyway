@@ -364,8 +364,12 @@ def build_request_cases_from_suite(
     suite = load_prompt_suite(suite_path)
     cases: list[JSONDict] = []
     max_tokens = request_max_tokens or suite["default_request"]["max_tokens"]
+    selected_prompt_count = 0
     for family in suite["families"]:
         for prompt in family["prompts"]:
+            if max_prompts > 0 and selected_prompt_count >= max_prompts:
+                return cases
+            selected_prompt_count += 1
             for repeat in range(1, repeats + 1):
                 cases.append(
                     {
@@ -383,8 +387,6 @@ def build_request_cases_from_suite(
                         },
                     }
                 )
-                if max_prompts > 0 and len(cases) >= max_prompts:
-                    return cases
     return cases
 
 
@@ -398,18 +400,24 @@ class RuntimeProbeAccumulator:
         self.by_finish_reason: dict[str, int] = {}
         self.changed_metric_counts: dict[str, int] = {}
         self.total_latency_ms = 0.0
+        self.latency_observation_count = 0
 
     def ingest(self, event: JSONDict) -> None:
         self.request_count += 1
-        if event.get("error") is not None:
+        error_text = event.get("error")
+        if error_text is not None:
             self.failure_count += 1
         family_id = event["case"]["family_id"]
         self.by_family[family_id] = self.by_family.get(family_id, 0) + 1
         finish_reason = str(event.get("response", {}).get("summary", {}).get("finish_reason") or "none")
+        if finish_reason == "none" and error_text is not None:
+            finish_reason = "error"
         self.by_finish_reason[finish_reason] = self.by_finish_reason.get(finish_reason, 0) + 1
-        latency = event.get("latency_ms", {}).get("total")
+        latency_payload = event.get("latency_ms") or {}
+        latency = latency_payload.get("total") if isinstance(latency_payload, dict) else None
         if isinstance(latency, (float, int)):
             self.total_latency_ms += float(latency)
+            self.latency_observation_count += 1
         changed_metrics = event.get("observability", {}).get("metrics_delta", {}).get("changed_metrics", {})
         for metric_name in changed_metrics.keys():
             self.changed_metric_counts[metric_name] = self.changed_metric_counts.get(metric_name, 0) + 1
@@ -435,7 +443,12 @@ class RuntimeProbeAccumulator:
             "totals": {
                 "request_count": self.request_count,
                 "failure_count": self.failure_count,
-                "mean_latency_ms": round3(safe_div(self.total_latency_ms, self.request_count)),
+                "latency_observation_count": self.latency_observation_count,
+                "mean_latency_ms": (
+                    round3(safe_div(self.total_latency_ms, self.latency_observation_count))
+                    if self.latency_observation_count
+                    else None
+                ),
             },
             "breakdowns": {
                 "by_family": self.by_family,

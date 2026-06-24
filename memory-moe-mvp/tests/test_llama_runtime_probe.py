@@ -178,6 +178,27 @@ class LlamaRuntimeProbeTests(unittest.TestCase):
         self.assertEqual(cases[0]["body"]["model"], "nemotron-test")
         self.assertEqual(cases[0]["body"]["max_tokens"], 512)
 
+    def test_build_request_cases_applies_repeats_after_prompt_limit(self) -> None:
+        cases = llama_runtime_probe.build_request_cases_from_suite(
+            suite_path=ROOT / "data" / "mixtral_probe_prompts.json",
+            model="mixtral-test",
+            max_prompts=3,
+            repeats=2,
+        )
+
+        self.assertEqual(len(cases), 6)
+        self.assertEqual(
+            [(case["probe_id"], case["repeat"]) for case in cases],
+            [
+                ("prose-summary-01", 1),
+                ("prose-summary-01", 2),
+                ("prose-rewrite-01", 1),
+                ("prose-rewrite-01", 2),
+                ("python-impl-01", 1),
+                ("python-impl-01", 2),
+            ],
+        )
+
     def test_arg_parser_accepts_request_max_tokens(self) -> None:
         parser = llama_runtime_probe.build_arg_parser()
         args = parser.parse_args(
@@ -192,6 +213,41 @@ class LlamaRuntimeProbeTests(unittest.TestCase):
         )
 
         self.assertEqual(args.request_max_tokens, 512)
+
+    def test_accumulator_handles_failed_event_without_latency(self) -> None:
+        config = llama_runtime_probe.RuntimeProbeConfig(
+            base_url="http://127.0.0.1:11434",
+            output_dir=ROOT,
+            label="failed-request",
+            request_timeout_seconds=60.0,
+            model="nemotron-test",
+            backend_family="ollama_openai_compatible",
+        )
+        accumulator = llama_runtime_probe.RuntimeProbeAccumulator(
+            run_id="failed-run",
+            config=config,
+        )
+
+        accumulator.ingest(
+            {
+                "case": {"family_id": "english_prose"},
+                "error": "HTTP Error 500: Internal Server Error",
+                "latency_ms": None,
+                "response": {"summary": {}},
+                "observability": {
+                    "metrics_delta": {
+                        "changed_metrics": {},
+                    },
+                },
+            }
+        )
+
+        snapshot = accumulator.snapshot()
+        self.assertEqual(snapshot["totals"]["request_count"], 1)
+        self.assertEqual(snapshot["totals"]["failure_count"], 1)
+        self.assertEqual(snapshot["totals"]["latency_observation_count"], 0)
+        self.assertIsNone(snapshot["totals"]["mean_latency_ms"])
+        self.assertEqual(snapshot["breakdowns"]["by_finish_reason"]["error"], 1)
 
     def test_probe_runs_against_stub_server(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
