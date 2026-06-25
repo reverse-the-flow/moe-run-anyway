@@ -90,7 +90,10 @@ The required actuator capabilities are:
 
 `llama_cpp` covers stock `llama.cpp` / `llama-server` evidence and a possible
 small patch or fork later. Stock observability is useful runtime evidence, but
-it does not expose semantic expert routing or live residency mutation.
+it does not expose semantic expert routing or live residency mutation. A patched
+engine hook can become a valid semantic-routing source if it emits selected
+expert ids, scores, layer ids, and token/window metadata under the shared trace
+contract.
 
 `vllm_openai_compatible` covers vLLM or compatible HTTP endpoints. Request
 metadata and timing are not semantic expert ids unless a plugin or runtime

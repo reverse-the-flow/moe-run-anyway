@@ -59,8 +59,10 @@ controller, or live actuator work.
 | Step | Status | Evidence | Blocker |
 | --- | --- | --- | --- |
 | Confirm synthetic hook smoke path. | done | `run_forward_probe_demo.py` exercises hook attach, router event capture, spans, and window summaries without a model. | None. |
-| Select a hookable MoE target. | active | Expected: target note with model family, runtime, memory needs, and hook points. | Needs a local small MoE, a cloud box, or a user-supplied checkpoint/runtime. |
-| Build a thin target runner around `ForwardHookMoEProbe`. | planned | Expected: runner loads one user-provided local model, attaches hooks, runs prompt cases, writes existing probe artifacts, and does not create a new artifact shape. | Needs selected target. |
+| Classify current PC/GX10 hook candidates. | done | `data/hookable_moe_attempt_matrix.json` records PC HF non-MoEs, PC/GX10 GGUF engine-hook candidates, and the GX10 Nemotron HF dependency blocker. | None. |
+| Select a hookable MoE target. | active | Mixtral/Qwen3 GGUF are llama.cpp engine-hook candidates; GX10 Nemotron HF is a Python hook candidate blocked by missing trusted-code dependencies. | Needs either a llama.cpp source patch path or a compatible Transformers MoE runtime. |
+| Build a thin Python target runner around `ForwardHookMoEProbe`. | planned | Expected: runner loads one user-provided local model, attaches hooks, runs prompt cases, writes existing probe artifacts, and does not create a new artifact shape. | Needs compatible Transformers target/runtime. |
+| Build a minimal llama.cpp router trace patch. | active | Expected: direct llama.cpp run emits layer id, token/window id, selected expert ids, and scores to JSONL under the shared trace contract. | Needs llama.cpp source checkout and patch-point inspection. |
 | Capture router outputs with hooks. | planned | Expected: layer id, expert ids, scores/probabilities, entropy, token/window metadata. | Needs selected hookable runtime. |
 | Capture dense or full-runtime fallback output. | planned | Expected: baseline outputs for the same prompt set. | Needs runnable target. |
 | Validate trace artifacts against the shared contract. | planned | Expected: trace validation report. | Needs trace artifacts. |
@@ -101,21 +103,24 @@ trustworthy routing traces.
 
 ## Current Critical Blockers
 
-1. Hookable semantic routing needs a runnable target: local small MoE,
-   user-provided checkpoint/runtime, or cloud run.
+1. Hookable semantic routing needs either a compatible local/cloud
+   Transformers MoE runtime or an instrumented llama.cpp GGUF runtime.
 2. Stock endpoints do not expose semantic expert routing.
-3. Nemotron-H GGUF loading is blocked on current llama.cpp tensor-layout
+3. No llama.cpp source checkout/patch is present yet for engine hooks.
+4. Nemotron-H GGUF loading is blocked on current llama.cpp tensor-layout
    compatibility.
-4. No live runtime actuator exists.
-5. Residency observation and residency control are missing.
-6. Cleanup/restore proof is missing.
-7. Processed expert-store work needs real checkpoint files and disk, but should
+5. No live runtime actuator exists.
+6. Residency observation and residency control are missing.
+7. Cleanup/restore proof is missing.
+8. Processed expert-store work needs real checkpoint files and disk, but should
    not require loading the full model into RAM.
 
 ## Next Achievable Steps
 
 1. Run the synthetic hook smoke after hookable-probe edits.
-2. Select one small hookable MoE target for semantic routing traces.
-3. Build the thinnest real-model runner around `ForwardHookMoEProbe`.
-4. Add the expert inventory manifest schema as a supporting offline track.
-5. Produce the backend observability comparison from captured artifacts.
+2. Fetch or select a llama.cpp source checkout for an engine-hook spike.
+3. Patch the Mixtral GGUF router selection path to emit semantic trace JSONL.
+4. Build the thinnest real-model runner around `ForwardHookMoEProbe` when a
+   compatible Transformers MoE runtime is available.
+5. Add the expert inventory manifest schema as a supporting offline track.
+6. Produce the backend observability comparison from captured artifacts.

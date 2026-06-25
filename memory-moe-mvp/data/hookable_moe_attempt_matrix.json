@@ -1,0 +1,332 @@
+{
+  "schema_version": "hookable-moe-attempt-matrix-v1",
+  "generated_at": "2026-06-25",
+  "scope": "Hookability attempts for MoE-class models currently available on the PC and GX10. Runtime GGUF/Ollama/vLLM targets are recorded as engine-hook candidates when they run MoE inference, not as completed semantic hook successes.",
+  "honesty_boundary": [
+    "Synthetic hook smoke proves the probe pipeline only.",
+    "Stock Ollama, GGUF, llama.cpp, and OpenAI-compatible vLLM endpoints do not expose Python forward hooks.",
+    "llama.cpp/Ollama MoE targets are still hookable at the inference-engine level, but need an engine patch, fork, or explicit telemetry callback before they produce semantic route artifacts.",
+    "A real-model semantic hook success requires a local Transformers/PyTorch MoE runtime, a compatible Python environment, nonzero hook_count, nonempty router_events.jsonl, and summary router_event_count greater than zero."
+  ],
+  "hosts": {
+    "pc": {
+      "observed_sources": [
+        "C:\\Users\\jpret\\.cache\\huggingface\\hub",
+        "Docker Ollama container: ollama list"
+      ],
+      "hook_runtime_available": false,
+      "notes": "PC has MoE-class GGUF/Ollama models but no local Transformers-style MoE checkpoint directory."
+    },
+    "gx10": {
+      "observed_sources": [
+        "/mnt/Calliope/models",
+        "vllm/vllm-openai:v0.20.0 image"
+      ],
+      "hook_runtime_available": true,
+      "notes": "GX10 has one local Transformers-style MoE target, but the available hook image lacks Nemotron trusted-code dependencies."
+    }
+  },
+  "attempts": [
+    {
+      "attempt_id": "pc-hf-deepseek-r1-distill-qwen-14b",
+      "host": "pc",
+      "model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-14B",
+      "local_reference": "C:\\Users\\jpret\\.cache\\huggingface\\hub\\models--deepseek-ai--DeepSeek-R1-Distill-Qwen-14B\\snapshots\\43388607a61ba60e6dd3e349eb5f55c94e984bc0",
+      "runtime_surface": "hf_transformers_directory",
+      "moe_metadata": {
+        "is_moe": false,
+        "model_type": "qwen2",
+        "architectures": [
+          "Qwen2ForCausalLM"
+        ],
+        "expert_count": null,
+        "experts_per_token": null
+      },
+      "hook_attempt_status": "screened_non_moe",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Local Transformers directory is dense Qwen2, not MoE."
+      ],
+      "evidence": [
+        "config.json model_type=qwen2",
+        "config.json architectures=Qwen2ForCausalLM",
+        "config keyword scan found no expert/moe/router/gate fields"
+      ]
+    },
+    {
+      "attempt_id": "pc-hf-all-minilm-l6-v2",
+      "host": "pc",
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "local_reference": "C:\\Users\\jpret\\.cache\\huggingface\\hub\\models--sentence-transformers--all-MiniLM-L6-v2\\snapshots\\c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "runtime_surface": "hf_transformers_directory",
+      "moe_metadata": {
+        "is_moe": false,
+        "model_type": "bert",
+        "architectures": [
+          "BertModel"
+        ],
+        "expert_count": null,
+        "experts_per_token": null
+      },
+      "hook_attempt_status": "screened_non_moe",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Local Transformers directory is a dense embedding model, not MoE."
+      ],
+      "evidence": [
+        "config.json model_type=bert",
+        "config.json architectures=BertModel",
+        "config keyword scan found no expert/moe/router/gate fields"
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-dolphin-mixtral-8x7b",
+      "host": "pc",
+      "model": "dolphin-mixtral:8x7b",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "mixtral_style",
+        "expert_count": 8,
+        "experts_per_token": 2
+      },
+      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Stock Ollama/GGUF does not expose Python modules or register_forward_hook.",
+        "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
+      ],
+      "evidence": [
+        "PC Docker Ollama list includes dolphin-mixtral:8x7b.",
+        "Prior runtime artifacts exist under memory-moe-mvp/runtime-probe-runs/pc-ollama-*."
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-nemotron-cascade-30b-a3b-gguf",
+      "host": "pc",
+      "model": "hf.co/bartowski/nvidia_Nemotron-Cascade-2-30B-A3B-GGUF:Q4_K_M",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "nemotron_h_moe",
+        "expert_count": null,
+        "experts_per_token": null
+      },
+      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Stock Ollama/GGUF does not expose Python modules or register_forward_hook.",
+        "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
+      ],
+      "evidence": [
+        "PC Docker Ollama list includes the Nemotron Cascade GGUF model.",
+        "Prior PC runtime probe recorded this as nemotron_h_moe."
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-qwen3-coder-30b-a3b-gguf",
+      "host": "pc",
+      "model": "hf.co/unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF:Q3_K_S",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "qwen3_moe",
+        "expert_count": null,
+        "experts_per_token": null
+      },
+      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Stock Ollama/GGUF does not expose Python modules or register_forward_hook.",
+        "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
+      ],
+      "evidence": [
+        "PC Docker Ollama list includes Qwen3-Coder-30B-A3B GGUF."
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-llama4-scout-16e-gguf",
+      "host": "pc",
+      "model": "llama4:17b-scout-16e-instruct-q4_K_M",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "llama4_scout_moe",
+        "expert_count": 16,
+        "experts_per_token": null
+      },
+      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Stock Ollama/GGUF does not expose Python modules or register_forward_hook.",
+        "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
+      ],
+      "evidence": [
+        "PC Docker Ollama list includes llama4:17b-scout-16e-instruct-q4_K_M."
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-deepseek-v31-gguf",
+      "host": "pc",
+      "model": "hf.co/unsloth/DeepSeek-V3.1-GGUF:TQ1_0",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "deepseek_v3_moe",
+        "expert_count": null,
+        "experts_per_token": null
+      },
+      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Stock Ollama/GGUF does not expose Python modules or register_forward_hook.",
+        "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
+      ],
+      "evidence": [
+        "PC Docker Ollama list includes DeepSeek-V3.1 GGUF."
+      ]
+    },
+    {
+      "attempt_id": "gx10-hf-nemotron-nano-omni-30b-a3b-nvfp4",
+      "host": "gx10",
+      "model": "Nemotron-3-Nano-Omni-30B-A3B-Reasoning-NVFP4-hf",
+      "local_reference": "/mnt/Calliope/models/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-NVFP4-hf",
+      "runtime_surface": "hf_transformers_directory",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "nemotron_h_moe",
+        "expert_count": 128,
+        "shared_expert_count": 1,
+        "experts_per_token": 6
+      },
+      "hook_attempt_status": "blocked_missing_hook_runtime_dependencies",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "mamba_ssm missing from available hook runtime image",
+        "causal_conv1d missing from available hook runtime image",
+        "Package download/build feasibility check failed because the container could not resolve pypi.org"
+      ],
+      "evidence": [
+        "memory-moe-mvp/docs/nemotron-hook-trace-attempt-2026-06-24.md",
+        "Synthetic hook smoke: hook_count=2, router_event_count=4, unique_experts_seen=5",
+        "Dry-run dependency scanner now reports missing mamba_ssm and causal_conv1d before live model load"
+      ]
+    },
+    {
+      "attempt_id": "gx10-hf-gemma4-31b-nvfp4",
+      "host": "gx10",
+      "model": "Gemma-4-31B-IT-NVFP4",
+      "local_reference": "/mnt/Calliope/models/Gemma-4-31B-IT-NVFP4",
+      "runtime_surface": "hf_transformers_directory",
+      "moe_metadata": {
+        "is_moe": false,
+        "model_type": "gemma4",
+        "architectures": [
+          "Gemma4ForConditionalGeneration"
+        ],
+        "enable_moe_block": false,
+        "expert_count": null,
+        "experts_per_token": null
+      },
+      "hook_attempt_status": "screened_non_moe",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Config reports enable_moe_block=false and no active expert metadata."
+      ],
+      "evidence": [
+        "config text_config.enable_moe_block=False",
+        "config text_config.num_experts=None",
+        "config text_config.top_k_experts=None"
+      ]
+    },
+    {
+      "attempt_id": "gx10-gguf-dolphin-mixtral-8x7b",
+      "host": "gx10",
+      "model": "dolphin-mixtral-8x7b.gguf",
+      "local_reference": "/mnt/Calliope/models/dolphin-mixtral-8x7b.gguf",
+      "runtime_surface": "llama_cpp_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "mixtral_style",
+        "expert_count": 8,
+        "experts_per_token": 2
+      },
+      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Stock llama.cpp/GGUF does not expose Python modules or register_forward_hook.",
+        "Semantic route capture requires instrumentation inside the llama.cpp inference engine."
+      ],
+      "evidence": [
+        "Runtime baseline captured in runtime-baseline-full-suite-2026-06-24.md."
+      ]
+    },
+    {
+      "attempt_id": "gx10-gguf-qwen3-30b",
+      "host": "gx10",
+      "model": "qwen3-30b.gguf",
+      "local_reference": "/mnt/Calliope/models/qwen3-30b.gguf",
+      "runtime_surface": "llama_cpp_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "qwen3_moe",
+        "expert_count": 128,
+        "experts_per_token": 8
+      },
+      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Stock llama.cpp/GGUF does not expose Python modules or register_forward_hook.",
+        "Semantic route capture requires instrumentation inside the llama.cpp inference engine."
+      ],
+      "evidence": [
+        "Runtime baseline captured in runtime-baseline-full-suite-2026-06-24.md."
+      ]
+    },
+    {
+      "attempt_id": "gx10-gguf-nemotron-3-super-120b",
+      "host": "gx10",
+      "model": "nemotron-3-super-120b.gguf",
+      "local_reference": "/mnt/Calliope/models/nemotron-3-super-120b.gguf",
+      "runtime_surface": "llama_cpp_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "nemotron_h_moe",
+        "expert_count": 512,
+        "shared_expert_count": 1,
+        "experts_per_token": 22
+      },
+      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Stock llama.cpp/GGUF does not expose Python modules or register_forward_hook.",
+        "Semantic route capture requires instrumentation inside the llama.cpp inference engine.",
+        "Current llama.cpp image also hit a Nemotron-H tensor-layout compatibility blocker."
+      ],
+      "evidence": [
+        "calliope_moe_phase2_evidence.json records llama.cpp tensor-shape compatibility failure."
+      ]
+    }
+  ],
+  "summary": {
+    "real_model_semantic_hook_success_count": 0,
+    "synthetic_hook_success_count": 1,
+    "hookable_transformers_moe_attempts": 1,
+    "hookable_transformers_moe_blocked": [
+      "gx10-hf-nemotron-nano-omni-30b-a3b-nvfp4"
+    ],
+    "pc_hookable_transformers_moe_available": false,
+    "gx10_hookable_transformers_moe_available": true,
+    "next_productive_actions": [
+      "Fetch or select a llama.cpp source checkout and patch direct Mixtral GGUF first with a router trace flag.",
+      "Build or obtain a Nemotron hook runtime image with mamba-ssm and causal-conv1d.",
+      "Or stage one small, current Transformers MoE canary without custom Mamba dependencies.",
+      "Do not broaden into generic Mamba support; the useful Mamba dependency path is Nemotron-specific."
+    ]
+  }
+}

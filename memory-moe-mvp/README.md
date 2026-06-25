@@ -168,6 +168,8 @@ and `summary.json` router events can support that claim.
 - [docs/expert-paging-roadmap.md](docs/expert-paging-roadmap.md): phase roadmap from harness/probes to a future expert-paging actuator.
 - [docs/expert-paging-step-breakdown.md](docs/expert-paging-step-breakdown.md): small-step execution checklist for roadmap phases, evidence, and blockers.
 - [docs/hookable-progression.md](docs/hookable-progression.md): intended progression from passive external observation to internal hookable semantic tracing before fork/controller work.
+- [docs/llama-cpp-engine-hook-track.md](docs/llama-cpp-engine-hook-track.md): correction and contract for llama.cpp engine-level MoE router hooks.
+- [docs/hookable-moe-attempts-pc-gx10-2026-06-25.md](docs/hookable-moe-attempts-pc-gx10-2026-06-25.md): current PC/GX10 hookability attempt matrix summary.
 - [data/expert_paging_roadmap.json](data/expert_paging_roadmap.json): machine-readable roadmap and actuator-spike checklist. Validate it from the repository root with `python3 scripts/plan_expert_paging.py`.
 - [docs/managed-expert-loading.md](docs/managed-expert-loading.md): first managed expert loading contract pass, including observe-only, replay/simulate, and future live-actuator boundaries.
 - [data/managed_expert_loading_plan.json](data/managed_expert_loading_plan.json): machine-readable managed-loading contract. Validate it from the repository root with `python3 scripts/plan_managed_expert_loading.py`.
