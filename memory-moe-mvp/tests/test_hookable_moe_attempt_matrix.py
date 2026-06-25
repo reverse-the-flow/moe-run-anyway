@@ -25,12 +25,17 @@ class HookableMoEAttemptMatrixTests(unittest.TestCase):
         summary = planner.summarize_matrix(matrix)
         self.assertEqual(summary["by_host"]["pc"], 7)
         self.assertEqual(summary["by_host"]["gx10"], 5)
-        self.assertEqual(summary["real_model_semantic_hook_success_count"], 0)
+        self.assertEqual(summary["real_model_semantic_hook_success_count"], 2)
         self.assertEqual(
             summary["by_status"]["blocked_missing_hook_runtime_dependencies"],
             1,
         )
-        self.assertEqual(summary["by_status"]["engine_hook_candidate_uninstrumented"], 8)
+        self.assertEqual(summary["by_status"]["engine_hook_candidate_uninstrumented"], 6)
+        self.assertEqual(summary["by_status"]["semantic_trace_captured"], 2)
+        self.assertEqual(
+            set(summary["real_model_semantic_hook_successes"]),
+            {"gx10-gguf-dolphin-mixtral-8x7b", "gx10-gguf-qwen3-30b"},
+        )
         blocker_ids = {
             item["attempt_id"]
             for item in summary["hookable_transformers_moe_blockers"]

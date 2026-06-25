@@ -76,18 +76,43 @@ No trace should be emitted unless explicitly enabled.
 
 Use direct llama.cpp before Ollama:
 
-1. Patch/build llama.cpp sidecar image.
+1. Patch/build direct llama.cpp.
 2. Run `dolphin-mixtral-8x7b.gguf` first because Mixtral has small, known
    routing shape: 8 experts, top 2.
 3. Run `qwen3-30b.gguf` second for a larger Qwen3 MoE shape.
 4. Treat PC Ollama models as later targets unless they can be run through the
    patched direct llama.cpp binary or a custom Ollama build.
 
-## Current Blocker
+## Current GX10 Result
 
-No llama.cpp source checkout is currently present in the checked locations on
-PC or GX10. The Docker image contains binaries and libraries, not source.
+GX10 now has a direct llama.cpp source checkout at:
 
-The next concrete step is to add or fetch a llama.cpp source checkout matching
-the current runtime image closely enough to patch, build, and run the sidecar
-image with `--moe-router-trace-file`.
+```text
+/home/codexlab/src/llama.cpp-moe-hook
+```
+
+The first patch artifact is:
+
+```text
+memory-moe-mvp/patches/llama-cpp-moe-router-trace-example.patch
+```
+
+That patch adds a `llama-moe-router-trace` example using llama.cpp's eval
+callback. It writes selected expert tensors and selected weight tensors to
+JSONL through `LLAMA_MOE_ROUTER_TRACE_FILE`.
+
+Two GX10 direct GGUF runs succeeded:
+
+- Mixtral: 96 events across 32 layers.
+- Qwen3: 144 events across 48 layers.
+
+See `llama-cpp-engine-hook-traces-2026-06-25.md`.
+
+## Remaining Blockers
+
+- The JSONL needs a repo validator against the shared trace contract.
+- PC Ollama is not instrumented yet; direct patched llama.cpp or a custom Ollama
+  build is still needed there.
+- Nemotron Super GGUF still has the previous tensor-layout/runtime compatibility
+  issue.
+- Routing visibility is not residency observation or residency control.

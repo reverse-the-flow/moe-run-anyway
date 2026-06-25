@@ -95,6 +95,11 @@ engine hook can become a valid semantic-routing source if it emits selected
 expert ids, scores, layer ids, and token/window metadata under the shared trace
 contract.
 
+The first patched direct llama.cpp hook now emits selected expert ids and
+selected weights for GX10 Mixtral and Qwen3 GGUF runs. That upgrades
+`llama_cpp` routing visibility for patched direct runs only. It still does not
+provide residency observation, residency control, or cleanup/restore proof.
+
 `vllm_openai_compatible` covers vLLM or compatible HTTP endpoints. Request
 metadata and timing are not semantic expert ids unless a plugin or runtime
 extension exposes MoE internals.

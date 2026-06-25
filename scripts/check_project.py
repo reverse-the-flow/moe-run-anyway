@@ -29,6 +29,7 @@ PRIMARY_DOCS = [
     MVP_DIR / "docs" / "expert-paging-step-breakdown.md",
     MVP_DIR / "docs" / "hookable-progression.md",
     MVP_DIR / "docs" / "llama-cpp-engine-hook-track.md",
+    MVP_DIR / "docs" / "llama-cpp-engine-hook-traces-2026-06-25.md",
     MVP_DIR / "docs" / "hookable-moe-attempts-pc-gx10-2026-06-25.md",
     MVP_DIR / "docs" / "managed-expert-loading.md",
     MVP_DIR / "docs" / "edge-hardware-quickstart.md",

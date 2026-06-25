@@ -1,12 +1,13 @@
 {
   "schema_version": "hookable-moe-attempt-matrix-v1",
   "generated_at": "2026-06-25",
-  "scope": "Hookability attempts for MoE-class models currently available on the PC and GX10. Runtime GGUF/Ollama/vLLM targets are recorded as engine-hook candidates when they run MoE inference, not as completed semantic hook successes.",
+  "scope": "Hookability attempts for MoE-class models currently available on the PC and GX10. Runtime GGUF/Ollama/vLLM targets are recorded as engine-hook candidates until a patched inference engine emits route artifacts.",
   "honesty_boundary": [
     "Synthetic hook smoke proves the probe pipeline only.",
     "Stock Ollama, GGUF, llama.cpp, and OpenAI-compatible vLLM endpoints do not expose Python forward hooks.",
     "llama.cpp/Ollama MoE targets are still hookable at the inference-engine level, but need an engine patch, fork, or explicit telemetry callback before they produce semantic route artifacts.",
-    "A real-model semantic hook success requires a local Transformers/PyTorch MoE runtime, a compatible Python environment, nonzero hook_count, nonempty router_events.jsonl, and summary router_event_count greater than zero."
+    "A Python real-model semantic hook success requires a local Transformers/PyTorch MoE runtime, a compatible Python environment, nonzero hook_count, nonempty router_events.jsonl, and summary router_event_count greater than zero.",
+    "A llama.cpp real-model semantic hook success requires a patched direct llama.cpp run, nonempty router trace JSONL, selected expert ids, selected weights or scores, layer ids, and model/run evidence."
   ],
   "hosts": {
     "pc": {
@@ -256,14 +257,15 @@
         "expert_count": 8,
         "experts_per_token": 2
       },
-      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
-      "real_model_semantic_trace_captured": false,
-      "blockers": [
-        "Stock llama.cpp/GGUF does not expose Python modules or register_forward_hook.",
-        "Semantic route capture requires instrumentation inside the llama.cpp inference engine."
-      ],
+      "hook_attempt_status": "semantic_trace_captured",
+      "real_model_semantic_trace_captured": true,
+      "blockers": [],
       "evidence": [
-        "Runtime baseline captured in runtime-baseline-full-suite-2026-06-24.md."
+        "Patched llama.cpp eval-callback trace run: memory-moe-mvp/llama-cpp-hook-runs/20260625-mixtral-moe-router-trace-clean.",
+        "Exit code 0; router-events.jsonl contains 96 events.",
+        "Captured 32 selected_experts tensors, 32 selected_weights tensors, and 32 selected_weights_norm tensors.",
+        "Layer ids cover 0..31; top-k selected expert tensor shape is [2,4,1,1] for the short prompt.",
+        "Patch artifact: memory-moe-mvp/patches/llama-cpp-moe-router-trace-example.patch."
       ]
     },
     {
@@ -278,14 +280,15 @@
         "expert_count": 128,
         "experts_per_token": 8
       },
-      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
-      "real_model_semantic_trace_captured": false,
-      "blockers": [
-        "Stock llama.cpp/GGUF does not expose Python modules or register_forward_hook.",
-        "Semantic route capture requires instrumentation inside the llama.cpp inference engine."
-      ],
+      "hook_attempt_status": "semantic_trace_captured",
+      "real_model_semantic_trace_captured": true,
+      "blockers": [],
       "evidence": [
-        "Runtime baseline captured in runtime-baseline-full-suite-2026-06-24.md."
+        "Patched llama.cpp eval-callback trace run: memory-moe-mvp/llama-cpp-hook-runs/20260625-qwen3-moe-router-trace-clean.",
+        "Exit code 0; router-events.jsonl contains 144 events.",
+        "Captured 48 selected_experts tensors, 48 selected_weights tensors, and 48 selected_weights_norm tensors.",
+        "Layer ids cover 0..47; top-k selected expert tensor shape is [8,2,1,1] for the short prompt.",
+        "Patch artifact: memory-moe-mvp/patches/llama-cpp-moe-router-trace-example.patch."
       ]
     },
     {
@@ -314,7 +317,7 @@
     }
   ],
   "summary": {
-    "real_model_semantic_hook_success_count": 0,
+    "real_model_semantic_hook_success_count": 2,
     "synthetic_hook_success_count": 1,
     "hookable_transformers_moe_attempts": 1,
     "hookable_transformers_moe_blocked": [
@@ -323,7 +326,8 @@
     "pc_hookable_transformers_moe_available": false,
     "gx10_hookable_transformers_moe_available": true,
     "next_productive_actions": [
-      "Fetch or select a llama.cpp source checkout and patch direct Mixtral GGUF first with a router trace flag.",
+      "Validate the patched llama.cpp trace JSONL against the shared memory-moe-bridge-v1 contract.",
+      "Package the llama.cpp engine-hook patch and run command as a repeatable Model Plane launch card.",
       "Build or obtain a Nemotron hook runtime image with mamba-ssm and causal-conv1d.",
       "Or stage one small, current Transformers MoE canary without custom Mamba dependencies.",
       "Do not broaden into generic Mamba support; the useful Mamba dependency path is Nemotron-specific."

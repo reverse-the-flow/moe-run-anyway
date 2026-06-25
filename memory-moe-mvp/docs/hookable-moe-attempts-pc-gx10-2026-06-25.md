@@ -2,13 +2,16 @@
 
 ## Result
 
-No real model has produced semantic router traces yet.
+Two real llama.cpp/GGUF models have now produced semantic router traces through
+a patched direct llama.cpp eval-callback hook.
 
 The current state is:
 
 - Synthetic hook pipeline: works.
+- GX10 Mixtral GGUF engine hook: works.
+- GX10 Qwen3 GGUF engine hook: works.
 - GX10 Nemotron HF MoE hook attempt: real target selected, blocked by missing hook-runtime dependencies.
-- PC MoE models: available as Ollama/GGUF runtime targets. They are not Python-forward-hookable, but they are engine-hook candidates if we instrument the underlying inference engine.
+- PC MoE models: available as Ollama/GGUF runtime targets. They are not Python-forward-hookable, and PC Ollama has not been instrumented yet.
 - PC Hugging Face cache: contains local Transformers directories, but they are not MoE.
 
 The machine-readable matrix is `memory-moe-mvp/data/hookable_moe_attempt_matrix.json`.
@@ -59,8 +62,23 @@ Other GX10 MoE models are GGUF/llama.cpp runtime targets:
 - `qwen3-30b.gguf`
 - `nemotron-3-super-120b.gguf`
 
-They remain useful for runtime baselines and sidecar artifacts. For semantic
-routes, they require a llama.cpp engine hook rather than a Python forward hook.
+Mixtral and Qwen3 now have direct llama.cpp engine-hook traces:
+
+- Mixtral run: `memory-moe-mvp/llama-cpp-hook-runs/20260625-mixtral-moe-router-trace-clean`
+  - exit code 0
+  - 96 JSONL events
+  - 32 layers
+  - event kinds: selected experts, raw selected weights, normalized selected weights
+  - top-k shape: `[2,4,1,1]`
+- Qwen3 run: `memory-moe-mvp/llama-cpp-hook-runs/20260625-qwen3-moe-router-trace-clean`
+  - exit code 0
+  - 144 JSONL events
+  - 48 layers
+  - event kinds: selected experts, raw selected weights, normalized selected weights
+  - top-k shape: `[8,2,1,1]`
+
+Nemotron Super GGUF remains a runtime compatibility target, not a completed
+semantic trace target.
 
 ## Next Productive Action
 
@@ -74,7 +92,7 @@ The productive next move is one of:
 - stage one small, current Transformers MoE canary without custom Mamba
   dependencies
 
-For GGUF models that already run in llama.cpp/Ollama, the parallel productive
-move is a minimal llama.cpp engine-hook spike: find the MoE routing site, emit
-layer id, token/window id, selected expert ids, and scores to JSONL, then compare
-that artifact contract with the existing Python forward-hook contract.
+For GGUF models that already run in direct llama.cpp, the next move is to
+validate the JSONL trace events against `memory-moe-bridge-v1` and package the
+patch/run command as a repeatable launch-card path. PC Ollama still needs either
+a custom Ollama build or direct patched llama.cpp access to the same model files.

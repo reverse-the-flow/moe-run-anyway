@@ -1,0 +1,320 @@
+diff --git a/examples/CMakeLists.txt b/examples/CMakeLists.txt
+index 3e0f4d4..e67f7a4 100644
+--- a/examples/CMakeLists.txt
++++ b/examples/CMakeLists.txt
+@@ -15,6 +15,7 @@ else()
+     add_subdirectory(embedding)
+     add_subdirectory(eval-callback)
+ 
++    add_subdirectory(moe-router-trace)
+     add_subdirectory(gguf-hash)
+     add_subdirectory(gguf)
+     add_subdirectory(idle)
+diff --git a/examples/moe-router-trace/CMakeLists.txt b/examples/moe-router-trace/CMakeLists.txt
+new file mode 100644
+index 0000000..8b31db9
+--- /dev/null
++++ b/examples/moe-router-trace/CMakeLists.txt
+@@ -0,0 +1,5 @@
++set(TARGET llama-moe-router-trace)
++add_executable(${TARGET} moe-router-trace.cpp)
++install(TARGETS ${TARGET} RUNTIME)
++target_link_libraries(${TARGET} PRIVATE llama-common llama ${CMAKE_THREAD_LIBS_INIT})
++target_compile_features(${TARGET} PRIVATE cxx_std_17)
+diff --git a/examples/moe-router-trace/moe-router-trace.cpp b/examples/moe-router-trace/moe-router-trace.cpp
+new file mode 100644
+index 0000000..1c95337
+--- /dev/null
++++ b/examples/moe-router-trace/moe-router-trace.cpp
+@@ -0,0 +1,291 @@
++#include "arg.h"
++#include "common.h"
++#include "llama.h"
++#include "log.h"
++
++#include <algorithm>
++#include <clocale>
++#include <cstdint>
++#include <cstdio>
++#include <cstdlib>
++#include <cstring>
++#include <ctime>
++#include <string>
++#include <vector>
++
++struct moe_trace_data {
++    FILE * out = nullptr;
++    std::string model_path;
++    std::vector<uint8_t> data;
++    int event_count = 0;
++    int max_events = 512;
++};
++
++static bool starts_with(const char * value, const char * prefix) {
++    return std::strncmp(value, prefix, std::strlen(prefix)) == 0;
++}
++
++static bool is_layer_tensor_name(const char * value, const char * prefix) {
++    if (!starts_with(value, prefix)) {
++        return false;
++    }
++    return std::strchr(value, '(') == nullptr;
++}
++
++static bool is_moe_trace_tensor(const ggml_tensor * t) {
++    if (t == nullptr) {
++        return false;
++    }
++    return is_layer_tensor_name(t->name, "ffn_moe_topk-") ||
++           is_layer_tensor_name(t->name, "ffn_moe_weights-") ||
++           is_layer_tensor_name(t->name, "ffn_moe_weights_norm-");
++}
++
++static std::string json_escape(const std::string & value) {
++    std::string out;
++    out.reserve(value.size() + 8);
++    for (char c : value) {
++        switch (c) {
++            case '\\': out += "\\\\"; break;
++            case '"':  out += "\\\""; break;
++            case '\n': out += "\\n"; break;
++            case '\r': out += "\\r"; break;
++            case '\t': out += "\\t"; break;
++            default:
++                if (static_cast<unsigned char>(c) < 0x20) {
++                    char buf[7];
++                    std::snprintf(buf, sizeof(buf), "\\u%04x", c);
++                    out += buf;
++                } else {
++                    out += c;
++                }
++        }
++    }
++    return out;
++}
++
++static std::string iso_timestamp_utc() {
++    std::time_t now = std::time(nullptr);
++    std::tm tm_utc {};
++#if defined(_WIN32)
++    gmtime_s(&tm_utc, &now);
++#else
++    gmtime_r(&now, &tm_utc);
++#endif
++    char buf[32];
++    std::strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%SZ", &tm_utc);
++    return buf;
++}
++
++static int parse_layer_id(const char * name) {
++    const char * dash = std::strrchr(name, '-');
++    if (dash == nullptr || dash[1] == '\0') {
++        return -1;
++    }
++    char * end = nullptr;
++    long value = std::strtol(dash + 1, &end, 10);
++    if (end == dash + 1) {
++        return -1;
++    }
++    return static_cast<int>(value);
++}
++
++static int64_t element_count(const ggml_tensor * t) {
++    int64_t total = 1;
++    for (int i = 0; i < GGML_MAX_DIMS; ++i) {
++        total *= t->ne[i];
++    }
++    return total;
++}
++
++static void write_shape(FILE * out, const ggml_tensor * t) {
++    std::fprintf(out, "\"shape\":[");
++    for (int i = 0; i < GGML_MAX_DIMS; ++i) {
++        if (i > 0) {
++            std::fprintf(out, ",");
++        }
++        std::fprintf(out, "%lld", static_cast<long long>(t->ne[i]));
++    }
++    std::fprintf(out, "]");
++}
++
++static void write_i32_values(FILE * out, const uint8_t * data, int64_t count, int64_t max_values) {
++    const int32_t * values = reinterpret_cast<const int32_t *>(data);
++    const int64_t n = std::min(count, max_values);
++    std::fprintf(out, "\"values\":[");
++    for (int64_t i = 0; i < n; ++i) {
++        if (i > 0) {
++            std::fprintf(out, ",");
++        }
++        std::fprintf(out, "%d", values[i]);
++    }
++    std::fprintf(out, "]");
++}
++
++static void write_f32_values(FILE * out, const uint8_t * data, int64_t count, int64_t max_values) {
++    const float * values = reinterpret_cast<const float *>(data);
++    const int64_t n = std::min(count, max_values);
++    std::fprintf(out, "\"values\":[");
++    for (int64_t i = 0; i < n; ++i) {
++        if (i > 0) {
++            std::fprintf(out, ",");
++        }
++        std::fprintf(out, "%.9g", static_cast<double>(values[i]));
++    }
++    std::fprintf(out, "]");
++}
++
++static void write_f16_values(FILE * out, const uint8_t * data, int64_t count, int64_t max_values) {
++    const ggml_fp16_t * values = reinterpret_cast<const ggml_fp16_t *>(data);
++    const int64_t n = std::min(count, max_values);
++    std::fprintf(out, "\"values\":[");
++    for (int64_t i = 0; i < n; ++i) {
++        if (i > 0) {
++            std::fprintf(out, ",");
++        }
++        std::fprintf(out, "%.9g", static_cast<double>(ggml_fp16_to_fp32(values[i])));
++    }
++    std::fprintf(out, "]");
++}
++
++static void write_values(FILE * out, const ggml_tensor * t, const uint8_t * data) {
++    const int64_t max_values = 128;
++    const int64_t count = element_count(t);
++    if (t->type == GGML_TYPE_I32) {
++        write_i32_values(out, data, count, max_values);
++    } else if (t->type == GGML_TYPE_F32) {
++        write_f32_values(out, data, count, max_values);
++    } else if (t->type == GGML_TYPE_F16) {
++        write_f16_values(out, data, count, max_values);
++    } else {
++        std::fprintf(out, "\"values\":[],\"values_omitted_reason\":\"unsupported tensor type\"");
++    }
++    if (count > max_values) {
++        std::fprintf(out, ",\"values_truncated\":true,\"value_count\":%lld", static_cast<long long>(count));
++    } else {
++        std::fprintf(out, ",\"values_truncated\":false,\"value_count\":%lld", static_cast<long long>(count));
++    }
++}
++
++static bool moe_trace_cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
++    auto * trace = static_cast<moe_trace_data *>(user_data);
++    if (trace == nullptr || trace->out == nullptr) {
++        return true;
++    }
++
++    const bool match = is_moe_trace_tensor(t);
++    if (ask) {
++        return match && trace->event_count < trace->max_events;
++    }
++    if (!match) {
++        return true;
++    }
++
++    const size_t n_bytes = ggml_nbytes(t);
++    const bool is_host = ggml_backend_buffer_is_host(t->buffer);
++    const uint8_t * data_ptr = nullptr;
++    if (is_host) {
++        data_ptr = static_cast<const uint8_t *>(t->data);
++    } else {
++        trace->data.resize(n_bytes);
++        ggml_backend_tensor_get(t, trace->data.data(), 0, n_bytes);
++        data_ptr = trace->data.data();
++    }
++
++    const char * tensor_kind = "selected_weights";
++    if (starts_with(t->name, "ffn_moe_topk-")) {
++        tensor_kind = "selected_experts";
++    } else if (starts_with(t->name, "ffn_moe_weights_norm-")) {
++        tensor_kind = "selected_weights_norm";
++    }
++    const int layer_id = parse_layer_id(t->name);
++
++    std::fprintf(trace->out, "{");
++    std::fprintf(trace->out, "\"event_type\":\"llama_cpp_moe_router_tensor\",");
++    std::fprintf(trace->out, "\"contract_version\":\"memory-moe-bridge-v1\",");
++    std::fprintf(trace->out, "\"timestamp\":\"%s\",", iso_timestamp_utc().c_str());
++    std::fprintf(trace->out, "\"backend_family\":\"llama_cpp\",");
++    std::fprintf(trace->out, "\"source\":\"llama_cpp_eval_callback\",");
++    std::fprintf(trace->out, "\"model\":\"%s\",", json_escape(trace->model_path).c_str());
++    std::fprintf(trace->out, "\"tensor_name\":\"%s\",", json_escape(t->name).c_str());
++    std::fprintf(trace->out, "\"tensor_kind\":\"%s\",", tensor_kind);
++    std::fprintf(trace->out, "\"layer_id\":%d,", layer_id);
++    std::fprintf(trace->out, "\"ggml_type\":\"%s\",", ggml_type_name(t->type));
++    write_shape(trace->out, t);
++    std::fprintf(trace->out, ",");
++    write_values(trace->out, t, data_ptr);
++    std::fprintf(trace->out, "}\n");
++    std::fflush(trace->out);
++
++    trace->event_count += 1;
++    return true;
++}
++
++static bool run(llama_context * ctx, const common_params & params) {
++    const llama_model * model = llama_get_model(ctx);
++    const llama_vocab * vocab = llama_model_get_vocab(model);
++    const bool add_bos = llama_vocab_get_add_bos(vocab);
++
++    std::vector<llama_token> tokens = common_tokenize(ctx, params.prompt, add_bos, true);
++    if (tokens.empty()) {
++        LOG_ERR("%s : no input tokens to process\n", __func__);
++        return false;
++    }
++
++    LOG_INF("number of input tokens = %zu\n", tokens.size());
++    if (llama_decode(ctx, llama_batch_get_one(tokens.data(), tokens.size()))) {
++        LOG_ERR("%s : failed to eval\n", __func__);
++        return false;
++    }
++
++    return true;
++}
++
++int main(int argc, char ** argv) {
++    std::setlocale(LC_NUMERIC, "C");
++
++    const char * trace_file = std::getenv("LLAMA_MOE_ROUTER_TRACE_FILE");
++    if (trace_file == nullptr || trace_file[0] == '\0') {
++        LOG_ERR("LLAMA_MOE_ROUTER_TRACE_FILE must point to a JSONL trace path\n");
++        return 2;
++    }
++
++    moe_trace_data trace;
++    trace.out = std::fopen(trace_file, "w");
++    if (trace.out == nullptr) {
++        LOG_ERR("failed to open trace file: %s\n", trace_file);
++        return 2;
++    }
++    if (const char * max_events = std::getenv("LLAMA_MOE_ROUTER_TRACE_MAX_EVENTS")) {
++        trace.max_events = std::max(1, std::atoi(max_events));
++    }
++
++    common_params params;
++    common_init();
++    if (!common_params_parse(argc, argv, params, LLAMA_EXAMPLE_COMMON)) {
++        std::fclose(trace.out);
++        return 1;
++    }
++    params.cb_eval = moe_trace_cb_eval;
++    params.cb_eval_user_data = &trace;
++    params.warmup = false;
++    trace.model_path = params.model.path;
++
++    llama_backend_init();
++    llama_numa_init(params.numa);
++
++    auto llama_init = common_init_from_params(params);
++    auto * ctx = llama_init->context();
++    if (ctx == nullptr) {
++        LOG_ERR("%s : failed to init\n", __func__);
++        std::fclose(trace.out);
++        return 1;
++    }
++
++    const bool ok = run(ctx, params);
++    LOG_INF("moe router trace events written: %d\n", trace.event_count);
++
++    std::fclose(trace.out);
++    llama_backend_free();
++    return ok ? 0 : 1;
++}

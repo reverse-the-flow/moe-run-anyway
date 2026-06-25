@@ -71,7 +71,7 @@ The next real blockers are target/runtime specific:
 - Python hook track: a runnable local Transformers MoE with compatible runtime
   dependencies, or a cloud run with enough memory.
 - llama.cpp hook track: a source checkout and minimal patch that can emit router
-  events for a direct GGUF run.
+  events for a direct GGUF run. This now exists for GX10 Mixtral and Qwen3.
 
 The safe local hookable preflight is:
 
@@ -87,10 +87,10 @@ Python-track semantic routing artifact still needs the approved command without
 `--dry-run`, pointed at a local Transformers-style MoE directory whose router or
 gate modules expose expert ids, weights, or logits through forward hooks.
 
-The first llama.cpp-track semantic routing artifact should use direct
-llama.cpp, not stock Ollama. Start with Mixtral GGUF, add an explicit trace flag
-such as `--moe-router-trace-file`, and write one JSONL event per observed
-router decision using the same `memory-moe-bridge-v1` boundary.
+The first llama.cpp-track semantic routing artifact uses direct llama.cpp, not
+stock Ollama. The initial patch uses `LLAMA_MOE_ROUTER_TRACE_FILE` and writes
+JSONL route tensor events for Mixtral and Qwen3 under the same
+`memory-moe-bridge-v1` boundary.
 
 ## Level 3: Fork, Runtime Actuator, Or Controller
 
@@ -114,7 +114,8 @@ Fork/controller work should start only when:
 3. Keep the PC/GX10 hookability matrix current.
 4. For Python hooks, dry-run `run_transformers_forward_probe.py` against a
    compatible local Transformers MoE path.
-5. For llama.cpp hooks, fetch or select a source checkout, patch the router
-   selection point, and run Mixtral GGUF first.
-6. Capture one real semantic routing artifact bundle.
-7. Only then revisit controller policies or live expert-loading actuators.
+5. Validate the llama.cpp route JSONL against the shared trace contract.
+6. Package the llama.cpp patch/run path into a repeatable launch card.
+7. Capture a Python-track semantic routing artifact when a compatible
+   Transformers MoE runtime is available.
+8. Only then revisit controller policies or live expert-loading actuators.
