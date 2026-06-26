@@ -64,6 +64,7 @@ controller, or live actuator work.
 | Build a thin Python target runner around `ForwardHookMoEProbe`. | planned | Expected: runner loads one user-provided local model, attaches hooks, runs prompt cases, writes existing probe artifacts, and does not create a new artifact shape. | Needs compatible Transformers target/runtime. |
 | Build a minimal llama.cpp router trace patch. | done | `patches/llama-cpp-moe-router-trace-example.patch` adds an eval-callback trace example; GX10 and PC runs emitted selected expert ids and weights. | None for direct GGUF hook smoke. |
 | Capture router outputs with hooks. | active | GX10 Mixtral: 96 validated events across 32 layers. GX10 Qwen3: 144 validated events across 48 layers. PC Mixtral: 96 events across 32 layers. PC Nemotron Cascade: 69 events across 23 routed layers. PC Qwen3 Coder: 144 events across 48 layers. | Needs Python-track target and repeatable launch-card packaging. |
+| Preflight oversized GGUF MoE targets. | done | PC Llama 4 Scout metadata preflight found 48 routed MoE layers, 16 experts, top-k 1. PC DeepSeek V3.1 metadata preflight found 58 routed MoE layers, 256 experts, 1 shared expert, top-k 8. | Full router traces need a higher-memory host or Docker memory increase. |
 | Capture dense or full-runtime fallback output. | planned | Expected: baseline outputs for the same prompt set. | Needs runnable target. |
 | Validate trace artifacts against the shared contract. | planned | Expected: trace validation report. | Needs trace artifacts. |
 | Record hook failure modes. | planned | Expected: failures are explicit and do not downgrade to timing inference. | Needs hook attempts. |
@@ -109,11 +110,13 @@ trustworthy routing traces.
 3. PC Ollama itself is not instrumented with the hook yet, but local Ollama
    blobs are readable through direct patched llama.cpp.
 4. Nemotron-H GGUF loading is blocked on current llama.cpp tensor-layout
-   compatibility.
-5. No live runtime actuator exists.
-6. Residency observation and residency control are missing.
-7. Cleanup/restore proof is missing.
-8. Processed expert-store work needs real checkpoint files and disk, but should
+   compatibility; GX10 still has the 86.8 GB local GGUF.
+5. PC Llama 4 Scout and DeepSeek V3.1 full router traces need a higher-memory
+   host or Docker memory increase.
+6. No live runtime actuator exists.
+7. Residency observation and residency control are missing.
+8. Cleanup/restore proof is missing.
+9. Processed expert-store work needs real checkpoint files and disk, but should
    not require loading the full model into RAM.
 
 ## Next Achievable Steps

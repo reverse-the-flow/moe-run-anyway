@@ -38,10 +38,17 @@ Validated PC direct llama.cpp hook traces:
 See `pc-llama-cpp-router-traces-2026-06-26.md`.
 
 The remaining large PC Ollama candidates are present but should be scheduled
-separately:
+separately for full router traces:
 
-- Llama 4 Scout blob: 63 GB.
-- DeepSeek V3.1 blob: 159 GB.
+- Llama 4 Scout blob: 63 GB; metadata preflight found 48 routed MoE layers,
+  16 experts, and top-k 1.
+- DeepSeek V3.1 blob: 159 GB; metadata preflight found 58 routed MoE layers,
+  256 experts, 1 shared expert, and top-k 8.
+
+The stock `llama-gguf r n` path was killed with exit 137 on both large blobs in
+the current 31 GiB Docker VM. The lighter `scripts/gguf_moe_preflight.py` path
+completed because it reads metadata and tensor-info records without loading
+weights. See `pc-large-gguf-moe-preflights-2026-06-26.md`.
 
 The PC Hugging Face cache was also checked:
 
@@ -89,8 +96,10 @@ Mixtral and Qwen3 now have direct llama.cpp engine-hook traces:
   - event kinds: selected experts, raw selected weights, normalized selected weights
   - top-k shape: `[8,2,1,1]`
 
-Nemotron Super GGUF remains a runtime compatibility target, not a completed
-semantic trace target.
+Nemotron Super GGUF remains blocked on llama.cpp runtime compatibility. The
+GX10 inventory check found the local GGUF at about 86.8 GB, but the existing
+evidence still points to a Nemotron-H tensor-layout failure before a semantic
+router trace can be captured.
 
 ## Next Productive Action
 
@@ -103,8 +112,11 @@ The productive next move is one of:
   `causal-conv1d`
 - stage one small, current Transformers MoE canary without custom Mamba
   dependencies
+- resolve llama.cpp Nemotron-H GGUF compatibility before retrying Nemotron
+  Super with the patched router-trace runner
 
 For GGUF models that already run in direct llama.cpp, the next move is to
 package the patched Docker image and run command as a repeatable launch-card
-path. PC Ollama itself is still unpatched, but its blobs are now proven readable
-through direct patched llama.cpp.
+path. PC Ollama itself is still unpatched, but three of its blobs are now proven
+readable through direct patched llama.cpp and two oversized blobs have metadata
+preflight coverage.

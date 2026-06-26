@@ -17,6 +17,8 @@ HOOK_STATUSES = {
     "screened_non_moe",
     "engine_hook_candidate_uninstrumented",
     "engine_debug_route_tensors_captured",
+    "blocked_host_memory_preflight",
+    "blocked_llama_cpp_runtime_compatibility",
     "blocked_missing_hook_runtime_dependencies",
     "semantic_trace_captured",
 }
@@ -56,6 +58,8 @@ def validate_attempt(attempt: JSONDict) -> list[str]:
     if status in {
         "engine_hook_candidate_uninstrumented",
         "engine_debug_route_tensors_captured",
+        "blocked_host_memory_preflight",
+        "blocked_llama_cpp_runtime_compatibility",
     } and surface not in RUNTIME_ONLY_SURFACES:
         errors.append(f"{attempt_id}: engine-hook attempts must use a runtime-only surface")
 

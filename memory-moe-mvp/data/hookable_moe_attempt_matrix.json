@@ -163,18 +163,23 @@
         "is_moe": true,
         "family": "llama4_scout_moe",
         "expert_count": 16,
-        "experts_per_token": null
+        "experts_per_token": 1,
+        "routed_layer_count": 48
       },
-      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "hook_attempt_status": "blocked_host_memory_preflight",
       "real_model_semantic_trace_captured": false,
       "blockers": [
-        "Stock Ollama/GGUF does not expose Python modules or register_forward_hook.",
-        "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
+        "The 63G model blob is larger than the current Docker Desktop memory limit of about 31 GiB.",
+        "Stock llama.cpp llama-gguf metadata-only preflight was killed with exit 137 in the current Docker VM.",
+        "Full patched llama.cpp router trace was deferred to a higher-memory run window."
       ],
       "evidence": [
         "PC Docker Ollama list includes llama4:17b-scout-16e-instruct-q4_K_M.",
         "Ollama Modelfile maps the model to /root/.ollama/models/blobs/sha256-9d507a36062c2845dd3bb3e93364e9abc1607118acd8650727a700f72fb126e5.",
-        "Read-only blob size check found a 63G model file, so this should be attempted in a separate high-memory run window."
+        "Read-only blob size check found a 63G model file, so this should be attempted in a separate high-memory run window.",
+        "Stock ghcr.io/ggml-org/llama.cpp:full-cuda /app/llama-gguf r n preflight exited 137 after reading GGUF metadata keys and much of the tensor table.",
+        "scripts/gguf_moe_preflight.py succeeded without loading tensor data: architecture=llama4, block_count=48, expert_count=16, expert_used_count=1, tensor_count=1182.",
+        "Lightweight preflight counted 48 routed MoE layers and 48 each of ffn_gate_inp, ffn_down_exps, ffn_gate_exps, and ffn_up_exps tensors."
       ]
     },
     {
@@ -186,19 +191,26 @@
       "moe_metadata": {
         "is_moe": true,
         "family": "deepseek_v3_moe",
-        "expert_count": null,
-        "experts_per_token": null
+        "expert_count": 256,
+        "shared_expert_count": 1,
+        "experts_per_token": 8,
+        "leading_dense_block_count": 3,
+        "routed_layer_count": 58
       },
-      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "hook_attempt_status": "blocked_host_memory_preflight",
       "real_model_semantic_trace_captured": false,
       "blockers": [
-        "Stock Ollama/GGUF does not expose Python modules or register_forward_hook.",
-        "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
+        "The 159G model blob is far larger than the current Docker Desktop memory limit of about 31 GiB.",
+        "Stock llama.cpp llama-gguf metadata-only preflight was killed with exit 137 in the current Docker VM.",
+        "Full patched llama.cpp router trace was deferred to a higher-memory host or run window."
       ],
       "evidence": [
         "PC Docker Ollama list includes DeepSeek-V3.1 GGUF.",
         "Ollama Modelfile maps the model to /root/.ollama/models/blobs/sha256-b66917dec6d7a9e9e923dbd083a0c98526baddf49e8f9a47116f6b86d283d363.",
-        "Read-only blob size check found a 159G model file, so this should be attempted on a host/run window with enough memory and disk headroom."
+        "Read-only blob size check found a 159G model file, so this should be attempted on a host/run window with enough memory and disk headroom.",
+        "Stock ghcr.io/ggml-org/llama.cpp:full-cuda /app/llama-gguf r n preflight exited 137 after reading GGUF metadata keys and much of the tensor table.",
+        "scripts/gguf_moe_preflight.py succeeded without loading tensor data: architecture=deepseek2, block_count=61, leading_dense_block_count=3, expert_count=256, expert_shared_count=1, expert_used_count=8, tensor_count=1086.",
+        "Lightweight preflight counted 58 routed MoE layers and 58 each of exp_probs_b, ffn_gate_inp, ffn_down_exps, ffn_gate_exps, and ffn_up_exps tensors."
       ]
     },
     {
@@ -224,7 +236,9 @@
       "evidence": [
         "memory-moe-mvp/docs/nemotron-hook-trace-attempt-2026-06-24.md",
         "Synthetic hook smoke: hook_count=2, router_event_count=4, unique_experts_seen=5",
-        "Dry-run dependency scanner now reports missing mamba_ssm and causal_conv1d before live model load"
+        "Dry-run dependency scanner now reports missing mamba_ssm and causal_conv1d before live model load",
+        "2026-06-26 GX10 rootless vLLM image check: torch=True, transformers=True, accelerate=True, mamba_ssm=False, causal_conv1d=False.",
+        "GX10 model directory is present at /mnt/Calliope/models/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-NVFP4-hf with observed size about 21G."
       ]
     },
     {
@@ -315,7 +329,7 @@
         "shared_expert_count": 1,
         "experts_per_token": 22
       },
-      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "hook_attempt_status": "blocked_llama_cpp_runtime_compatibility",
       "real_model_semantic_trace_captured": false,
       "blockers": [
         "Stock llama.cpp/GGUF does not expose Python modules or register_forward_hook.",
@@ -323,7 +337,9 @@
         "Current llama.cpp image also hit a Nemotron-H tensor-layout compatibility blocker."
       ],
       "evidence": [
-        "calliope_moe_phase2_evidence.json records llama.cpp tensor-shape compatibility failure."
+        "calliope_moe_phase2_evidence.json records llama.cpp tensor-shape compatibility failure.",
+        "2026-06-26 GX10 inventory check found /mnt/Calliope/models/nemotron-3-super-120b.gguf with observed size about 86.8G.",
+        "This remains an engine-hook candidate only after llama.cpp Nemotron-H GGUF compatibility is resolved."
       ]
     }
   ],
@@ -338,7 +354,7 @@
     "gx10_hookable_transformers_moe_available": true,
     "next_productive_actions": [
       "Package the llama.cpp engine-hook Docker image and run command as a repeatable Model Plane launch card.",
-      "Attempt remaining large PC Ollama MoE candidates, starting with Llama 4 Scout before DeepSeek V3.1 if local disk and Docker memory permit.",
+      "Run Llama 4 Scout and DeepSeek V3.1 router traces on a higher-memory host or after increasing Docker memory beyond their blob-size requirements.",
       "Build or obtain a Nemotron hook runtime image with mamba-ssm and causal-conv1d.",
       "Or stage one small, current Transformers MoE canary without custom Mamba dependencies.",
       "Do not broaden into generic Mamba support; the useful Mamba dependency path is Nemotron-specific."

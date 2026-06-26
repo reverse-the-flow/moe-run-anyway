@@ -30,7 +30,9 @@ class HookableMoEAttemptMatrixTests(unittest.TestCase):
             summary["by_status"]["blocked_missing_hook_runtime_dependencies"],
             1,
         )
-        self.assertEqual(summary["by_status"]["engine_hook_candidate_uninstrumented"], 3)
+        self.assertEqual(summary["by_status"]["blocked_host_memory_preflight"], 2)
+        self.assertEqual(summary["by_status"]["blocked_llama_cpp_runtime_compatibility"], 1)
+        self.assertEqual(summary["by_status"].get("engine_hook_candidate_uninstrumented", 0), 0)
         self.assertEqual(summary["by_status"].get("engine_debug_route_tensors_captured", 0), 0)
         self.assertEqual(summary["by_status"]["semantic_trace_captured"], 5)
         self.assertEqual(
