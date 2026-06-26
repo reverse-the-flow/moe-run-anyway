@@ -2,7 +2,7 @@
 
 ## Result
 
-Two real llama.cpp/GGUF models have now produced semantic router traces through
+Five real llama.cpp/GGUF runs have now produced semantic router traces through
 a patched direct llama.cpp eval-callback hook.
 
 The current state is:
@@ -11,7 +11,7 @@ The current state is:
 - GX10 Mixtral GGUF engine hook: works.
 - GX10 Qwen3 GGUF engine hook: works.
 - GX10 Nemotron HF MoE hook attempt: real target selected, blocked by missing hook-runtime dependencies.
-- PC MoE models: available as Ollama/GGUF runtime targets. They are not Python-forward-hookable, and PC Ollama has not been instrumented yet.
+- PC Mixtral, Nemotron Cascade, and Qwen3 Coder Ollama blobs: work through the patched direct llama.cpp hook runner.
 - PC Hugging Face cache: contains local Transformers directories, but they are not MoE.
 
 The machine-readable matrix is `memory-moe-mvp/data/hookable_moe_attempt_matrix.json`.
@@ -26,10 +26,22 @@ python3 scripts/plan_hookable_moe_attempts.py --json
 The PC has useful runtime MoE targets in Docker Ollama, including Mixtral,
 Nemotron, Qwen3-Coder A3B, Llama 4 Scout, and DeepSeek V3.1 GGUF models. These
 are not Python-forward-hookable. They do not expose Python modules or
-`register_forward_hook()`. They should not be dismissed as impossible, though:
-if llama.cpp/Ollama is routing the MoE, the route decision exists inside the
-inference engine. The missing piece is an engine-level hook, patch, fork, or
-telemetry callback that emits router choices as artifacts.
+`register_forward_hook()`. The productive path is the llama.cpp engine-hook
+track: read the Ollama blobs directly with a patched llama.cpp runner.
+
+Validated PC direct llama.cpp hook traces:
+
+- Mixtral: 96 events, 32 layers, top-k 2, 8 unique experts.
+- Nemotron Cascade: 69 events, 23 routed layers, top-k 6, 125 unique experts.
+- Qwen3 Coder: 144 events, 48 layers, top-k 8, 128 unique experts.
+
+See `pc-llama-cpp-router-traces-2026-06-26.md`.
+
+The remaining large PC Ollama candidates are present but should be scheduled
+separately:
+
+- Llama 4 Scout blob: 63 GB.
+- DeepSeek V3.1 blob: 159 GB.
 
 The PC Hugging Face cache was also checked:
 
@@ -93,6 +105,6 @@ The productive next move is one of:
   dependencies
 
 For GGUF models that already run in direct llama.cpp, the next move is to
-validate the JSONL trace events against `memory-moe-bridge-v1` and package the
-patch/run command as a repeatable launch-card path. PC Ollama still needs either
-a custom Ollama build or direct patched llama.cpp access to the same model files.
+package the patched Docker image and run command as a repeatable launch-card
+path. PC Ollama itself is still unpatched, but its blobs are now proven readable
+through direct patched llama.cpp.

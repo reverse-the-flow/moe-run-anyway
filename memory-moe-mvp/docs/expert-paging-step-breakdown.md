@@ -60,10 +60,10 @@ controller, or live actuator work.
 | --- | --- | --- | --- |
 | Confirm synthetic hook smoke path. | done | `run_forward_probe_demo.py` exercises hook attach, router event capture, spans, and window summaries without a model. | None. |
 | Classify current PC/GX10 hook candidates. | done | `data/hookable_moe_attempt_matrix.json` records PC HF non-MoEs, PC/GX10 GGUF engine-hook candidates, and the GX10 Nemotron HF dependency blocker. | None. |
-| Select a hookable MoE target. | done | Mixtral and Qwen3 GGUF produced llama.cpp engine-hook traces; GX10 Nemotron HF remains a Python hook candidate blocked by missing trusted-code dependencies. | Python track still needs a compatible Transformers MoE runtime. |
+| Select a hookable MoE target. | done | GX10 Mixtral/Qwen3 and PC Mixtral/Nemotron Cascade/Qwen3 Coder produced llama.cpp engine-hook traces; GX10 Nemotron HF remains a Python hook candidate blocked by missing trusted-code dependencies. | Python track still needs a compatible Transformers MoE runtime. |
 | Build a thin Python target runner around `ForwardHookMoEProbe`. | planned | Expected: runner loads one user-provided local model, attaches hooks, runs prompt cases, writes existing probe artifacts, and does not create a new artifact shape. | Needs compatible Transformers target/runtime. |
-| Build a minimal llama.cpp router trace patch. | done | `patches/llama-cpp-moe-router-trace-example.patch` adds an eval-callback trace example; Mixtral and Qwen3 runs emitted selected expert ids and weights. | None for direct GX10 GGUF smoke. |
-| Capture router outputs with hooks. | active | Mixtral: 96 validated events across 32 layers. Qwen3: 144 validated events across 48 layers. | Needs Python-track target and repeatable launch-card packaging. |
+| Build a minimal llama.cpp router trace patch. | done | `patches/llama-cpp-moe-router-trace-example.patch` adds an eval-callback trace example; GX10 and PC runs emitted selected expert ids and weights. | None for direct GGUF hook smoke. |
+| Capture router outputs with hooks. | active | GX10 Mixtral: 96 validated events across 32 layers. GX10 Qwen3: 144 validated events across 48 layers. PC Mixtral: 96 events across 32 layers. PC Nemotron Cascade: 69 events across 23 routed layers. PC Qwen3 Coder: 144 events across 48 layers. | Needs Python-track target and repeatable launch-card packaging. |
 | Capture dense or full-runtime fallback output. | planned | Expected: baseline outputs for the same prompt set. | Needs runnable target. |
 | Validate trace artifacts against the shared contract. | planned | Expected: trace validation report. | Needs trace artifacts. |
 | Record hook failure modes. | planned | Expected: failures are explicit and do not downgrade to timing inference. | Needs hook attempts. |
@@ -106,7 +106,8 @@ trustworthy routing traces.
 1. Python hookable semantic routing still needs a compatible local/cloud
    Transformers MoE runtime.
 2. Stock endpoints do not expose semantic expert routing.
-3. PC Ollama is not instrumented with the llama.cpp engine hook yet.
+3. PC Ollama itself is not instrumented with the hook yet, but local Ollama
+   blobs are readable through direct patched llama.cpp.
 4. Nemotron-H GGUF loading is blocked on current llama.cpp tensor-layout
    compatibility.
 5. No live runtime actuator exists.
@@ -118,7 +119,7 @@ trustworthy routing traces.
 ## Next Achievable Steps
 
 1. Run the synthetic hook smoke after hookable-probe edits.
-2. Package the llama.cpp patch/run command as a repeatable launch-card path.
+2. Package the llama.cpp Docker image and run command as a repeatable launch-card path.
 3. Build the thinnest real-model runner around `ForwardHookMoEProbe` when a
    compatible Transformers MoE runtime is available.
 4. Add the expert inventory manifest schema as a supporting offline track.

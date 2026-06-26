@@ -8,6 +8,12 @@ eval callback can expose MoE route tensors.
 
 This is a route-tensor smoke, not the structured JSONL trace contract.
 
+This note is now superseded by the structured PC trace report:
+
+```text
+pc-llama-cpp-router-traces-2026-06-26.md
+```
+
 ## Model Blob
 
 Ollama maps `dolphin-mixtral:8x7b` to:
@@ -47,11 +53,7 @@ docker run --rm --entrypoint /app/llama-debug \
 
 ## Boundary
 
-This confirms the PC Ollama Mixtral blob is direct-llama.cpp hook-readable. It
-does not yet produce `memory-moe-bridge-v1` JSONL because the PC stock
-llama.cpp image has binaries and libraries, but no headers or CMake for building
-the structured trace patch in-place.
-
-The next PC step is to build or package the patched `llama-moe-router-trace`
-binary for the PC container/runtime, then rerun this same blob through the JSONL
-validator.
+This confirmed the PC Ollama Mixtral blob was direct-llama.cpp hook-readable.
+The next step has now been completed: the patched `llama-moe-router-trace`
+binary was packaged in `memory-moe-llama-router-trace:latest`, and the same
+blob produced validated `memory-moe-bridge-v1` JSONL.

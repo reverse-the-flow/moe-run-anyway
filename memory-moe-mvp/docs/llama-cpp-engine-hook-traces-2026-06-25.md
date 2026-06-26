@@ -109,14 +109,16 @@ Result:
 ## Boundary
 
 This proves routing visibility for patched direct llama.cpp. It does not prove
-expert residency, expert paging, preload/evict control, cleanup, or PC Ollama
-instrumentation.
+expert residency, expert paging, preload/evict control, or cleanup.
 
 The raw trace directories are generated run artifacts and are ignored by git.
+
+PC Ollama blob access was validated later with the same patched direct llama.cpp
+path. See `pc-llama-cpp-router-traces-2026-06-26.md`.
 
 ## Next
 
 1. Convert the patch/run command into a repeatable Model Plane launch card.
-2. Decide whether PC Ollama should be bypassed with direct patched llama.cpp or
-   rebuilt with equivalent callback support.
+2. Attempt remaining large PC Ollama MoE candidates through direct patched
+   llama.cpp when disk and Docker memory permit.
 3. Keep Nemotron HF on the dependency-specific Python hook lane.

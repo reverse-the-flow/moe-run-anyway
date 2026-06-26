@@ -83,7 +83,7 @@ Use direct llama.cpp before Ollama:
 4. Treat PC Ollama models as later targets unless they can be run through the
    patched direct llama.cpp binary or a custom Ollama build.
 
-## Current GX10 Result
+## Current Result
 
 GX10 now has a direct llama.cpp source checkout at:
 
@@ -108,12 +108,21 @@ Two GX10 direct GGUF runs succeeded:
 
 See `llama-cpp-engine-hook-traces-2026-06-25.md`.
 
+Three PC Docker Ollama blobs also succeeded through the patched direct
+llama.cpp Docker image:
+
+- Mixtral: 96 events across 32 layers.
+- Nemotron Cascade: 69 events across 23 routed layers.
+- Qwen3 Coder: 144 events across 48 layers.
+
+See `pc-llama-cpp-router-traces-2026-06-26.md`.
+
 ## Remaining Blockers
 
-- The direct Mixtral and Qwen3 JSONL traces validate with
+- The direct GX10 and PC JSONL traces validate with
   `scripts/validate_llama_cpp_router_trace.py`.
-- PC Ollama is not instrumented yet; direct patched llama.cpp or a custom Ollama
-  build is still needed there.
+- PC Ollama itself is not patched, but its local blobs are hook-readable through
+  direct patched llama.cpp.
 - Nemotron Super GGUF still has the previous tensor-layout/runtime compatibility
   issue.
 - Routing visibility is not residency observation or residency control.

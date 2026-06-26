@@ -92,19 +92,18 @@
         "expert_count": 8,
         "experts_per_token": 2
       },
-      "hook_attempt_status": "engine_debug_route_tensors_captured",
-      "real_model_semantic_trace_captured": false,
-      "blockers": [
-        "Stock Ollama/GGUF does not expose Python modules or register_forward_hook.",
-        "Stock llama.cpp debug output exposed route tensors, but this PC attempt has not produced memory-moe-bridge-v1 JSONL yet.",
-        "The local stock llama.cpp image has binaries/libs but no headers or CMake for building the structured trace patch in-place."
-      ],
+      "hook_attempt_status": "semantic_trace_captured",
+      "real_model_semantic_trace_captured": true,
+      "blockers": [],
       "evidence": [
         "PC Docker Ollama list includes dolphin-mixtral:8x7b.",
         "Ollama Modelfile maps the model to /root/.ollama/models/blobs/sha256-5041ba4278429fe475782b889471b5ff065a6cce5c3a539bd61d1e457f1961de.",
         "Read-only Docker run with ghcr.io/ggml-org/llama.cpp:full-cuda /app/llama-debug exited 0 against that blob.",
         "Debug callback output contained 32 ffn_moe_topk layer tensors and 32 ffn_moe_weights_norm layer tensors.",
-        "First route tensor shape was {2,4,1,1}; prompt token count was 4."
+        "First route tensor shape was {2,4,1,1}; prompt token count was 4.",
+        "Patched memory-moe-llama-router-trace:latest run emitted memory-moe-bridge-v1 JSONL from the same Ollama blob.",
+        "Validated .codex_tmp/pc-router-trace-mixtral-jsonl/router-events.jsonl with scripts/validate_llama_cpp_router_trace.py using --expected-layers 32 and required selected_experts/selected_weights/selected_weights_norm kinds.",
+        "Captured 96 events across 32 layers; top-k was 2; unique experts seen: 8."
       ]
     },
     {
@@ -116,18 +115,19 @@
       "moe_metadata": {
         "is_moe": true,
         "family": "nemotron_h_moe",
-        "expert_count": null,
-        "experts_per_token": null
+        "expert_count": 128,
+        "experts_per_token": 6
       },
-      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
-      "real_model_semantic_trace_captured": false,
-      "blockers": [
-        "Stock Ollama/GGUF does not expose Python modules or register_forward_hook.",
-        "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
-      ],
+      "hook_attempt_status": "semantic_trace_captured",
+      "real_model_semantic_trace_captured": true,
+      "blockers": [],
       "evidence": [
         "PC Docker Ollama list includes the Nemotron Cascade GGUF model.",
-        "Prior PC runtime probe recorded this as nemotron_h_moe."
+        "Prior PC runtime probe recorded this as nemotron_h_moe.",
+        "Ollama Modelfile maps the model to /root/.ollama/models/blobs/sha256-916a371ed63edd6602da950df2c1eed5ff74bfb9dac2ece64c7cabaafb3e2922.",
+        "Patched memory-moe-llama-router-trace:latest run exited 0 and emitted memory-moe-bridge-v1 JSONL from the Ollama blob.",
+        "Validated .codex_tmp/pc-router-trace-nemotron-cascade-jsonl/router-events.jsonl with scripts/validate_llama_cpp_router_trace.py using --expected-layers 23 and required selected_experts/selected_weights/selected_weights_norm kinds.",
+        "Captured 69 events across 23 routed layers; top-k was 6; unique experts seen: 125."
       ]
     },
     {
@@ -139,17 +139,18 @@
       "moe_metadata": {
         "is_moe": true,
         "family": "qwen3_moe",
-        "expert_count": null,
-        "experts_per_token": null
+        "expert_count": 128,
+        "experts_per_token": 8
       },
-      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
-      "real_model_semantic_trace_captured": false,
-      "blockers": [
-        "Stock Ollama/GGUF does not expose Python modules or register_forward_hook.",
-        "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
-      ],
+      "hook_attempt_status": "semantic_trace_captured",
+      "real_model_semantic_trace_captured": true,
+      "blockers": [],
       "evidence": [
-        "PC Docker Ollama list includes Qwen3-Coder-30B-A3B GGUF."
+        "PC Docker Ollama list includes Qwen3-Coder-30B-A3B GGUF.",
+        "Ollama Modelfile maps the model to /root/.ollama/models/blobs/sha256-17d51f5310e9a598e5ac914d30f401fb2d1bc3b6a06a846919099eac09364ae1.",
+        "Patched memory-moe-llama-router-trace:latest run exited 0 and emitted memory-moe-bridge-v1 JSONL from the Ollama blob.",
+        "Validated .codex_tmp/pc-router-trace-qwen3-coder-jsonl/router-events.jsonl with scripts/validate_llama_cpp_router_trace.py using --expected-layers 48 and required selected_experts/selected_weights/selected_weights_norm kinds.",
+        "Captured 144 events across 48 layers; top-k was 8; unique experts seen: 128."
       ]
     },
     {
@@ -171,7 +172,9 @@
         "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
       ],
       "evidence": [
-        "PC Docker Ollama list includes llama4:17b-scout-16e-instruct-q4_K_M."
+        "PC Docker Ollama list includes llama4:17b-scout-16e-instruct-q4_K_M.",
+        "Ollama Modelfile maps the model to /root/.ollama/models/blobs/sha256-9d507a36062c2845dd3bb3e93364e9abc1607118acd8650727a700f72fb126e5.",
+        "Read-only blob size check found a 63G model file, so this should be attempted in a separate high-memory run window."
       ]
     },
     {
@@ -193,7 +196,9 @@
         "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
       ],
       "evidence": [
-        "PC Docker Ollama list includes DeepSeek-V3.1 GGUF."
+        "PC Docker Ollama list includes DeepSeek-V3.1 GGUF.",
+        "Ollama Modelfile maps the model to /root/.ollama/models/blobs/sha256-b66917dec6d7a9e9e923dbd083a0c98526baddf49e8f9a47116f6b86d283d363.",
+        "Read-only blob size check found a 159G model file, so this should be attempted on a host/run window with enough memory and disk headroom."
       ]
     },
     {
@@ -323,7 +328,7 @@
     }
   ],
   "summary": {
-    "real_model_semantic_hook_success_count": 2,
+    "real_model_semantic_hook_success_count": 5,
     "synthetic_hook_success_count": 1,
     "hookable_transformers_moe_attempts": 1,
     "hookable_transformers_moe_blocked": [
@@ -332,7 +337,8 @@
     "pc_hookable_transformers_moe_available": false,
     "gx10_hookable_transformers_moe_available": true,
     "next_productive_actions": [
-      "Package the llama.cpp engine-hook patch and run command as a repeatable Model Plane launch card.",
+      "Package the llama.cpp engine-hook Docker image and run command as a repeatable Model Plane launch card.",
+      "Attempt remaining large PC Ollama MoE candidates, starting with Llama 4 Scout before DeepSeek V3.1 if local disk and Docker memory permit.",
       "Build or obtain a Nemotron hook runtime image with mamba-ssm and causal-conv1d.",
       "Or stage one small, current Transformers MoE canary without custom Mamba dependencies.",
       "Do not broaden into generic Mamba support; the useful Mamba dependency path is Nemotron-specific."

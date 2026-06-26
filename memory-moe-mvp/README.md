@@ -171,8 +171,10 @@ and `summary.json` router events can support that claim.
 - [docs/llama-cpp-engine-hook-track.md](docs/llama-cpp-engine-hook-track.md): correction and contract for llama.cpp engine-level MoE router hooks.
 - [docs/llama-cpp-engine-hook-traces-2026-06-25.md](docs/llama-cpp-engine-hook-traces-2026-06-25.md): first successful patched llama.cpp Mixtral and Qwen3 router traces.
 - [docs/pc-llama-debug-mixtral-hook-smoke-2026-06-26.md](docs/pc-llama-debug-mixtral-hook-smoke-2026-06-26.md): PC Ollama Mixtral read-only llama.cpp debug route-tensor smoke.
+- [docs/pc-llama-cpp-router-traces-2026-06-26.md](docs/pc-llama-cpp-router-traces-2026-06-26.md): validated PC Ollama Mixtral, Nemotron Cascade, and Qwen3 Coder traces through the patched direct llama.cpp runner.
 - [docs/hookable-moe-attempts-pc-gx10-2026-06-25.md](docs/hookable-moe-attempts-pc-gx10-2026-06-25.md): current PC/GX10 hookability attempt matrix summary.
 - `scripts/validate_llama_cpp_router_trace.py`: dependency-free validator for patched llama.cpp router trace JSONL.
+- `docker/llama-moe-router-trace.Dockerfile`: builds the patched direct llama.cpp JSONL trace binary for local GGUF/Ollama blobs.
 - [data/expert_paging_roadmap.json](data/expert_paging_roadmap.json): machine-readable roadmap and actuator-spike checklist. Validate it from the repository root with `python3 scripts/plan_expert_paging.py`.
 - [docs/managed-expert-loading.md](docs/managed-expert-loading.md): first managed expert loading contract pass, including observe-only, replay/simulate, and future live-actuator boundaries.
 - [data/managed_expert_loading_plan.json](data/managed_expert_loading_plan.json): machine-readable managed-loading contract. Validate it from the repository root with `python3 scripts/plan_managed_expert_loading.py`.

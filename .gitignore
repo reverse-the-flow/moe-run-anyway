@@ -22,6 +22,7 @@ env/
 *.bak
 *.swp
 .DS_Store
+.codex_tmp/
 
 # Codex/session transcripts and generated run logs
 codex-*.log
