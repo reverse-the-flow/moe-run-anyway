@@ -23,18 +23,18 @@ class HookableMoEAttemptMatrixTests(unittest.TestCase):
         self.assertEqual(errors, [])
 
         summary = planner.summarize_matrix(matrix)
-        self.assertEqual(summary["by_host"]["pc"], 7)
+        self.assertEqual(summary["by_host"]["pc"], 15)
         self.assertEqual(summary["by_host"]["gx10"], 5)
-        self.assertEqual(summary["real_model_semantic_hook_success_count"], 5)
+        self.assertEqual(summary["real_model_semantic_hook_success_count"], 8)
         self.assertEqual(
             summary["by_status"]["blocked_missing_hook_runtime_dependencies"],
             1,
         )
-        self.assertEqual(summary["by_status"]["blocked_host_memory_preflight"], 2)
-        self.assertEqual(summary["by_status"]["blocked_llama_cpp_runtime_compatibility"], 1)
+        self.assertEqual(summary["by_status"]["blocked_host_memory_preflight"], 3)
+        self.assertEqual(summary["by_status"]["blocked_llama_cpp_runtime_compatibility"], 5)
         self.assertEqual(summary["by_status"].get("engine_hook_candidate_uninstrumented", 0), 0)
         self.assertEqual(summary["by_status"].get("engine_debug_route_tensors_captured", 0), 0)
-        self.assertEqual(summary["by_status"]["semantic_trace_captured"], 5)
+        self.assertEqual(summary["by_status"]["semantic_trace_captured"], 8)
         self.assertEqual(
             set(summary["real_model_semantic_hook_successes"]),
             {
@@ -43,6 +43,9 @@ class HookableMoEAttemptMatrixTests(unittest.TestCase):
                 "pc-ollama-dolphin-mixtral-8x7b",
                 "pc-ollama-nemotron-cascade-30b-a3b-gguf",
                 "pc-ollama-qwen3-coder-30b-a3b-gguf",
+                "pc-ollama-unsloth-gemma4-26b-a4b",
+                "pc-ollama-nemotron-3-nano-30b-a3b",
+                "pc-ollama-qwen3-coder-30b",
             },
         )
         blocker_ids = {

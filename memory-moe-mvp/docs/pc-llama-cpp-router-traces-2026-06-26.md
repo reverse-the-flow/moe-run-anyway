@@ -22,6 +22,10 @@ It packages the `llama-moe-router-trace` example from:
 memory-moe-mvp/patches/llama-cpp-moe-router-trace-example.patch
 ```
 
+A later same-day inventory refresh found additional PC Ollama MoE tags. See
+`pc-ollama-moe-inventory-refresh-2026-06-26.md` for the full current inventory
+and the extra Gemma4, Nemotron Nano, and Qwen3 Coder trace results.
+
 ## Runtime Shape
 
 Each run mounted the Docker Ollama volume read-only:

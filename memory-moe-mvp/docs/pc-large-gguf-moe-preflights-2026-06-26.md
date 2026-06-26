@@ -2,9 +2,9 @@
 
 ## Result
 
-The remaining large PC Ollama MoE candidates were preflighted without attempting
-full router traces in the current Docker Desktop VM. Docker memory is about
-31 GiB, while the remaining blobs are 63 GB and 159 GB.
+The large PC Ollama MoE candidates were preflighted without attempting full
+router traces in the current Docker Desktop VM. Docker memory is about 31 GiB,
+while the oversized blobs are 51 GB, 63 GB, and 159 GB.
 
 The stock llama.cpp metadata command was not safe enough for these sizes:
 
@@ -73,6 +73,32 @@ Observed:
 - routed MoE layers: 58
 - MoE tensor evidence: `exp_probs_b`, `ffn_gate_inp`, `ffn_down_exps`, `ffn_gate_exps`, `ffn_up_exps`
 - status: full patched router trace deferred to a higher-memory host or run window
+
+## Qwen3 Coder Next
+
+Model:
+
+```text
+qwen3-coder-next:Q4_K_M
+```
+
+Blob:
+
+```text
+/root/.ollama/models/blobs/sha256-30e51a7cb1cf1333b9e298b90b4c7790fe2572d8736b002482a0ac96328a2ffb
+```
+
+Observed:
+
+- blob size: 51 GB
+- architecture: `qwen3next`
+- tensor count: 843
+- block count: 48
+- expert count: 512
+- experts per token: 10
+- routed MoE layers: 48
+- MoE tensor evidence: `ffn_gate_inp`, `ffn_down_exps`, `ffn_gate_exps`, `ffn_up_exps`
+- status: full patched router trace deferred to a higher-memory run window
 
 ## Boundary
 

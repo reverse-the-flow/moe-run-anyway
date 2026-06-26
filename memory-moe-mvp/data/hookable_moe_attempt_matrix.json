@@ -214,6 +214,218 @@
       ]
     },
     {
+      "attempt_id": "pc-ollama-unsloth-gemma4-26b-a4b",
+      "host": "pc",
+      "model": "hf.co/unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q4_K_M",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "gemma4_moe",
+        "expert_count": 128,
+        "experts_per_token": 8,
+        "routed_layer_count": 30
+      },
+      "hook_attempt_status": "semantic_trace_captured",
+      "real_model_semantic_trace_captured": true,
+      "blockers": [],
+      "evidence": [
+        "PC Ollama manifest scan found MoE metadata for hf.co/unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q4_K_M.",
+        "Ollama manifest maps the model to /root/.ollama/models/blobs/sha256-2f8672b0c2cca8dedfb8782815c2769ccdaa6512788f3ee87b32cf117f0dffc1.",
+        "scripts/gguf_moe_preflight.py reported architecture=gemma4, block_count=30, expert_count=128, expert_used_count=8, tensor_count=658.",
+        "Patched memory-moe-llama-router-trace:latest run exited 0 and emitted memory-moe-bridge-v1 JSONL from the Ollama blob.",
+        "Validated .codex_tmp/router-trace-pc-unsloth-gemma4-26b-a4b/router-events.jsonl with scripts/validate_llama_cpp_router_trace.py using --expected-layers 30 and required selected_experts/selected_weights/selected_weights_norm kinds.",
+        "Captured 90 events across 30 layers; top-k was 8; unique experts seen: 128."
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-gemma4-26b",
+      "host": "pc",
+      "model": "gemma4:26b",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "gemma4_moe",
+        "expert_count": 128,
+        "experts_per_token": 8,
+        "routed_layer_count": 30
+      },
+      "hook_attempt_status": "blocked_llama_cpp_runtime_compatibility",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Patched llama.cpp failed to load this Gemma4 GGUF blob before any router events were emitted.",
+        "Runtime log reported wrong tensor count: expected 1014, got 658."
+      ],
+      "evidence": [
+        "PC Ollama manifest scan found MoE metadata for gemma4:26b.",
+        "Ollama manifest maps the model to /root/.ollama/models/blobs/sha256-7121486771cbfe218851513210c40b35dbdee93ab1ef43fe36283c883980f0df.",
+        "scripts/gguf_moe_preflight.py reported architecture=gemma4, block_count=30, expert_count=128, expert_used_count=8, tensor_count=1014.",
+        "Patched memory-moe-llama-router-trace:latest run exited 1 and wrote zero router events.",
+        "Runtime log: done_getting_tensors wrong number of tensors; expected 1014, got 658."
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-nemotron-3-nano-30b-a3b",
+      "host": "pc",
+      "model": "nemotron-3-nano:30b-a3b-q4_K_M",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "nemotron_h_moe",
+        "expert_count": 128,
+        "shared_expert_count": 1,
+        "experts_per_token": 6,
+        "routed_layer_count": 23
+      },
+      "hook_attempt_status": "semantic_trace_captured",
+      "real_model_semantic_trace_captured": true,
+      "blockers": [],
+      "evidence": [
+        "PC Ollama manifest scan found MoE metadata for nemotron-3-nano:30b-a3b-q4_K_M.",
+        "Ollama manifest maps the model to /root/.ollama/models/blobs/sha256-a70437c41b3b0b768c48737e15f8160c90f13dc963f5226aabb3a160f708d1ce.",
+        "scripts/gguf_moe_preflight.py reported architecture=nemotron_h_moe, block_count=52, expert_count=128, expert_shared_count=1, expert_used_count=6, tensor_count=401.",
+        "Patched memory-moe-llama-router-trace:latest run exited 0 and emitted memory-moe-bridge-v1 JSONL from the Ollama blob.",
+        "Validated .codex_tmp/router-trace-pc-nemotron-nano-30b-a3b/router-events.jsonl with scripts/validate_llama_cpp_router_trace.py using --expected-layers 23 and required selected_experts/selected_weights/selected_weights_norm kinds.",
+        "Captured 69 events across 23 routed layers; top-k was 6; unique experts seen: 124."
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-qwen3-coder-30b",
+      "host": "pc",
+      "model": "qwen3-coder:30b",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "qwen3_moe",
+        "expert_count": 128,
+        "experts_per_token": 8,
+        "routed_layer_count": 48
+      },
+      "hook_attempt_status": "semantic_trace_captured",
+      "real_model_semantic_trace_captured": true,
+      "blockers": [],
+      "evidence": [
+        "PC Ollama manifest scan found MoE metadata for qwen3-coder:30b.",
+        "Ollama manifest maps the model to /root/.ollama/models/blobs/sha256-1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a.",
+        "scripts/gguf_moe_preflight.py reported architecture=qwen3moe, block_count=48, expert_count=128, expert_used_count=8, tensor_count=579.",
+        "Patched memory-moe-llama-router-trace:latest run exited 0 and emitted memory-moe-bridge-v1 JSONL from the Ollama blob.",
+        "Validated .codex_tmp/router-trace-pc-qwen3-coder-30b/router-events.jsonl with scripts/validate_llama_cpp_router_trace.py using --expected-layers 48 and required selected_experts/selected_weights/selected_weights_norm kinds.",
+        "Captured 144 events across 48 layers; top-k was 8; unique experts seen: 127."
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-qwen3-coder-next",
+      "host": "pc",
+      "model": "qwen3-coder-next:Q4_K_M",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "qwen3next_moe",
+        "expert_count": 512,
+        "experts_per_token": 10,
+        "routed_layer_count": 48
+      },
+      "hook_attempt_status": "blocked_host_memory_preflight",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "The 51G model blob is larger than the current Docker Desktop memory limit of about 31 GiB.",
+        "Full patched llama.cpp router trace was deferred to a higher-memory run window."
+      ],
+      "evidence": [
+        "PC Ollama manifest scan found MoE metadata for qwen3-coder-next:Q4_K_M.",
+        "Ollama manifest maps the model to /root/.ollama/models/blobs/sha256-30e51a7cb1cf1333b9e298b90b4c7790fe2572d8736b002482a0ac96328a2ffb.",
+        "scripts/gguf_moe_preflight.py succeeded without loading tensor data: architecture=qwen3next, block_count=48, expert_count=512, expert_used_count=10, tensor_count=843.",
+        "Lightweight preflight counted 48 routed MoE layers and 48 ffn_down_exps, 48 ffn_gate_exps, 96 ffn_gate_inp, and 48 ffn_up_exps tensors."
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-qwen36-35b",
+      "host": "pc",
+      "model": "qwen3.6:35b",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "qwen35_moe",
+        "expert_count": 256,
+        "experts_per_token": 8,
+        "routed_layer_count": 40
+      },
+      "hook_attempt_status": "blocked_llama_cpp_runtime_compatibility",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Patched llama.cpp failed to load this Qwen35 MoE GGUF before any router events were emitted.",
+        "Runtime log reported qwen35moe.rope.dimension_sections wrong array length; expected 4, got 3."
+      ],
+      "evidence": [
+        "PC Ollama manifest scan found MoE metadata for qwen3.6:35b.",
+        "Ollama manifest maps the model to /root/.ollama/models/blobs/sha256-f5ee307a2982106a6eb82b62b2c00b575c9072145a759ae4660378acda8dcf2d.",
+        "scripts/gguf_moe_preflight.py reported architecture=qwen35moe, block_count=40, expert_count=256, expert_used_count=8, tensor_count=1194.",
+        "Patched memory-moe-llama-router-trace:latest run exited 1 and wrote zero router events.",
+        "Runtime log: key qwen35moe.rope.dimension_sections has wrong array length; expected 4, got 3."
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-glm47-flash",
+      "host": "pc",
+      "model": "glm-4.7-flash:Q8_0",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "glm4moelite",
+        "expert_count": 64,
+        "shared_expert_count": 1,
+        "experts_per_token": 4,
+        "leading_dense_block_count": 1,
+        "routed_layer_count": 46
+      },
+      "hook_attempt_status": "blocked_llama_cpp_runtime_compatibility",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Patched llama.cpp failed to load this GLM MoE GGUF before any router events were emitted.",
+        "Runtime log reported unknown model architecture: glm4moelite."
+      ],
+      "evidence": [
+        "PC Ollama manifest scan found MoE metadata for glm-4.7-flash:Q8_0.",
+        "Ollama manifest maps the model to /root/.ollama/models/blobs/sha256-1bfdff04a01e06051d7dcf5bcd6d7486240e1a92d2ce3325f727a20f2965e68c.",
+        "scripts/gguf_moe_preflight.py reported architecture=glm4moelite, block_count=47, leading_dense_block_count=1, expert_count=64, expert_shared_count=1, expert_used_count=4, tensor_count=844.",
+        "Patched memory-moe-llama-router-trace:latest run exited 1 and wrote zero router events.",
+        "Runtime log: unknown model architecture: glm4moelite."
+      ]
+    },
+    {
+      "attempt_id": "pc-ollama-gpt-oss-20b",
+      "host": "pc",
+      "model": "gpt-oss:20b",
+      "local_reference": "Docker Ollama model",
+      "runtime_surface": "ollama_gguf",
+      "moe_metadata": {
+        "is_moe": true,
+        "family": "gptoss_moe",
+        "expert_count": 32,
+        "experts_per_token": 4,
+        "routed_layer_count": 24
+      },
+      "hook_attempt_status": "blocked_llama_cpp_runtime_compatibility",
+      "real_model_semantic_trace_captured": false,
+      "blockers": [
+        "Patched llama.cpp failed to load this GPT-OSS GGUF before any router events were emitted.",
+        "Runtime log reported ffn_down_exps tensor row/block-size incompatibility."
+      ],
+      "evidence": [
+        "PC Ollama manifest scan found MoE metadata for gpt-oss:20b.",
+        "Ollama manifest maps the model to /root/.ollama/models/blobs/sha256-b112e727c6f18875636c56a779790a590d705aec9e1c0eb5a97d51fc2a778583.",
+        "scripts/gguf_moe_preflight.py reported architecture=gptoss, block_count=24, expert_count=32, expert_used_count=4, tensor_count=315.",
+        "Patched memory-moe-llama-router-trace:latest run exited 1 and wrote zero router events.",
+        "Runtime log: tensor blk.0.ffn_down_exps.weight has 2880 elements per row, not a multiple of block size."
+      ]
+    },
+    {
       "attempt_id": "gx10-hf-nemotron-nano-omni-30b-a3b-nvfp4",
       "host": "gx10",
       "model": "Nemotron-3-Nano-Omni-30B-A3B-Reasoning-NVFP4-hf",
@@ -344,7 +556,7 @@
     }
   ],
   "summary": {
-    "real_model_semantic_hook_success_count": 5,
+    "real_model_semantic_hook_success_count": 8,
     "synthetic_hook_success_count": 1,
     "hookable_transformers_moe_attempts": 1,
     "hookable_transformers_moe_blocked": [
@@ -354,7 +566,8 @@
     "gx10_hookable_transformers_moe_available": true,
     "next_productive_actions": [
       "Package the llama.cpp engine-hook Docker image and run command as a repeatable Model Plane launch card.",
-      "Run Llama 4 Scout and DeepSeek V3.1 router traces on a higher-memory host or after increasing Docker memory beyond their blob-size requirements.",
+      "Run Llama 4 Scout, Qwen3 Coder Next, and DeepSeek V3.1 router traces on a higher-memory host or after increasing Docker memory beyond their blob-size requirements.",
+      "Retry GPT-OSS, Gemma4 library 26B, Qwen3.6 35B, GLM-4.7 Flash, and Nemotron Super only after llama.cpp compatibility is updated for those GGUF layouts.",
       "Build or obtain a Nemotron hook runtime image with mamba-ssm and causal-conv1d.",
       "Or stage one small, current Transformers MoE canary without custom Mamba dependencies.",
       "Do not broaden into generic Mamba support; the useful Mamba dependency path is Nemotron-specific."

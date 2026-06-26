@@ -2,7 +2,7 @@
 
 ## Result
 
-Five real llama.cpp/GGUF runs have now produced semantic router traces through
+Eight real llama.cpp/GGUF runs have now produced semantic router traces through
 a patched direct llama.cpp eval-callback hook.
 
 The current state is:
@@ -11,7 +11,9 @@ The current state is:
 - GX10 Mixtral GGUF engine hook: works.
 - GX10 Qwen3 GGUF engine hook: works.
 - GX10 Nemotron HF MoE hook attempt: real target selected, blocked by missing hook-runtime dependencies.
-- PC Mixtral, Nemotron Cascade, and Qwen3 Coder Ollama blobs: work through the patched direct llama.cpp hook runner.
+- Six PC Ollama blobs work through the patched direct llama.cpp hook runner.
+- Three PC Ollama blobs are blocked by current host memory for full traces.
+- Four PC Ollama blobs are blocked by current llama.cpp runtime compatibility.
 - PC Hugging Face cache: contains local Transformers directories, but they are not MoE.
 
 The machine-readable matrix is `memory-moe-mvp/data/hookable_moe_attempt_matrix.json`.
@@ -23,32 +25,44 @@ python3 scripts/plan_hookable_moe_attempts.py --json
 
 ## PC
 
-The PC has useful runtime MoE targets in Docker Ollama, including Mixtral,
-Nemotron, Qwen3-Coder A3B, Llama 4 Scout, and DeepSeek V3.1 GGUF models. These
-are not Python-forward-hookable. They do not expose Python modules or
-`register_forward_hook()`. The productive path is the llama.cpp engine-hook
-track: read the Ollama blobs directly with a patched llama.cpp runner.
+The PC has 13 current MoE-class tags in Docker Ollama by GGUF metadata and
+tensor-table scan. These are not Python-forward-hookable. They do not expose
+Python modules or `register_forward_hook()`. The productive path is the
+llama.cpp engine-hook track: read the Ollama blobs directly with a patched
+llama.cpp runner.
 
 Validated PC direct llama.cpp hook traces:
 
 - Mixtral: 96 events, 32 layers, top-k 2, 8 unique experts.
 - Nemotron Cascade: 69 events, 23 routed layers, top-k 6, 125 unique experts.
 - Qwen3 Coder: 144 events, 48 layers, top-k 8, 128 unique experts.
+- Gemma4 26B A4B: 90 events, 30 layers, top-k 8, 128 unique experts.
+- Nemotron 3 Nano 30B A3B: 69 events, 23 routed layers, top-k 6, 124 unique experts.
+- Qwen3 Coder 30B alias: 144 events, 48 layers, top-k 8, 127 unique experts.
 
-See `pc-llama-cpp-router-traces-2026-06-26.md`.
+See `pc-ollama-moe-inventory-refresh-2026-06-26.md`.
 
 The remaining large PC Ollama candidates are present but should be scheduled
 separately for full router traces:
 
 - Llama 4 Scout blob: 63 GB; metadata preflight found 48 routed MoE layers,
   16 experts, and top-k 1.
+- Qwen3 Coder Next blob: 51 GB; metadata preflight found 48 routed MoE layers,
+  512 experts, and top-k 10.
 - DeepSeek V3.1 blob: 159 GB; metadata preflight found 58 routed MoE layers,
   256 experts, 1 shared expert, and top-k 8.
 
-The stock `llama-gguf r n` path was killed with exit 137 on both large blobs in
-the current 31 GiB Docker VM. The lighter `scripts/gguf_moe_preflight.py` path
-completed because it reads metadata and tensor-info records without loading
+The stock `llama-gguf r n` path was killed with exit 137 on the largest blobs
+in the current 31 GiB Docker VM. The lighter `scripts/gguf_moe_preflight.py`
+path completed because it reads metadata and tensor-info records without loading
 weights. See `pc-large-gguf-moe-preflights-2026-06-26.md`.
+
+Current PC llama.cpp runtime-compatibility blockers:
+
+- `gpt-oss:20b`: tensor row/block-size incompatibility.
+- `gemma4:26b`: tensor count mismatch.
+- `qwen3.6:35b`: Qwen35 MoE rope metadata mismatch.
+- `glm-4.7-flash:Q8_0`: unsupported `glm4moelite` architecture in this patched llama.cpp build.
 
 The PC Hugging Face cache was also checked:
 
@@ -117,6 +131,6 @@ The productive next move is one of:
 
 For GGUF models that already run in direct llama.cpp, the next move is to
 package the patched Docker image and run command as a repeatable launch-card
-path. PC Ollama itself is still unpatched, but three of its blobs are now proven
-readable through direct patched llama.cpp and two oversized blobs have metadata
-preflight coverage.
+path. PC Ollama itself is still unpatched, but six of its blobs are now proven
+readable through direct patched llama.cpp and the remaining MoE-class tags have
+explicit host-memory or llama.cpp compatibility blockers.
