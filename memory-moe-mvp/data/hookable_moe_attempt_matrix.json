@@ -92,15 +92,19 @@
         "expert_count": 8,
         "experts_per_token": 2
       },
-      "hook_attempt_status": "engine_hook_candidate_uninstrumented",
+      "hook_attempt_status": "engine_debug_route_tensors_captured",
       "real_model_semantic_trace_captured": false,
       "blockers": [
         "Stock Ollama/GGUF does not expose Python modules or register_forward_hook.",
-        "Semantic route capture requires instrumentation inside the llama.cpp/Ollama inference engine."
+        "Stock llama.cpp debug output exposed route tensors, but this PC attempt has not produced memory-moe-bridge-v1 JSONL yet.",
+        "The local stock llama.cpp image has binaries/libs but no headers or CMake for building the structured trace patch in-place."
       ],
       "evidence": [
         "PC Docker Ollama list includes dolphin-mixtral:8x7b.",
-        "Prior runtime artifacts exist under memory-moe-mvp/runtime-probe-runs/pc-ollama-*."
+        "Ollama Modelfile maps the model to /root/.ollama/models/blobs/sha256-5041ba4278429fe475782b889471b5ff065a6cce5c3a539bd61d1e457f1961de.",
+        "Read-only Docker run with ghcr.io/ggml-org/llama.cpp:full-cuda /app/llama-debug exited 0 against that blob.",
+        "Debug callback output contained 32 ffn_moe_topk layer tensors and 32 ffn_moe_weights_norm layer tensors.",
+        "First route tensor shape was {2,4,1,1}; prompt token count was 4."
       ]
     },
     {

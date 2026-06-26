@@ -30,7 +30,8 @@ class HookableMoEAttemptMatrixTests(unittest.TestCase):
             summary["by_status"]["blocked_missing_hook_runtime_dependencies"],
             1,
         )
-        self.assertEqual(summary["by_status"]["engine_hook_candidate_uninstrumented"], 6)
+        self.assertEqual(summary["by_status"]["engine_hook_candidate_uninstrumented"], 5)
+        self.assertEqual(summary["by_status"]["engine_debug_route_tensors_captured"], 1)
         self.assertEqual(summary["by_status"]["semantic_trace_captured"], 2)
         self.assertEqual(
             set(summary["real_model_semantic_hook_successes"]),

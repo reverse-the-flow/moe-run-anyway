@@ -16,6 +16,7 @@ SUPPORTED_SCHEMA_VERSION = "hookable-moe-attempt-matrix-v1"
 HOOK_STATUSES = {
     "screened_non_moe",
     "engine_hook_candidate_uninstrumented",
+    "engine_debug_route_tensors_captured",
     "blocked_missing_hook_runtime_dependencies",
     "semantic_trace_captured",
 }
@@ -52,8 +53,11 @@ def validate_attempt(attempt: JSONDict) -> list[str]:
         errors.append(f"{attempt_id}: non-success attempts must record blockers")
 
     surface = attempt.get("runtime_surface")
-    if status == "engine_hook_candidate_uninstrumented" and surface not in RUNTIME_ONLY_SURFACES:
-        errors.append(f"{attempt_id}: engine-hook candidates must use a runtime-only surface")
+    if status in {
+        "engine_hook_candidate_uninstrumented",
+        "engine_debug_route_tensors_captured",
+    } and surface not in RUNTIME_ONLY_SURFACES:
+        errors.append(f"{attempt_id}: engine-hook attempts must use a runtime-only surface")
 
     moe_metadata = attempt.get("moe_metadata")
     if not isinstance(moe_metadata, dict):

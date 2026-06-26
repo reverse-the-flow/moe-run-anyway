@@ -170,6 +170,7 @@ and `summary.json` router events can support that claim.
 - [docs/hookable-progression.md](docs/hookable-progression.md): intended progression from passive external observation to internal hookable semantic tracing before fork/controller work.
 - [docs/llama-cpp-engine-hook-track.md](docs/llama-cpp-engine-hook-track.md): correction and contract for llama.cpp engine-level MoE router hooks.
 - [docs/llama-cpp-engine-hook-traces-2026-06-25.md](docs/llama-cpp-engine-hook-traces-2026-06-25.md): first successful patched llama.cpp Mixtral and Qwen3 router traces.
+- [docs/pc-llama-debug-mixtral-hook-smoke-2026-06-26.md](docs/pc-llama-debug-mixtral-hook-smoke-2026-06-26.md): PC Ollama Mixtral read-only llama.cpp debug route-tensor smoke.
 - [docs/hookable-moe-attempts-pc-gx10-2026-06-25.md](docs/hookable-moe-attempts-pc-gx10-2026-06-25.md): current PC/GX10 hookability attempt matrix summary.
 - `scripts/validate_llama_cpp_router_trace.py`: dependency-free validator for patched llama.cpp router trace JSONL.
 - [data/expert_paging_roadmap.json](data/expert_paging_roadmap.json): machine-readable roadmap and actuator-spike checklist. Validate it from the repository root with `python3 scripts/plan_expert_paging.py`.
