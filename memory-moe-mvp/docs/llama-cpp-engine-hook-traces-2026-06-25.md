@@ -73,12 +73,14 @@ Result:
 - input tokens: 4
 - JSONL events: 96
 - layers: 0..31
+- validator: passed with `scripts/validate_llama_cpp_router_trace.py`
 - event counts:
   - `selected_experts`: 32
   - `selected_weights`: 32
   - `selected_weights_norm`: 32
 - first top-k tensor shape: `[2,4,1,1]`
 - first selected expert values: `[1,0,2,7,4,5,3,6]`
+- unique experts seen: 8
 
 ## Qwen3 Trace
 
@@ -94,6 +96,7 @@ Result:
 - input tokens: 2
 - JSONL events: 144
 - layers: 0..47
+- validator: passed with `scripts/validate_llama_cpp_router_trace.py`
 - event counts:
   - `selected_experts`: 48
   - `selected_weights`: 48
@@ -101,6 +104,7 @@ Result:
 - first top-k tensor shape: `[8,2,1,1]`
 - first selected expert values:
   `[23,124,12,105,6,64,122,125,75,66,36,42,3,30,116,55]`
+- unique experts seen: 126
 
 ## Boundary
 
@@ -112,8 +116,7 @@ The raw trace directories are generated run artifacts and are ignored by git.
 
 ## Next
 
-1. Add a repo validator for `llama_cpp_moe_router_tensor` JSONL.
-2. Convert the patch/run command into a repeatable Model Plane launch card.
-3. Decide whether PC Ollama should be bypassed with direct patched llama.cpp or
+1. Convert the patch/run command into a repeatable Model Plane launch card.
+2. Decide whether PC Ollama should be bypassed with direct patched llama.cpp or
    rebuilt with equivalent callback support.
-4. Keep Nemotron HF on the dependency-specific Python hook lane.
+3. Keep Nemotron HF on the dependency-specific Python hook lane.

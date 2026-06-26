@@ -70,6 +70,24 @@ def validate_edge_hardware_quickstart() -> int:
     return run_command([sys.executable, str(ROOT / "scripts" / "plan_edge_hardware_quickstart.py")])
 
 
+def validate_llama_cpp_router_trace_fixture() -> int:
+    return run_command(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "validate_llama_cpp_router_trace.py"),
+            str(MVP_DIR / "data" / "llama_cpp_router_trace.fixture.jsonl"),
+            "--expected-layers",
+            "2",
+            "--require-kind",
+            "selected_experts",
+            "--require-kind",
+            "selected_weights",
+            "--require-kind",
+            "selected_weights_norm",
+        ]
+    )
+
+
 def run_unit_tests() -> int:
     return run_command([sys.executable, "-m", "unittest", "discover", "-s", str(MVP_DIR / "tests")])
 
@@ -153,6 +171,7 @@ def main() -> int:
         ("runtime baseline artifact contract", validate_runtime_baseline_artifact_contract),
         ("runtime baseline capture plan", validate_runtime_baseline_capture_plan),
         ("edge hardware quickstart", validate_edge_hardware_quickstart),
+        ("llama.cpp router trace fixture", validate_llama_cpp_router_trace_fixture),
         ("unit tests", run_unit_tests),
         ("py_compile", compile_python_sources),
         ("docs portability", check_docs_portability),

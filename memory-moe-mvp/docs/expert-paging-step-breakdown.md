@@ -63,7 +63,7 @@ controller, or live actuator work.
 | Select a hookable MoE target. | done | Mixtral and Qwen3 GGUF produced llama.cpp engine-hook traces; GX10 Nemotron HF remains a Python hook candidate blocked by missing trusted-code dependencies. | Python track still needs a compatible Transformers MoE runtime. |
 | Build a thin Python target runner around `ForwardHookMoEProbe`. | planned | Expected: runner loads one user-provided local model, attaches hooks, runs prompt cases, writes existing probe artifacts, and does not create a new artifact shape. | Needs compatible Transformers target/runtime. |
 | Build a minimal llama.cpp router trace patch. | done | `patches/llama-cpp-moe-router-trace-example.patch` adds an eval-callback trace example; Mixtral and Qwen3 runs emitted selected expert ids and weights. | None for direct GX10 GGUF smoke. |
-| Capture router outputs with hooks. | active | Mixtral: 96 events across 32 layers. Qwen3: 144 events across 48 layers. | Needs JSONL contract validator and Python-track target. |
+| Capture router outputs with hooks. | active | Mixtral: 96 validated events across 32 layers. Qwen3: 144 validated events across 48 layers. | Needs Python-track target and repeatable launch-card packaging. |
 | Capture dense or full-runtime fallback output. | planned | Expected: baseline outputs for the same prompt set. | Needs runnable target. |
 | Validate trace artifacts against the shared contract. | planned | Expected: trace validation report. | Needs trace artifacts. |
 | Record hook failure modes. | planned | Expected: failures are explicit and do not downgrade to timing inference. | Needs hook attempts. |
@@ -118,9 +118,8 @@ trustworthy routing traces.
 ## Next Achievable Steps
 
 1. Run the synthetic hook smoke after hookable-probe edits.
-2. Validate the llama.cpp route JSONL against the shared trace contract.
-3. Package the llama.cpp patch/run command as a repeatable launch-card path.
-4. Build the thinnest real-model runner around `ForwardHookMoEProbe` when a
+2. Package the llama.cpp patch/run command as a repeatable launch-card path.
+3. Build the thinnest real-model runner around `ForwardHookMoEProbe` when a
    compatible Transformers MoE runtime is available.
-5. Add the expert inventory manifest schema as a supporting offline track.
-6. Produce the backend observability comparison from captured artifacts.
+4. Add the expert inventory manifest schema as a supporting offline track.
+5. Produce the backend observability comparison from captured artifacts.

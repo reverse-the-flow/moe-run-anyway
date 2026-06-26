@@ -110,7 +110,8 @@ See `llama-cpp-engine-hook-traces-2026-06-25.md`.
 
 ## Remaining Blockers
 
-- The JSONL needs a repo validator against the shared trace contract.
+- The direct Mixtral and Qwen3 JSONL traces validate with
+  `scripts/validate_llama_cpp_router_trace.py`.
 - PC Ollama is not instrumented yet; direct patched llama.cpp or a custom Ollama
   build is still needed there.
 - Nemotron Super GGUF still has the previous tensor-layout/runtime compatibility

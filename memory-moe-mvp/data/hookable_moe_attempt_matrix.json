@@ -263,6 +263,7 @@
       "evidence": [
         "Patched llama.cpp eval-callback trace run: memory-moe-mvp/llama-cpp-hook-runs/20260625-mixtral-moe-router-trace-clean.",
         "Exit code 0; router-events.jsonl contains 96 events.",
+        "Validated with scripts/validate_llama_cpp_router_trace.py using --expected-layers 32 and required selected_experts/selected_weights/selected_weights_norm kinds.",
         "Captured 32 selected_experts tensors, 32 selected_weights tensors, and 32 selected_weights_norm tensors.",
         "Layer ids cover 0..31; top-k selected expert tensor shape is [2,4,1,1] for the short prompt.",
         "Patch artifact: memory-moe-mvp/patches/llama-cpp-moe-router-trace-example.patch."
@@ -286,6 +287,7 @@
       "evidence": [
         "Patched llama.cpp eval-callback trace run: memory-moe-mvp/llama-cpp-hook-runs/20260625-qwen3-moe-router-trace-clean.",
         "Exit code 0; router-events.jsonl contains 144 events.",
+        "Validated with scripts/validate_llama_cpp_router_trace.py using --expected-layers 48 and required selected_experts/selected_weights/selected_weights_norm kinds.",
         "Captured 48 selected_experts tensors, 48 selected_weights tensors, and 48 selected_weights_norm tensors.",
         "Layer ids cover 0..47; top-k selected expert tensor shape is [8,2,1,1] for the short prompt.",
         "Patch artifact: memory-moe-mvp/patches/llama-cpp-moe-router-trace-example.patch."
@@ -326,7 +328,6 @@
     "pc_hookable_transformers_moe_available": false,
     "gx10_hookable_transformers_moe_available": true,
     "next_productive_actions": [
-      "Validate the patched llama.cpp trace JSONL against the shared memory-moe-bridge-v1 contract.",
       "Package the llama.cpp engine-hook patch and run command as a repeatable Model Plane launch card.",
       "Build or obtain a Nemotron hook runtime image with mamba-ssm and causal-conv1d.",
       "Or stage one small, current Transformers MoE canary without custom Mamba dependencies.",
