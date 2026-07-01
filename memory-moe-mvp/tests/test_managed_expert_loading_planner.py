@@ -34,6 +34,7 @@ class ManagedExpertLoadingPlannerTests(unittest.TestCase):
             ],
         )
         self.assertIn("residency_control", summary["adapter_gaps"]["llama_cpp"])
+        self.assertNotIn("routing_visibility", summary["adapter_gaps"]["llama_cpp"])
         self.assertIn("Live expert loading is not implemented yet.", summary["safety_contract"])
 
     def test_validation_requires_known_state_vocabulary(self) -> None:

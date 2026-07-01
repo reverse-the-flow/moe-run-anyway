@@ -1,0 +1,248 @@
+{
+  "backend_family": "llama_cpp",
+  "blockers": [
+    "model_plane_binding_context_missing",
+    "runtime_capture_commands_unbound"
+  ],
+  "bundle_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.json",
+  "executable": false,
+  "missing_runtime_command_artifact_ids": [
+    "candidate_router_trace",
+    "managed_output_summary_fill",
+    "dense_output_summary_fill"
+  ],
+  "missing_runtime_command_count": 3,
+  "mode": "phase3_runtime_capture_launch_card_template",
+  "model_id": "/root/.ollama/models/blobs/sha256-916a371ed63edd6602da950df2c1eed5ff74bfb9dac2ece64c7cabaafb3e2922",
+  "model_plane_binding_ready": false,
+  "model_plane_profile": {
+    "backend_family": null,
+    "base_url": null,
+    "blockers": [
+      "model_plane_probe_manifest_missing"
+    ],
+    "container_name": null,
+    "health_url": null,
+    "log_file_path": null,
+    "model_id": null,
+    "model_path": null,
+    "profile_id": null,
+    "provided": false,
+    "ready_for_binding": false,
+    "runtime_observability": {}
+  },
+  "next_actions": [
+    "Attach real Model Plane callable ids or launch-card commands for each planned task.",
+    "Do not execute runtime prompt traffic from this template until explicit approval is recorded.",
+    "After capture, fill receipts and rerun capture-result intake before bundle promotion."
+  ],
+  "preflight_gates": [
+    "explicit_user_approval_for_runtime_prompt_traffic",
+    "model_plane_profile_validated_for_target_host",
+    "runtime_health_check_passed_before_prompt_traffic",
+    "artifact_and_receipt_outputs_are_repo_relative_and_exact",
+    "capture_result_intake_runs_before_bundle_update"
+  ],
+  "prompt_family": "pc-router-trace-nemotron-cascade-jsonl",
+  "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+  "request_name": "PC Nemotron Cascade Phase 3 real evidence",
+  "request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+  "runtime_capture_command_ready": false,
+  "safety_contract": [
+    "launch-card template is planned-only",
+    "launch-card template does not launch model servers",
+    "launch-card template does not run Docker",
+    "launch-card template does not call endpoints",
+    "launch-card template does not inspect private tokens",
+    "launch-card template does not send prompt traffic",
+    "launch-card template does not mutate runtime residency",
+    "launch-card template does not claim live expert paging"
+  ],
+  "schema_version": "moe-phase3-runtime-capture-launch-card-v1",
+  "status": "planned_only",
+  "task_count": 3,
+  "tasks": [
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "router_trace_capture_approved"
+      ],
+      "artifact_id": "candidate_router_trace",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+      "binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json"
+      },
+      "capture_kind": "llama_cpp_router_trace_jsonl",
+      "command_binding_ready": false,
+      "command_placeholder": [
+        "model-plane-callable-or-launch-card",
+        "--runtime-capture-request",
+        "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "--artifact-id",
+        "candidate_router_trace",
+        "--artifact-output",
+        "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "--receipt-output",
+        "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json"
+      ],
+      "expected_result": {
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "rerun_after_capture": [
+          "scripts/plan_phase3_capture_result_intake.py",
+          "scripts/plan_phase3_evidence_packet.py"
+        ],
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json"
+      },
+      "post_capture_next_actions": [
+        "Validate the artifact and receipt paths named in this task.",
+        "Run capture-result intake before updating any Phase 3 bundle.",
+        "Keep live residency/control proof separate from this runtime capture card."
+      ],
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "trace_capture_receipt_json",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "status": "planned_only",
+      "task_id": "phase3_capture_candidate_router_trace",
+      "validator_command_count": 3
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "managed_output_capture_approved"
+      ],
+      "artifact_id": "managed_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json"
+      },
+      "capture_kind": "managed_output_summary_json",
+      "command_binding_ready": false,
+      "command_placeholder": [
+        "model-plane-callable-or-launch-card",
+        "--runtime-capture-request",
+        "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "--artifact-id",
+        "managed_output_summary_fill",
+        "--artifact-output",
+        "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "--receipt-output",
+        "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json"
+      ],
+      "expected_result": {
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "rerun_after_capture": [
+          "scripts/plan_phase3_capture_result_intake.py",
+          "scripts/plan_phase3_evidence_packet.py"
+        ],
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json"
+      },
+      "post_capture_next_actions": [
+        "Validate the artifact and receipt paths named in this task.",
+        "Run capture-result intake before updating any Phase 3 bundle.",
+        "Keep live residency/control proof separate from this runtime capture card."
+      ],
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "status": "planned_only",
+      "task_id": "phase3_capture_managed_output_summary_fill",
+      "validator_command_count": 1
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "dense_output_capture_approved"
+      ],
+      "artifact_id": "dense_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json"
+      },
+      "capture_kind": "dense_output_summary_json",
+      "command_binding_ready": false,
+      "command_placeholder": [
+        "model-plane-callable-or-launch-card",
+        "--runtime-capture-request",
+        "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "--artifact-id",
+        "dense_output_summary_fill",
+        "--artifact-output",
+        "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "--receipt-output",
+        "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json"
+      ],
+      "expected_result": {
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "rerun_after_capture": [
+          "scripts/plan_phase3_capture_result_intake.py",
+          "scripts/plan_phase3_evidence_packet.py"
+        ],
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json"
+      },
+      "post_capture_next_actions": [
+        "Validate the artifact and receipt paths named in this task.",
+        "Run capture-result intake before updating any Phase 3 bundle.",
+        "Keep live residency/control proof separate from this runtime capture card."
+      ],
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "status": "planned_only",
+      "task_id": "phase3_capture_dense_output_summary_fill",
+      "validator_command_count": 1
+    }
+  ],
+  "template_ready": true,
+  "valid": true
+}

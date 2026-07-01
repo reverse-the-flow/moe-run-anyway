@@ -1,0 +1,453 @@
+{
+  "schema_version": "moe-expert-inventory-manifest-v1",
+  "name": "Fixture Mixtral Expert Inventory",
+  "generated_for": "memory-moe-mvp",
+  "model_id": "fixture-mixtral.gguf",
+  "source_format": "gguf",
+  "backend_family": "llama_cpp",
+  "contract_version": "memory-moe-bridge-v1",
+  "inventory_scope": "fixture_only_for_phase_3_replay_schema",
+  "source_files": [
+    {
+      "path": "fixture-mixtral.gguf",
+      "source_format": "gguf",
+      "byte_length": 25165824,
+      "note": "Synthetic fixture; offsets are deterministic schema evidence, not a real model file."
+    }
+  ],
+  "expected": {
+    "layer_ids": [
+      0,
+      1
+    ],
+    "required_components": [
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "expert_count": 8,
+    "component_count": 24,
+    "total_estimated_residency_bytes": 25165824,
+    "routing_top_k": 2
+  },
+  "entries": [
+    {
+      "layer_id": 0,
+      "expert_id": 0,
+      "component_name": "gate_proj",
+      "tensor_name": "blk.0.ffn_gate.0.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 0,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 0,
+      "expert_id": 0,
+      "component_name": "up_proj",
+      "tensor_name": "blk.0.ffn_up.0.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 1048576,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 0,
+      "expert_id": 0,
+      "component_name": "down_proj",
+      "tensor_name": "blk.0.ffn_down.0.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 2097152,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        4096,
+        14336
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 0,
+      "expert_id": 1,
+      "component_name": "gate_proj",
+      "tensor_name": "blk.0.ffn_gate.1.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 3145728,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 0,
+      "expert_id": 1,
+      "component_name": "up_proj",
+      "tensor_name": "blk.0.ffn_up.1.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 4194304,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 0,
+      "expert_id": 1,
+      "component_name": "down_proj",
+      "tensor_name": "blk.0.ffn_down.1.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 5242880,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        4096,
+        14336
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 0,
+      "expert_id": 2,
+      "component_name": "gate_proj",
+      "tensor_name": "blk.0.ffn_gate.2.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 6291456,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 0,
+      "expert_id": 2,
+      "component_name": "up_proj",
+      "tensor_name": "blk.0.ffn_up.2.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 7340032,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 0,
+      "expert_id": 2,
+      "component_name": "down_proj",
+      "tensor_name": "blk.0.ffn_down.2.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 8388608,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        4096,
+        14336
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 0,
+      "expert_id": 3,
+      "component_name": "gate_proj",
+      "tensor_name": "blk.0.ffn_gate.3.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 9437184,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 0,
+      "expert_id": 3,
+      "component_name": "up_proj",
+      "tensor_name": "blk.0.ffn_up.3.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 10485760,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 0,
+      "expert_id": 3,
+      "component_name": "down_proj",
+      "tensor_name": "blk.0.ffn_down.3.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 11534336,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        4096,
+        14336
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 4,
+      "component_name": "gate_proj",
+      "tensor_name": "blk.1.ffn_gate.4.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 12582912,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 4,
+      "component_name": "up_proj",
+      "tensor_name": "blk.1.ffn_up.4.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 13631488,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 4,
+      "component_name": "down_proj",
+      "tensor_name": "blk.1.ffn_down.4.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 14680064,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        4096,
+        14336
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 5,
+      "component_name": "gate_proj",
+      "tensor_name": "blk.1.ffn_gate.5.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 15728640,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 5,
+      "component_name": "up_proj",
+      "tensor_name": "blk.1.ffn_up.5.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 16777216,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 5,
+      "component_name": "down_proj",
+      "tensor_name": "blk.1.ffn_down.5.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 17825792,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        4096,
+        14336
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 6,
+      "component_name": "gate_proj",
+      "tensor_name": "blk.1.ffn_gate.6.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 18874368,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 6,
+      "component_name": "up_proj",
+      "tensor_name": "blk.1.ffn_up.6.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 19922944,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 6,
+      "component_name": "down_proj",
+      "tensor_name": "blk.1.ffn_down.6.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 20971520,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        4096,
+        14336
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 7,
+      "component_name": "gate_proj",
+      "tensor_name": "blk.1.ffn_gate.7.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 22020096,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 7,
+      "component_name": "up_proj",
+      "tensor_name": "blk.1.ffn_up.7.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 23068672,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        14336,
+        4096
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    },
+    {
+      "layer_id": 1,
+      "expert_id": 7,
+      "component_name": "down_proj",
+      "tensor_name": "blk.1.ffn_down.7.weight",
+      "source_file": "fixture-mixtral.gguf",
+      "byte_offset": 24117248,
+      "byte_length": 1048576,
+      "stride_bytes": 1048576,
+      "dtype": "q4_K",
+      "shape": [
+        4096,
+        14336
+      ],
+      "estimated_residency_bytes": 1048576,
+      "coverage_status": "complete"
+    }
+  ],
+  "safety_contract": [
+    "Fixture validation only; tensor values are not loaded.",
+    "Do not write packed expert stores from this manifest.",
+    "Do not claim live expert paging from inventory validation."
+  ],
+  "next_actions": [
+    "Join semantic routing traces to inventory-derived byte costs for Phase 3 replay metrics.",
+    "Add baseline replay policies for observe-only, keep-hot, preload-shortlist, evict-cold, fallback-dense, and no-live-actuator.",
+    "Add a dry-run expert-store layout planner after trace+inventory replay basics are stable."
+  ]
+}

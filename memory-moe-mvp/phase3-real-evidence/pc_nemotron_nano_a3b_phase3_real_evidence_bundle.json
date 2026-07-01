@@ -1,0 +1,36 @@
+{
+  "approvals": {
+    "dense_fallback_capture_approved": false,
+    "notes": [
+      "Trace artifact came from the prior approved PC Ollama Nemotron Nano A3B run; inventory was generated metadata-only from the read-only Docker Ollama volume."
+    ],
+    "real_model_trace_capture_approved": true,
+    "runtime_prompt_traffic_approved": false
+  },
+  "artifact_paths": {
+    "fallback_artifact_path": null,
+    "inventory_path": "memory-moe-mvp/phase3-real-evidence/sha256-a70437c41b3b0b768c48737e15f8160c90f13dc963f5226aabb3a160f708d1ce.expert_inventory.json",
+    "managed_plan_path": "memory-moe-mvp/data/managed_expert_loading_plan.json",
+    "policies_path": "memory-moe-mvp/data/baseline_replay_policies.json",
+    "trace_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_router_events.jsonl"
+  },
+  "backend_family": "llama_cpp",
+  "model_id": "/root/.ollama/models/blobs/sha256-a70437c41b3b0b768c48737e15f8160c90f13dc963f5226aabb3a160f708d1ce",
+  "name": "PC Nemotron Nano A3B Phase 3 real evidence",
+  "next_actions": [
+    "Validate this bundle with scripts/plan_phase3_real_evidence_bundle.py.",
+    "Keep the bundle valid-but-not-ready until real-model pairing and fallback comparison are proven.",
+    "Use the bundle as the Phase 3 handoff artifact before Phase 4 adapter work."
+  ],
+  "prompt_family": "router-trace-pc-nemotron-nano-30b-a3b",
+  "safety_contract": [
+    "Bundle validation reads local artifacts only.",
+    "Bundle validation does not launch model servers.",
+    "Bundle validation does not download models.",
+    "Bundle validation does not inspect private tokens.",
+    "Bundle validation does not send prompt traffic.",
+    "Bundle validation does not claim live expert paging."
+  ],
+  "schema_version": "moe-phase3-real-evidence-bundle-v1",
+  "source_format": "gguf"
+}

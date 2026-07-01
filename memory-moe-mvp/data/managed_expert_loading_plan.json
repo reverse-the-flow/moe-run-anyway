@@ -175,19 +175,20 @@
     {
       "id": "llama_cpp",
       "display_name": "llama.cpp / llama-server",
-      "description": "Stock llama.cpp evidence path and possible future small-patch substrate.",
+      "description": "Stock llama.cpp evidence path plus patched direct-router-trace substrate for GGUF runs.",
       "class": "stock_endpoint_or_small_patch_candidate",
       "mode": "observe_only",
-      "adapter_boundary": "Stock endpoint observability can provide runtime evidence; real managed loading would require a narrow runtime patch or upstream-supported control point.",
+      "adapter_boundary": "Stock endpoint observability can provide runtime evidence; patched direct llama.cpp can provide semantic routing traces; real managed loading would still require a narrow runtime patch or upstream-supported residency control point.",
       "evidence_sources": [
         "metrics endpoint",
         "slots endpoint",
         "props endpoint",
-        "server logs"
+        "server logs",
+        "patched llama.cpp router trace JSONL"
       ],
       "capability_status": {
         "expert_inventory": "missing",
-        "routing_visibility": "missing",
+        "routing_visibility": "partial",
         "residency_observation": "missing",
         "residency_control": "missing",
         "policy_application": "planned",
@@ -197,7 +198,6 @@
       },
       "missing_actuator_capabilities": [
         "expert_inventory",
-        "routing_visibility",
         "residency_observation",
         "residency_control",
         "cleanup_restore"
@@ -386,8 +386,8 @@
     },
     {
       "capability_id": "routing_visibility",
-      "impact": "Stock endpoint telemetry cannot be treated as semantic expert routing.",
-      "needed_before_live": "Selected backend must expose routed layer/expert ids and scores at the decision point."
+      "impact": "Only hook-derived or patched-router traces count as semantic routing; stock endpoint telemetry alone is insufficient.",
+      "needed_before_live": "Selected backend must expose routed layer/expert ids and scores at the decision point for the live actuator path."
     }
   ],
   "safety_contract": [

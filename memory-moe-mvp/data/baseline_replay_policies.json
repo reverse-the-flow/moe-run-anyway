@@ -1,0 +1,203 @@
+{
+  "schema_version": "moe-baseline-replay-policies-v1",
+  "name": "MoE Run Anyway Phase 3 Baseline Replay Policies",
+  "generated_for": "memory-moe-mvp",
+  "phase": "phase_3",
+  "source_artifacts": [
+    "memory-moe-mvp/data/llama_cpp_router_trace.fixture.jsonl",
+    "memory-moe-mvp/data/expert_inventory_manifest.fixture.json",
+    "scripts/plan_trace_inventory_replay.py"
+  ],
+  "managed_loading_actions": [
+    "observe_only",
+    "preload",
+    "pin",
+    "keep",
+    "evict",
+    "demote",
+    "fallback_dense",
+    "abort_run"
+  ],
+  "required_replay_metrics": [
+    "unique_expert_count",
+    "unique_estimated_residency_bytes",
+    "route_estimated_residency_bytes",
+    "reuse_distance",
+    "miss_rate",
+    "warm_hit_rate",
+    "churn",
+    "fallback_frequency",
+    "rejected_policy_reasons"
+  ],
+  "policies": [
+    {
+      "id": "observe_only",
+      "mode": "observe_only",
+      "description": "Record routed experts, byte estimates, and reuse distance without recommending residency changes.",
+      "managed_loading_actions": [
+        "observe_only"
+      ],
+      "may_mutate_runtime": false,
+      "requires_metrics": [
+        "unique_expert_count",
+        "unique_estimated_residency_bytes",
+        "route_estimated_residency_bytes",
+        "reuse_distance"
+      ],
+      "reports_metrics": [
+        "unique_expert_count",
+        "unique_estimated_residency_bytes",
+        "route_estimated_residency_bytes",
+        "reuse_distance"
+      ],
+      "rejects_when": [
+        "trace_inventory_join_invalid",
+        "missing_route_inventory"
+      ]
+    },
+    {
+      "id": "keep_hot",
+      "mode": "replay_simulate",
+      "description": "Keep recently and frequently routed experts resident inside a fixed byte budget.",
+      "managed_loading_actions": [
+        "keep",
+        "evict",
+        "fallback_dense"
+      ],
+      "may_mutate_runtime": false,
+      "requires_metrics": [
+        "reuse_distance",
+        "unique_estimated_residency_bytes",
+        "miss_rate",
+        "warm_hit_rate",
+        "churn"
+      ],
+      "reports_metrics": [
+        "warm_hit_rate",
+        "miss_rate",
+        "churn",
+        "rejected_policy_reasons"
+      ],
+      "rejects_when": [
+        "resident_budget_exceeded",
+        "warm_hit_rate_not_better_than_observe_only",
+        "churn_above_threshold"
+      ]
+    },
+    {
+      "id": "preload_shortlist",
+      "mode": "replay_simulate",
+      "description": "Preload a shortlist of high-mass experts before the next replay window when reuse evidence supports it.",
+      "managed_loading_actions": [
+        "preload",
+        "keep",
+        "evict",
+        "fallback_dense"
+      ],
+      "may_mutate_runtime": false,
+      "requires_metrics": [
+        "reuse_distance",
+        "route_estimated_residency_bytes",
+        "miss_rate",
+        "warm_hit_rate",
+        "churn",
+        "fallback_frequency"
+      ],
+      "reports_metrics": [
+        "warm_hit_rate",
+        "miss_rate",
+        "churn",
+        "fallback_frequency",
+        "rejected_policy_reasons"
+      ],
+      "rejects_when": [
+        "shortlist_bytes_exceed_budget",
+        "preload_misses_exceed_observe_only",
+        "fallback_frequency_above_threshold"
+      ]
+    },
+    {
+      "id": "evict_cold",
+      "mode": "replay_simulate",
+      "description": "Demote or evict experts with weak recent reuse while preserving dense fallback.",
+      "managed_loading_actions": [
+        "demote",
+        "evict",
+        "fallback_dense"
+      ],
+      "may_mutate_runtime": false,
+      "requires_metrics": [
+        "reuse_distance",
+        "miss_rate",
+        "churn",
+        "fallback_frequency"
+      ],
+      "reports_metrics": [
+        "miss_rate",
+        "churn",
+        "fallback_frequency",
+        "rejected_policy_reasons"
+      ],
+      "rejects_when": [
+        "eviction_causes_repeat_misses",
+        "churn_above_threshold",
+        "dense_fallback_unavailable"
+      ]
+    },
+    {
+      "id": "fallback_dense",
+      "mode": "replay_simulate",
+      "description": "Prefer dense or full-residency behavior when replay evidence does not justify managed loading.",
+      "managed_loading_actions": [
+        "fallback_dense"
+      ],
+      "may_mutate_runtime": false,
+      "requires_metrics": [
+        "miss_rate",
+        "fallback_frequency",
+        "rejected_policy_reasons"
+      ],
+      "reports_metrics": [
+        "fallback_frequency",
+        "rejected_policy_reasons"
+      ],
+      "rejects_when": [
+        "dense_fallback_missing",
+        "fallback_output_missing_for_quality_comparison"
+      ]
+    },
+    {
+      "id": "no_live_actuator",
+      "mode": "observe_only",
+      "description": "End the audit with no live actuator recommendation when inventory, replay, fallback, or cleanup evidence is insufficient.",
+      "managed_loading_actions": [
+        "abort_run"
+      ],
+      "may_mutate_runtime": false,
+      "requires_metrics": [
+        "rejected_policy_reasons"
+      ],
+      "reports_metrics": [
+        "rejected_policy_reasons"
+      ],
+      "rejects_when": [
+        "no_residency_observation",
+        "no_residency_control",
+        "cleanup_restore_unproven",
+        "policy_benefit_unproven"
+      ]
+    }
+  ],
+  "safety_contract": [
+    "Policy validation does not launch models.",
+    "Policy validation does not load tensor values.",
+    "Policy validation does not mutate runtime residency.",
+    "Policy validation does not write packed expert stores.",
+    "Policy validation does not claim live expert paging."
+  ],
+  "next_actions": [
+    "Run scripts/plan_baseline_policy_replay.py over joined trace+inventory artifacts.",
+    "Report miss rate, warm-hit rate, churn, fallback frequency, and rejected-policy reasons.",
+    "Keep no_live_actuator available until backend residency observation, control, dense fallback, and cleanup are proven."
+  ]
+}

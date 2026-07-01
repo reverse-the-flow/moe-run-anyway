@@ -16,16 +16,24 @@ SPEC.loader.exec_module(planner)
 
 
 class ExpertPagingPlannerTests(unittest.TestCase):
-    def test_default_roadmap_validates_and_reports_hookable_focus(self) -> None:
+    def test_default_roadmap_validates_and_reports_phase3_audit_focus(self) -> None:
         roadmap = planner.load_roadmap(planner.DEFAULT_ROADMAP_PATH)
         summary = planner.build_summary(roadmap, planner.DEFAULT_ROADMAP_PATH)
 
         self.assertTrue(summary["valid"], summary["errors"])
         self.assertEqual(summary["schema_version"], planner.SUPPORTED_SCHEMA_VERSION)
-        self.assertEqual(summary["current_phase"]["id"], "phase_2")
-        self.assertEqual(roadmap["phases"][0]["status"], "complete")
-        self.assertEqual(roadmap["phases"][1]["status"], "blocked")
-        self.assertEqual(roadmap["phases"][2]["status"], "in_progress")
+        self.assertEqual(summary["current_phase"]["id"], "phase_3")
+        statuses_by_phase = {phase["id"]: phase["status"] for phase in roadmap["phases"]}
+        self.assertEqual(statuses_by_phase["phase_0"], "complete")
+        self.assertEqual(statuses_by_phase["phase_1"], "blocked")
+        self.assertEqual(statuses_by_phase["phase_2"], "blocked")
+        self.assertEqual(statuses_by_phase["phase_3"], "in_progress")
+        phase3 = next(phase for phase in roadmap["phases"] if phase["id"] == "phase_3")
+        phase3_text = " ".join(phase3["deliverables"] + phase3["evidence_gates"])
+        self.assertIn("receipt-fill artifact-class count parity", phase3_text)
+        self.assertIn("next-unblocked work-package pointer", phase3_text)
+        self.assertIn("candidate-router trace, managed-output, and dense-output", phase3_text)
+        self.assertIn("phase3_pc_mixtral_real_evidence_bundle", roadmap)
         self.assertEqual(summary["planned_stage"], "harness_run_request")
         self.assertIn("planner does not send prompt traffic", summary["safety_contract"])
 

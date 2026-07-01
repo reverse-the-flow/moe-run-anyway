@@ -1,293 +1,394 @@
 {
-  "schema_version": "moe-expert-paging-roadmap-v1",
-  "name": "MoE Run Anyway Expert Paging Roadmap",
-  "generated_for": "memory-moe-mvp",
-  "managed_expert_loading_contract": "memory-moe-mvp/data/managed_expert_loading_plan.json",
-  "model_plane_manifest_fixture": "memory-moe-mvp/data/model_plane_moe_probe_manifest.runtime_baseline.fixture.json",
-  "runtime_baseline_artifact_contract": "memory-moe-mvp/data/runtime_baseline_artifact_contract.json",
-  "current_truth_table": [
-    {
-      "surface": "model_plane_manifest_handoff",
-      "status": "implemented",
-      "can_do": "Export run-scoped model, backend, endpoint, log, observability, and safety hints for MoE planning.",
-      "cannot_do": "Expose semantic expert ids unless the runtime exposes router outputs."
-    },
-    {
-      "surface": "managed_expert_loading_contract",
-      "status": "implemented",
-      "can_do": "Validate expert inventory, routing visibility, residency states, policy decisions, backend adapter boundaries, fallback, cleanup, and memory-moe-bridge-v1 artifact expectations.",
-      "cannot_do": "Read or mutate live expert residency; the runtime actuator is still missing."
-    },
-    {
-      "surface": "runtime_baseline_planner",
-      "status": "implemented",
-      "can_do": "Plan dry-run and preflight-only baseline commands for llama.cpp, vLLM, Ollama, or OpenAI-compatible endpoints.",
-      "cannot_do": "Launch servers, send prompt traffic, or page experts."
-    },
-    {
-      "surface": "runtime_baseline_artifact_contract",
-      "status": "implemented",
-      "can_do": "Validate Phase 1 baseline artifact classes and label runtime evidence separately from semantic routing evidence.",
-      "cannot_do": "Collect live runtime artifacts or prove semantic expert ids from stock endpoint telemetry."
-    },
-    {
-      "surface": "passive_sidecar",
-      "status": "implemented",
-      "can_do": "Capture request-boundary telemetry and upstream observability without invasive runtime changes.",
-      "cannot_do": "Alter expert residency or infer semantic routing from endpoint timing alone."
-    },
-    {
-      "surface": "forward_hook_probe",
-      "status": "implemented_for_hookable_runtimes",
-      "can_do": "Capture router outputs and semantic expert ids when Python modules expose them; dry-run a local-only Transformers hookable target path.",
-      "cannot_do": "Apply to stock llama.cpp GGUF execution or download/load remote model ids."
-    },
-    {
-      "surface": "controller_replay_advisor",
-      "status": "implemented",
-      "can_do": "Score offline residency policies over synthetic or captured traces.",
-      "cannot_do": "Pin, evict, preload, or load only routed experts in a live backend."
-    },
-    {
-      "surface": "runtime_actuator",
-      "status": "missing",
-      "can_do": "Nothing yet.",
-      "cannot_do": "No live expert loading, eviction, pinning, preloading, or expert offload override exists."
-    }
-  ],
-  "phases": [
-    {
-      "id": "phase_0",
-      "title": "Harness contract and Model Plane handoff",
-      "status": "complete",
-      "deliverables": [
-        "Roadmap document and machine-readable checklist.",
-        "Managed expert loading contract defines inventory, routing visibility, residency state, policy decision, backend adapter, fallback, cleanup, and artifact requirements.",
-        "Manifest planner remains planning-only and emits a planned harness_run_request stage.",
-        "Saved Model Plane runtime-baseline manifest fixture exercises the handoff planner.",
-        "Model Plane callable-function and cron handoff is documented.",
-        "Actuator spike proof checklist is tracked."
-      ],
-      "evidence_gates": [
-        "Roadmap JSON validates with scripts/plan_expert_paging.py.",
-        "Managed expert loading JSON validates with scripts/plan_managed_expert_loading.py.",
-        "Manifest planner output names the planned harness_run_request without executing it when run against memory-moe-mvp/data/model_plane_moe_probe_manifest.runtime_baseline.fixture.json with --json.",
-        "Dependency-free tests cover planner output and roadmap validation."
-      ],
-      "next_actions": [
-        "Preserve the saved manifest fixture as the local Phase 0 handoff gate.",
-        "Keep all probe execution behind explicit user approval."
-      ]
-    },
-    {
-      "id": "phase_1",
-      "title": "Artifact evidence from runtime baselines",
-      "status": "blocked",
-      "deliverables": [
-        "Runtime baseline artifact contract that separates runtime evidence from semantic routing evidence.",
-        "Passive sidecar artifact bundle from an approved running upstream.",
-        "llama.cpp runtime baseline artifact bundle.",
-        "vLLM or OpenAI-compatible runtime baseline artifact bundle.",
-        "Backend labels mapped to memory-moe-bridge-v1 fields.",
-        "Managed-loading capability labels for inventory, routing visibility, residency read/write, fallback, artifact export, and cleanup.",
-        "Explicit separation of runtime evidence from semantic routing evidence."
-      ],
-      "evidence_gates": [
-        "Runtime baseline artifact contract validates with scripts/plan_runtime_baseline_artifacts.py.",
-        "At least one run-scoped artifact bundle exists for each selected backend class.",
-        "Artifacts include timing, readiness, observability, manifest metadata, and safety notes.",
-        "No artifact claims semantic expert ids unless router outputs are exposed."
-      ],
-      "next_actions": [
-        "Run python3 scripts/plan_runtime_baseline_artifacts.py.",
-        "Capture a passive sidecar artifact bundle when an approved upstream endpoint is running.",
-        "Use Model Plane cron or callable functions to export manifests for approved runtime baselines.",
-        "Run only dry-run or preflight-only planning until the user approves prompt traffic.",
-        "Compare artifact fields across sidecar, llama.cpp, and OpenAI-compatible baselines."
-      ]
-    },
-    {
-      "id": "phase_2",
-      "title": "Hookable PyTorch semantic routing trace runner",
-      "status": "in_progress",
-      "deliverables": [
-        "Synthetic no-model hook smoke path that exercises hook attach, router event capture, spans, and window summaries.",
-        "Local hookable trace runner for a PyTorch/Transformers-style MoE.",
-        "Router output capture for layer, expert id, score or probability, entropy, prompt family, and token/window metadata.",
-        "Trace artifacts compatible with controller replay."
-      ],
-      "evidence_gates": [
-        "Semantic traces validate under memory-moe-bridge-v1.",
-        "Dense fallback output can be recorded or compared for the same prompt set.",
-        "Hooking failures are explicit and never downgraded into timing inference."
-      ],
-      "next_actions": [
-        "Run the synthetic forward-hook smoke after hookable-probe edits.",
-        "Select one local, user-provided, or cloud hookable MoE runtime.",
-        "Run run_transformers_forward_probe.py --dry-run against the selected local Transformers model directory.",
-        "Run the same command without --dry-run only after local path and optional dependencies are ready.",
-        "Extend forward-hook tests with fixture-level semantic trace validation."
-      ]
-    },
-    {
-      "id": "phase_3",
-      "title": "Managed loading policy and replay audit with dense fallback comparison",
-      "status": "planned",
-      "deliverables": [
-        "Replay controller evaluates candidate residency policies over semantic traces.",
-        "Dense fallback comparison is part of the audit contract.",
-        "Policy output uses the managed-loading vocabulary: observe_only, preload, pin, keep, evict, demote, fallback_dense, abort_run, and confidence fields."
-      ],
-      "evidence_gates": [
-        "Policy decisions are reproducible from artifacts.",
-        "Warm-hit or memory benefit is shown without unacceptable churn.",
-        "Dense fallback bounds behavior or quality drift."
-      ],
-      "next_actions": [
-        "Add replay fixtures from Phase 2 semantic traces.",
-        "Report churn, fallback rate, missed experts, and dense-baseline deltas."
-      ]
-    },
-    {
-      "id": "phase_4",
-      "title": "Managed expert loading backend adapter feasibility spike",
-      "status": "planned",
-      "deliverables": [
-        "Spike plan identifying backend-specific control points for llama.cpp first, then vllm_openai_compatible, hookable_pytorch, moe_infinity_style, or prototype_offload_system adapters as evidence permits.",
-        "Comparison of outside controller, small llama.cpp patch, fork, backend plugin, and hookable runtime adapter options.",
-        "Proof checklist for routing visibility, residency control, dense fallback, artifact shape, cleanup, and rollback."
-      ],
-      "evidence_gates": [
-        "A concrete runtime hook, adapter, or patch point can read and influence expert residency or offload behavior.",
-        "The runtime can emit auditable artifacts without breaking dense baseline execution.",
-        "Cleanup and fallback are tested under failure."
-      ],
-      "next_actions": [
-        "Audit llama.cpp MoE loading/offload paths before writing a patch.",
-        "Prefer a small controller patch or fork over a custom runtime if llama.cpp is viable."
-      ]
-    },
-    {
-      "id": "phase_5",
-      "title": "Guarded runtime actuator experiment",
-      "status": "planned",
-      "deliverables": [
-        "Guarded actuator mode for preload, pin, evict, or expert residency restriction.",
-        "Kill switch, dense fallback, artifact export, and cleanup.",
-        "Automatic comparison against baseline and replay expectations."
-      ],
-      "evidence_gates": [
-        "Actuator behavior is externally observable and internally auditable.",
-        "Dense fallback remains available for every run.",
-        "A measurable memory or latency effect is shown without unacceptable regression."
-      ],
-      "next_actions": [
-        "Run only after Phase 4 proves a safe actuator point.",
-        "Keep the first experiment narrow, reversible, and artifact-first."
-      ]
-    }
-  ],
-  "decision_gates": [
-    {
-      "from": "phase_0",
-      "to": "phase_1",
-      "requires": "Manifest, roadmap, managed-loading contract, and planner checks pass locally."
-    },
-    {
-      "from": "phase_1",
-      "to": "phase_2",
-      "requires": "Passive external observation surfaces and limitations are explicit; live baseline artifact capture can continue in parallel while hookable tracing advances."
-    },
-    {
-      "from": "phase_2",
-      "to": "phase_3",
-      "requires": "Semantic traces exist from a hookable runtime."
-    },
-    {
-      "from": "phase_3",
-      "to": "phase_4",
-      "requires": "Replay policies use managed-loading decision vocabulary and show useful behavior against dense fallback comparisons."
-    },
-    {
-      "from": "phase_4",
-      "to": "phase_5",
-      "requires": "A backend adapter or runtime actuator point exists, can read/write residency state, and has a rollback plan."
-    }
-  ],
-  "managed_expert_loading": {
-    "plan": "memory-moe-mvp/data/managed_expert_loading_plan.json",
-    "planner": "scripts/plan_managed_expert_loading.py",
-    "doc": "memory-moe-mvp/docs/managed-expert-loading.md",
-    "role": "Concrete contract layer between roadmap-only expert paging and a future live runtime actuator.",
-    "current_limit": "Planning and validation only; no live expert residency mutation exists."
-  },
-  "llama_cpp_options": [
-    {
-      "option": "external_controller",
-      "can_do": "Schedule runs, choose probe suites, analyze artifacts, and recommend residency.",
-      "cannot_do": "Load only routed experts or alter tensor residency without runtime support."
-    },
-    {
-      "option": "small_controller_patch_or_fork",
-      "can_do": "Expose routing and residency controls if llama.cpp internals support a narrow patch.",
-      "cannot_do": "Avoid maintenance cost; must be justified by Phase 1-3 evidence."
-    },
-    {
-      "option": "custom_runtime",
-      "can_do": "Potentially expose full control.",
-      "cannot_do": "Stay scoped; this is a last resort, not the starting point."
-    }
-  ],
-  "model_plane_handoff": {
-    "source": "Model Plane callable function or cron",
-    "artifact": "run-scoped MoE manifest",
-    "planned_stage": "harness_run_request",
-    "contract": "MoE consumes manifests and emits planning artifacts; Model Plane owns orchestration surfaces.",
-    "safety": [
-      "No model launch from roadmap/planner checks.",
-      "No downloads, authentication, Docker, or prompt traffic from roadmap/planner checks.",
-      "Probe execution requires explicit user approval."
-    ]
-  },
-  "actuator_spike_checklist": [
-    {
-      "id": "routing_visibility",
-      "question": "Can the runtime expose routed expert ids or sufficient router metadata at the decision point?",
-      "required_evidence": "Artifact showing layer, token or window, expert id, and routing score or rank."
-    },
-    {
-      "id": "tensor_residency_control",
-      "question": "Can policy pin, evict, preload, or alter expert offload behavior?",
-      "required_evidence": "Runtime proof that residency changes occur and are visible."
-    },
-    {
-      "id": "dense_fallback",
-      "question": "Can the run revert to normal dense/full-residency behavior?",
-      "required_evidence": "Fallback command or mode plus comparable artifact."
-    },
-    {
-      "id": "artifact_shape",
-      "question": "Can decisions and outcomes be exported in memory-moe-bridge-v1-compatible form?",
-      "required_evidence": "Validated artifact with policy decision and observed outcome fields."
-    },
-    {
-      "id": "cleanup",
-      "question": "Does interruption or failure restore runtime state?",
-      "required_evidence": "Failure-path cleanup test or rollback artifact."
-    }
-  ],
-  "risks": [
-    "Endpoint metrics may be overinterpreted as semantic routing.",
-    "A runtime patch may expose routing but not safe tensor residency control.",
-    "Replay policies may cause live churn or cleanup failures.",
-    "Backend artifact fields may drift without strict labels.",
-    "Fork maintenance cost may exceed the benefit if the patch is not small."
-  ],
-  "non_goals": [
-    "Claim live expert paging before an actuator exists.",
-    "Download models, use tokens, run Docker, launch model servers, or send prompt traffic from roadmap/planner checks.",
-    "Start with a large custom runtime rewrite.",
-    "Infer semantic expert ids from stock OpenAI-compatible endpoint telemetry.",
-    "Perform destructive cleanup or mutate user model caches."
-  ]
+    "schema_version":  "moe-expert-paging-roadmap-v1",
+    "name":  "MoE Run Anyway Expert Paging Roadmap",
+    "generated_for":  "memory-moe-mvp",
+    "managed_expert_loading_contract":  "memory-moe-mvp/data/managed_expert_loading_plan.json",
+    "model_plane_manifest_fixture":  "memory-moe-mvp/data/model_plane_moe_probe_manifest.runtime_baseline.fixture.json",
+    "runtime_baseline_artifact_contract":  "memory-moe-mvp/data/runtime_baseline_artifact_contract.json",
+    "expert_inventory_manifest_fixture":  "memory-moe-mvp/data/expert_inventory_manifest.fixture.json",
+    "expert_inventory_planner":  "scripts/plan_expert_inventory.py",
+    "expert_inventory_safetensors_scanner":  "scripts/scan_safetensors_expert_inventory.py",
+    "expert_inventory_gguf_scanner":  "scripts/scan_gguf_expert_inventory.py",
+    "expert_store_layout_planner":  "scripts/plan_expert_store_layout.py",
+    "trace_inventory_replay_planner":  "scripts/plan_trace_inventory_replay.py",
+    "real_model_trace_inventory_pairing_planner":  "scripts/plan_real_model_trace_inventory_pairing.py",
+    "baseline_replay_policies":  "memory-moe-mvp/data/baseline_replay_policies.json",
+    "baseline_replay_policies_planner":  "scripts/plan_baseline_replay_policies.py",
+    "baseline_policy_replay_planner":  "scripts/plan_baseline_policy_replay.py",
+    "dense_fallback_comparison_planner":  "scripts/plan_dense_fallback_comparison.py",
+    "dense_fallback_comparison_builder":  "scripts/build_dense_fallback_comparison.py",
+    "phase3_prompt_set_builder":  "scripts/build_phase3_prompt_set.py",
+    "phase3_output_summary_builder":  "scripts/build_phase3_output_summary.py",
+    "phase3_trace_receipts":  "scripts/phase3_trace_receipts.py",
+    "phase3_trace_receipt_builder":  "scripts/build_phase3_trace_receipt.py",
+    "phase3_runtime_capture_request_builder":  "scripts/build_phase3_runtime_capture_request.py",
+    "phase3_runtime_capture_request_audit_planner":  "scripts/plan_phase3_runtime_capture_request.py",
+    "phase3_runtime_capture_command_contract_planner":  "scripts/plan_phase3_runtime_capture_commands.py",
+    "phase3_launch_card_library_planner":  "scripts/plan_phase3_launch_card_library.py",
+    "phase3_capture_result_intake_planner":  "scripts/plan_phase3_capture_result_intake.py",
+    "phase3_policy_candidate_trace_planner":  "scripts/plan_phase3_policy_candidate_trace.py",
+    "phase3_go_no_go_planner":  "scripts/plan_phase3_go_no_go.py",
+    "phase3_evidence_packet_planner":  "scripts/plan_phase3_evidence_packet.py",
+    "phase3_real_evidence_capture_planner":  "scripts/plan_phase3_real_evidence_capture.py",
+    "phase3_live_capability_proof_planner":  "scripts/plan_phase3_live_capability_proof.py",
+    "phase3_runtime_actuator_design_planner":  "scripts/plan_phase3_runtime_actuator_design.py",
+    "phase3_runtime_actuator_spike_planner":  "scripts/plan_phase3_runtime_actuator_spike.py",
+    "phase3_live_capability_proof_template_builder":  "scripts/build_phase3_live_capability_proof_template.py",
+    "phase3_artifact_intake_planner":  "scripts/plan_phase3_artifact_intake.py",
+    "phase3_real_evidence_bundle_fixture":  "memory-moe-mvp/data/phase3_real_evidence_bundle.fixture.json",
+    "phase3_real_evidence_bundle_planner":  "scripts/plan_phase3_real_evidence_bundle.py",
+    "phase3_real_evidence_bundle_builder":  "scripts/build_phase3_real_evidence_bundle.py",
+    "phase3_positive_path_test":  "memory-moe-mvp/tests/test_phase3_positive_path.py",
+    "phase3_pc_mixtral_real_evidence_readme":  "memory-moe-mvp/phase3-real-evidence/README.md",
+    "phase3_pc_mixtral_router_trace":  "memory-moe-mvp/phase3-real-evidence/pc_mixtral_router_events.jsonl",
+    "phase3_pc_mixtral_expert_inventory":  "memory-moe-mvp/phase3-real-evidence/sha256-5041ba4278429fe475782b889471b5ff065a6cce5c3a539bd61d1e457f1961de.expert_inventory.json",
+    "phase3_pc_mixtral_real_evidence_bundle":  "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.json",
+    "phase3_pc_mixtral_prompt_set":  "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.prompt-set.json",
+    "phase3_pc_mixtral_managed_output_summary_template":  "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+    "phase3_pc_mixtral_dense_output_summary_template":  "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+    "phase3_pc_mixtral_runtime_capture_request":  "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-request.json",
+    "phase3_pc_mixtral_live_capability_proof_template":  "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.live-capability-proof.template.json",
+    "current_truth_table":  [
+                                {
+                                    "surface":  "model_plane_manifest_handoff",
+                                    "status":  "implemented",
+                                    "can_do":  "Export run-scoped model, backend, endpoint, log, observability, and safety hints for MoE planning.",
+                                    "cannot_do":  "Expose semantic expert ids unless the runtime exposes router outputs."
+                                },
+                                {
+                                    "surface":  "managed_expert_loading_contract",
+                                    "status":  "implemented",
+                                    "can_do":  "Validate expert inventory, routing visibility, residency states, policy decisions, backend adapter boundaries, fallback, cleanup, and memory-moe-bridge-v1 artifact expectations.",
+                                    "cannot_do":  "Read or mutate live expert residency; the runtime actuator is still missing."
+                                },
+                                {
+                                    "surface":  "runtime_baseline_planner",
+                                    "status":  "implemented",
+                                    "can_do":  "Plan dry-run and preflight-only baseline commands for llama.cpp, vLLM, Ollama, or OpenAI-compatible endpoints.",
+                                    "cannot_do":  "Launch servers, send prompt traffic, or page experts."
+                                },
+                                {
+                                    "surface":  "runtime_baseline_artifact_contract",
+                                    "status":  "implemented",
+                                    "can_do":  "Validate Phase 1 baseline artifact classes and label runtime evidence separately from semantic routing evidence.",
+                                    "cannot_do":  "Collect live runtime artifacts or prove semantic expert ids from stock endpoint telemetry."
+                                },
+                                {
+                                    "surface":  "passive_sidecar",
+                                    "status":  "implemented",
+                                    "can_do":  "Capture request-boundary telemetry and upstream observability without invasive runtime changes.",
+                                    "cannot_do":  "Alter expert residency or infer semantic routing from endpoint timing alone."
+                                },
+                                {
+                                    "surface":  "forward_hook_probe",
+                                    "status":  "implemented_for_hookable_runtimes",
+                                    "can_do":  "Capture router outputs and semantic expert ids when Python modules expose them; dry-run a local-only Transformers hookable target path.",
+                                    "cannot_do":  "Apply to stock llama.cpp GGUF execution or download/load remote model ids."
+                                },
+                                {
+                                    "surface":  "patched_llama_cpp_router_trace",
+                                    "status":  "implemented",
+                                    "can_do":  "Emit memory-moe-bridge-v1 selected expert ids and weights from direct patched llama.cpp runs, including read-only Ollama GGUF blobs.",
+                                    "cannot_do":  "Make stock Ollama API traffic emit traces, control expert residency, or prove paging."
+                                },
+                                {
+                                    "surface":  "offline_expert_inventory",
+                                    "status":  "implemented",
+                                    "can_do":  "Validate repo-local expert inventory manifests and dry-run safetensors headers, safetensors shard indexes, or GGUF metadata/tensor tables into inventory rows without loading tensor values.",
+                                    "cannot_do":  "Load, page, mutate live expert residency, write packed stores, or prove live paging."
+                                },
+                                {
+                                    "surface":  "controller_replay_advisor",
+                                    "status":  "implemented",
+                                    "can_do":  "Score offline residency policies over synthetic or captured traces.",
+                                    "cannot_do":  "Pin, evict, preload, or load only routed experts in a live backend."
+                                },
+                                {
+                                    "surface":  "runtime_actuator",
+                                    "status":  "missing",
+                                    "can_do":  "Nothing yet.",
+                                    "cannot_do":  "No live expert loading, eviction, pinning, preloading, or expert offload override exists."
+                                }
+                            ],
+    "phases":  [
+                   {
+                       "id":  "phase_0",
+                       "title":  "Harness contract and Model Plane handoff",
+                       "status":  "complete",
+                       "deliverables":  [
+                                            "Roadmap document and machine-readable checklist.",
+                                            "Managed expert loading contract defines inventory, routing visibility, residency state, policy decision, backend adapter, fallback, cleanup, and artifact requirements.",
+                                            "Manifest planner remains planning-only and emits a planned harness_run_request stage.",
+                                            "Saved Model Plane runtime-baseline manifest fixture exercises the handoff planner.",
+                                            "Model Plane callable-function and cron handoff is documented.",
+                                            "Actuator spike proof checklist is tracked."
+                                        ],
+                       "evidence_gates":  [
+                                              "Roadmap JSON validates with scripts/plan_expert_paging.py.",
+                                              "Managed expert loading JSON validates with scripts/plan_managed_expert_loading.py.",
+                                              "Manifest planner output names the planned harness_run_request without executing it when run against memory-moe-mvp/data/model_plane_moe_probe_manifest.runtime_baseline.fixture.json with --json.",
+                                              "Dependency-free tests cover planner output and roadmap validation."
+                                          ],
+                       "next_actions":  [
+                                            "Preserve the saved manifest fixture as the local Phase 0 handoff gate.",
+                                            "Keep all probe execution behind explicit user approval."
+                                        ]
+                   },
+                   {
+                       "id":  "phase_1",
+                       "title":  "Artifact evidence from runtime baselines",
+                       "status":  "blocked",
+                       "deliverables":  [
+                                            "Runtime baseline artifact contract that separates runtime evidence from semantic routing evidence.",
+                                            "Passive sidecar artifact bundle from an approved running upstream.",
+                                            "llama.cpp runtime baseline artifact bundle.",
+                                            "vLLM or OpenAI-compatible runtime baseline artifact bundle.",
+                                            "Backend labels mapped to memory-moe-bridge-v1 fields.",
+                                            "Managed-loading capability labels for inventory, routing visibility, residency read/write, fallback, artifact export, and cleanup.",
+                                            "Explicit separation of runtime evidence from semantic routing evidence."
+                                        ],
+                       "evidence_gates":  [
+                                              "Runtime baseline artifact contract validates with scripts/plan_runtime_baseline_artifacts.py.",
+                                              "At least one run-scoped artifact bundle exists for each selected backend class.",
+                                              "Artifacts include timing, readiness, observability, manifest metadata, and safety notes.",
+                                              "No artifact claims semantic expert ids unless router outputs are exposed."
+                                          ],
+                       "next_actions":  [
+                                            "Run python3 scripts/plan_runtime_baseline_artifacts.py.",
+                                            "Capture a passive sidecar artifact bundle when an approved upstream endpoint is running.",
+                                            "Use Model Plane cron or callable functions to export manifests for approved runtime baselines.",
+                                            "Run only dry-run or preflight-only planning until the user approves prompt traffic.",
+                                            "Compare artifact fields across sidecar, llama.cpp, and OpenAI-compatible baselines."
+                                        ]
+                   },
+                   {
+                       "id":  "phase_2",
+                       "title":  "Semantic routing trace capture",
+                       "status":  "blocked",
+                       "deliverables":  [
+                                            "Synthetic no-model hook smoke path that exercises hook attach, router event capture, spans, and window summaries.",
+                                            "Local hookable trace runner for a PyTorch/Transformers-style MoE.",
+                                            "Patched direct llama.cpp router trace path for GGUF and read-only Ollama blobs.",
+                                            "Router output capture for layer, expert id, score or probability, entropy, prompt family, and token/window metadata.",
+                                            "Trace artifacts compatible with controller replay.",
+                                            "Repeat protocol that separates matrix validation, metadata preflight, and semantic trace acceptance."
+                                        ],
+                       "evidence_gates":  [
+                                              "Semantic traces validate under memory-moe-bridge-v1.",
+                                              "Dense fallback output can be recorded or compared for the same prompt set.",
+                                              "Hooking failures are explicit and never downgraded into timing inference.",
+                                              "Timeouts with empty JSONL are recorded as runtime-budget blockers, not semantic trace successes or model incompatibility."
+                                          ],
+                       "next_actions":  [
+                                            "Run the Phase 2 repeat protocol before new live trace attempts.",
+                                            "Package the patched llama.cpp Docker image and command as a repeatable launch-card path.",
+                                            "Select one local, user-provided, or cloud hookable MoE runtime.",
+                                            "Run run_transformers_forward_probe.py --dry-run against the selected local Transformers model directory.",
+                                            "Run the same command without --dry-run only after local path and optional dependencies are ready.",
+                                            "Extend forward-hook tests with fixture-level semantic trace validation."
+                                        ]
+                   },
+                   {
+                       "id":  "phase_3",
+                       "title":  "Inventory-grounded replay audit with dense fallback comparison",
+                       "status":  "in_progress",
+                       "deliverables":  [
+                                            "Expert inventory manifest fixture, validator, safetensors header/index scanner dry run, GGUF tensor-table scanner dry run, trace-to-inventory replay join planner, real-model trace/inventory pairing gate, baseline policy definitions, and baseline policy replay planner.",
+                                            "Dry-run expert-store layout plan that estimates disk and missing components without writing tensor data.",
+                                            "Trace-to-inventory planner joins semantic traces to inventory-derived byte costs; replay controller evaluates candidate residency policies over that joined artifact.",
+                                            "Dense fallback comparison, a local comparison artifact builder, or an explicit fallback-output blocker report is part of the audit contract.",
+                                            "Baseline replay policy definitions use the managed-loading vocabulary: observe_only, preload, pin, keep, evict, demote, fallback_dense, abort_run, required metrics, and rejection reasons.",
+                                            "Failure reports cover churn, missed experts, byte misses, fallback frequency, quality deltas, rejected policies, the explicit Phase 3 go/no-go decision with optional Markdown export, a one-command evidence packet with optional Markdown export and metadata-only operator handoff package export and validation, blocker-resolution queue package/row/dependency/completion-gate/validator parity, next-unblocked work-package pointer, plus runtime-actuator proof-handoff counts, requirement coverage, and control-dependency checks, ordered promotion checklist, recommended runtime-capture sequence, recommended policy-candidate trace handoff, recommended dense fallback capture handoff, recommended live capability proof handoff, runtime-actuator design readiness, runtime-actuator spike proof handoff, recommended and all-request validator command manifests, live-proof attachment, repo-local matrix, matrix-aware pairing status, scaffold, request-audit, approval-manifest parity, receipt-requirement parity, path-aware operator-queue parity, recommended and all-request post-approval capture-fill parity, recommended runtime-capture preflight manifest, recommended runtime-capture command contract, recommended and all-request runtime-capture runtime-command/manual execution coverage, all-request manual capture runbook with source-request/prompt-set/approval-contract counts, all-request post-capture intake runbook, all-request capture queue manifest, all-request approval command manifest, all-request validator command manifest, all-request downstream handoff manifest, all-request receipt-fill manifest with candidate-router trace, managed-output, and dense-output class counts, all-request receipt-fill command manifest, all-request receipt/validator parity, receipt-command validator coverage, Phase 3 blocker closure manifest with mapping-ready/evidence-complete status, Phase 3 blocker evidence ledger with row-level missing-evidence counts, Phase 3 blocker resolution queue with ordered work packages, next-unblocked work-package pointer, dependency order, completion gates, embedded runtime-actuator proof handoff, and closure-level validator counts, and intake receipt gates, a real-evidence capture plan with optional Markdown request/command handoff, a prompt-set builder, output-summary templates with capture receipts, trace receipt validation/templates, runtime-capture requests with future live-proof fills, planned-only runtime-capture launch-card templates, a launch-card library planner with a binding handoff worksheet, Model Plane artifact-writer contract request, and Model Plane fulfillment validator, a saved-request audit with optional Markdown operator handoff export, a capture-result intake audit with aggregate receipt-gate coverage, a flat receipt-fill manifest split by candidate-router trace, managed-output, and dense-output artifact classes, a post-approval capture-fill plan, per-request next-step queueing, and command-block handoff, live-capability proof templates, a dense fallback capture planner with Markdown handoff that names saved-output artifacts and commands, a policy-candidate trace planner that names candidate-router-trace and trace-receipt requirements, an artifact intake planner with Docker/Ollama-volume scanner command handoff, a positive-path completion test, and bundle manifests with optional fallback and live-proof paths for Phase 4 handoff."
+                                        ],
+                       "evidence_gates":  [
+                                              "Expert inventory validates for at least one fixture, safetensors scanner output, or GGUF scanner output.",
+                                              "Dry-run packer/layout plan validates without writing tensors.",
+                                              "Trace/inventory join reports unique experts, estimated bytes, reuse distance, and whether the pair is fixture-only or scanner-derived real-model evidence; policy replay reports miss rate, churn, fallback frequency, and rejected-policy reasons.",
+                                              "Baseline policy definitions validate offline and policy decisions are reproducible from artifacts.",
+                                              "Warm-hit or memory benefit is shown without unacceptable churn, or the report recommends no live actuator yet.",
+                                              "Dense fallback bounds behavior or quality drift, with shared prompt-set, saved-output artifact, ready capture-receipt, and receipt-ready pair-consistent comparison-provenance requirements planned per real bundle.",
+                                              "The Phase 3 prompt-set builder creates a repeated prompt artifact that policy-candidate and dense fallback planners discover by default.",
+                                              "The Phase 3 output-summary builder creates valid not-ready managed and dense templates that cover every prompt id and carry capture receipts before runtime capture.",
+                                              "The Phase 3 runtime-capture request binds the candidate trace, trace receipt template, managed output fill, dense output fill, future live-proof fill, approvals, and validator commands into one operator handoff artifact.",
+                                              "The Phase 3 saved-request audit validates all generated runtime-capture requests against current local metadata, reports path/status/approval/embedded-summary/source/validator-command drift before approved operator capture, summarizes required validator-command coverage, recommends the first approval-bound capture request with missing approval flags, queue rank, and selection rationale, emits an approval metadata rebuild command plus a compact approval command manifest for recording approved booleans, emits a metadata-only post-approval preview proving the recommended request becomes ready-for-operator without capture completion or mutation, emits an ordered approve/capture/fill/intake sequence, renders per-artifact capture receipt requirements, emits a capture-queue selection summary with approval-required, ready-for-operator-capture, and approved-but-incomplete counts, feeds the evidence packet selected-request preflight for approval metadata, receipt rows, validators, and blocker-closure mapping, exposes execution coverage that distinguishes runtime-command-backed capture from approval metadata commands and manual runtime-output fills, and exposes `--output-md` for a durable pre-capture operator handoff report.",
+                                              "The Phase 3 runtime-capture command contract exports a planned-only launch-card template with Model Plane profile context, prompt-set/artifact/receipt/request paths, approval gates, command placeholders, binding templates, and explicit non-executable status; the evidence packet can export the recommended template with --output-runtime-capture-launch-card, validates filled launch cards offline with --launch-card, can consume the filled card with --runtime-capture-launch-card, and runtime-command binding is ready only when every task has exact paths, exact prompt-set binding, approval gates, prompt-traffic acknowledgement, the exact runtime-capture request path, and real callable ids or launch commands after approval. The launch-card library planner indexes all six planned-only launch cards, exposes the 18-task prompt-set-bound binding handoff worksheet and Model Plane artifact-writer contract request with exact prompt-set/artifact/receipt/request paths, prompt-traffic acknowledgement, and validation commands, writes a fillable worksheet with --output-binding-worksheet, writes the metadata-only contract request with --output-model-plane-contract-request, validates filled worksheets with --binding-worksheet, validates returned Model Plane fulfillments with --model-plane-contract-fulfillment, can emit offline-validated filled cards with --output-filled-card-dir, the evidence packet can consume that directory with --runtime-capture-launch-card-dir to promote all-request execution coverage offline, and reports template, Model Plane binding, binding, runtime-command, task, unbound-task, and missing-command counts without execution; the evidence packet consumes that repo-wide library and binding handoff summary before approved capture and can write a metadata-only operator handoff package with the packet, README, binding worksheet, Model Plane artifact-writer contract request, recommended launch-card template, recommended runtime-capture preflight, recommended runtime-capture command contract, recommended runtime-capture execution coverage, all-request runtime-capture execution coverage, runtime-capture launch-card directory manifest, reuse-evidence capture plan, manual capture runbook, post-capture intake runbook, capture queue, approval command manifest, validator manifests, downstream handoff manifest, receipt-fill manifests with artifact-class counts, blocker-closure manifest, blocker-evidence ledger, and blocker-resolution queue, then validates that package with `scripts/plan_phase3_operator_handoff.py`, including recommended and all-request approval-command readiness, approval-command-manifest/capture-queue parity, recommended capture-queue agreement, recommended launch-card worksheet/template/capture-queue task parity, Model Plane artifact-writer contract request/schema/task parity, selected preflight packet/file parity, selected command-contract packet/file parity, selected execution-coverage packet/file parity, all-request execution-coverage packet/file parity, runtime-capture launch-card directory packet/execution/handoff parity with external staging directories allowed but repo-relative request and source-card paths checked, reuse-evidence capture-plan packet/gap/handoff/recommended-capture parity, manual-capture runbook packet/file parity, post-capture intake runbook packet/file parity, post-capture artifact-gate/manual-task/receipt-command parity, manual-task/receipt-command parity, manual-task source-request/prompt-set/approval-contract counter parity, all-request binding-worksheet/capture-queue task parity, repo-relative artifact/request/receipt path safety, and receipt-command/capture-queue artifact-key parity, receipt-fill artifact-class count parity, receipt-command validator coverage against capture-queue validator counts plus source-request/prompt-set/approval-contract readiness, validator-manifest runtime/future coverage, downstream handoff request/section/path coverage, blocker-closure reason/action/path coverage, blocker-evidence ledger row/count/packet parity, and blocker-resolution queue package/row/dependency/completion-gate/validator parity, next-unblocked work-package pointer, plus runtime-actuator proof-handoff counts, requirement coverage, and control-dependency checks.",
+                                              "The Phase 3 capture-result intake audit validates filled request artifacts before bundle promotion, requires the saved request to be drift-free, reports aggregate drift-free/drifted saved-request counts, ready-for-operator and approved-but-incomplete request counts, runtime-approval-missing versus approved-runtime-capture-pending counts, aggregate capture-receipt gate coverage, flat receipt-fill manifest readiness split by candidate-router trace, managed-output, and dense-output artifact classes, output receipt binding readiness, reports metadata-only approval rebuild command availability plus a compact approval command manifest for missing-approval runtime steps, emits a metadata-only approval transition preview and post-approval capture-fill plan, requires candidate trace receipts plus managed/dense output receipts to bind to existing saved request and prompt-set files with recorded approvals, reports the next operator step per request, exposes `--show-queue` for compact terminal handoff and `--output-md` for a durable Markdown queue report with detailed per-request queues plus validator/build command blocks, and keeps bundle-update, Phase 4 candidate, and live-spike readiness separate.",
+                                              "The Phase 3 live-capability proof template builder creates a valid not-ready proof artifact for residency observation, residency control, cleanup/restore, artifact export, source bundle, and prompt context before live capture; the proof validator requires the source-bundle path to exist, can enforce expected bundle/model/backend context, requires exported artifact paths to exist once artifact export is available, and can emit a Markdown handoff for remaining live-proof blockers.",
+                                              "The Phase 3 runtime-actuator spike planner turns the managed-loading backend gaps into proof requirements, patch/probe boundaries, dependency edges, and completion gates before any residency-control spike is allowed.",
+                                              "Generated non-fixture positive-path artifacts prove the Phase 3 packet, bundle, and capture plan can become Phase 4-ready without claiming live paging.",
+                                              "Generated router trace folders can be intake-scanned without promoting inventory summaries into scanner-derived inventory evidence.",
+                                              "Replay artifacts expose policy-candidate diagnostics and keep no_replay_policy_candidate visible when traces have no reuse-distance observations.",
+                                              "The policy-candidate trace planner turns no_replay_policy_candidate into repeated prompt set, candidate router trace, ready trace receipt with existing source request, prompt-set, and candidate-trace path bindings, replay validation, updated-bundle artifact requests, explicit pre-capture planned trace paths, and a durable Markdown handoff with trace-receipt contract plus commands.",
+                                              "The repo-local evidence matrix validates six real trace/inventory/replay bundles while still refusing Phase 4 readiness without a replay policy candidate, ready policy-candidate trace receipt, fallback quality, and a populated live capability proof artifact; it reports policy-candidate blocker counts, trace-receipt required/ready/blocked counts, and no-reuse-distance and prompt-identity diagnostics.",
+                                              "The top-level Phase 3 go/no-go decision can emit a Markdown decision report, and the decision plus evidence packet consume the repo-local matrix as the real-model pairing basis, handoff scaffold coverage, runtime-capture request audit, and capture-result intake receipt gate and receipt-fill manifest with candidate-router trace, managed-output, and dense-output class counts so scanner-derived pairing is not reported as missing once the six-bundle matrix validates, policy-candidate blockers expose blocked-bundle, no-reuse-distance, and prompt-identity counts plus the next candidate-trace operator step, launch-card template/binding/runtime-command counts stay visible, runtime-actuator spike proof counts stay visible, and unfilled or drifted capture artifacts stay visible; the packet also emits an ordered promotion checklist, runtime-capture queue selection, the approval metadata rebuild command manifest, the approval-manifest parity check, the receipt-requirement parity check, the path-aware operator-queue parity, recommended and all-request post-approval capture-fill parity checks, the all-request capture queue manifest, the all-request approval command manifest, the recommended runtime-capture sequence, the recommended post-approval preview, the recommended runtime-capture preflight manifest, the recommended runtime-capture command contract, the recommended and all-request runtime-capture execution coverage manifests, recommended launch-card template export, metadata-only operator handoff package export and validation, blocker-resolution queue package/row/dependency/completion-gate/validator parity, next-unblocked work-package pointer, plus runtime-actuator proof-handoff counts, requirement coverage, and control-dependency checks, the repo-level launch-card library and prompt-set-bound binding handoff summary, the recommended filled launch-card binding intake, repo-wide filled launch-card directory intake, reuse-evidence capture plan handoff validation, the recommended and all-request runtime-capture runtime-command/manual execution coverage, the all-request manual capture runbook, the all-request post-capture intake runbook, the recommended post-approval capture-fill plan, the recommended policy-candidate trace handoff, the recommended dense fallback capture handoff, the recommended live capability proof handoff, the recommended and all-request validator command manifests, the all-request downstream handoff manifest, the all-request receipt-fill manifest, the all-request receipt-fill command manifest, the Phase 3 blocker closure manifest with mapping-ready/evidence-complete ready-scope status, Phase 3 blocker evidence ledger with row-level missing-evidence counts, Phase 3 blocker resolution queue with ordered work packages, next-unblocked work-package pointer, dependency order, completion gates, embedded runtime-actuator proof handoff, and closure-level validator counts, and the all-request receipt/validator parity check, receipt-fill artifact-class count parity, receipt-command validator coverage, validator-manifest runtime/future coverage, separating satisfied matrix/scaffold gates from approval-bound capture, intake, fallback-quality, runtime-actuator design, runtime-actuator spike proof handoff, live-proof, and Phase 4 promotion blockers. Bundle-local evidence packets keep repo-wide gate aggregation disabled to avoid recursive validation and require attached live proof to match the bundle model, backend, prompt family, and source bundle path.",
+                                              "The Phase 3 handoff coverage planner validates that all six real bundles have prompt sets, candidate trace receipt templates, managed/dense output templates, runtime-capture requests, planned-only runtime-capture launch-card templates, and live-proof templates before approved runtime capture, and can emit a Markdown coverage/repair report with missing scaffold counts plus build commands.",
+                                              "GGUF scanner profiles validate Mixtral/Qwen-style gate/up/down, Nemotron-H up/down, and Gemma4 fused gate/up layouts."
+                                          ],
+                       "next_actions":  [
+                                            "Use the evidence packet blocker-resolution queue, recommended runtime-capture preflight, planned runtime-capture command contract, and selected/all-request runtime-command/manual execution coverage, starting with Mixtral if a single target is desired, to capture an approved candidate router trace, fill its trace receipt with existing source request, prompt-set, candidate-trace path bindings, explicit approval metadata, prompt-traffic acknowledgement, and per-event prompt identity metadata, then replay it for reuse-distance observations or document why the observed route pattern should stay no-go.",
+                                            "Export the planned launch-card template, then wire model-plane or launch-card runtime capture commands for the candidate trace and managed/dense output fills, or run those fills manually after explicit approval; then mark their capture receipts ready from the approved request, build the comparison artifact, and validate it.",
+                                            "Run the capture-result intake audit before rebuilding any bundle from filled runtime-capture artifacts.",
+                                            "Fill the live-capability proof template with approved residency observation/control and cleanup/restore evidence, keep its source-bundle binding resolvable, and attach existing exported proof artifacts before any live mutation claim.",
+                                            "Start the streaming write-path design only after real-model layout and disk budget are validated."
+                                        ]
+                   },
+                   {
+                       "id":  "phase_4",
+                       "title":  "Managed expert loading backend adapter feasibility spike",
+                       "status":  "planned",
+                       "deliverables":  [
+                                            "Spike plan identifying backend-specific control points for llama.cpp first, then vllm_openai_compatible, hookable_pytorch, moe_infinity_style, or prototype_offload_system adapters as evidence permits.",
+                                            "Comparison of outside controller, small llama.cpp patch, fork, backend plugin, and hookable runtime adapter options.",
+                                            "Proof checklist for routing visibility, residency control, dense fallback, artifact shape, cleanup, and rollback."
+                                        ],
+                       "evidence_gates":  [
+                                              "A concrete runtime hook, adapter, or patch point can read and influence expert residency or offload behavior.",
+                                              "The runtime can emit auditable artifacts without breaking dense baseline execution.",
+                                              "Cleanup and fallback are tested under failure."
+                                          ],
+                       "next_actions":  [
+                                            "Audit llama.cpp MoE loading/offload paths before writing a patch.",
+                                            "Prefer a small controller patch or fork over a custom runtime if llama.cpp is viable."
+                                        ]
+                   },
+                   {
+                       "id":  "phase_5",
+                       "title":  "Guarded runtime actuator experiment",
+                       "status":  "planned",
+                       "deliverables":  [
+                                            "Guarded actuator mode for preload, pin, evict, or expert residency restriction.",
+                                            "Kill switch, dense fallback, artifact export, and cleanup.",
+                                            "Automatic comparison against baseline and replay expectations."
+                                        ],
+                       "evidence_gates":  [
+                                              "Actuator behavior is externally observable and internally auditable.",
+                                              "Dense fallback remains available for every run.",
+                                              "A measurable memory or latency effect is shown without unacceptable regression."
+                                          ],
+                       "next_actions":  [
+                                            "Run only after Phase 4 proves a safe actuator point.",
+                                            "Keep the first experiment narrow, reversible, and artifact-first."
+                                        ]
+                   }
+               ],
+    "decision_gates":  [
+                           {
+                               "from":  "phase_0",
+                               "to":  "phase_1",
+                               "requires":  "Manifest, roadmap, managed-loading contract, and planner checks pass locally."
+                           },
+                           {
+                               "from":  "phase_1",
+                               "to":  "phase_2",
+                               "requires":  "Passive external observation surfaces and limitations are explicit; live baseline artifact capture can continue in parallel while hookable tracing advances."
+                           },
+                           {
+                               "from":  "phase_2",
+                               "to":  "phase_3",
+                               "requires":  "Semantic traces exist from a hookable runtime and the repeat protocol can validate trace artifacts without rerunning live models."
+                           },
+                           {
+                               "from":  "phase_3",
+                               "to":  "phase_4",
+                               "requires":  "Inventory manifests, dry-run layout planning, replay metrics, rejected-policy evidence, policy-candidate trace receipt and prompt-identity/reuse evidence, dense fallback comparison, top-level go/no-go evidence, and selected runtime-capture preflight and execution-coverage evidence exist; live adapter work starts only if the Phase 3 decision supports a live spike."
+                           },
+                           {
+                               "from":  "phase_4",
+                               "to":  "phase_5",
+                               "requires":  "A backend adapter or runtime actuator point exists, can read/write residency state, and has a rollback plan."
+                           }
+                       ],
+    "managed_expert_loading":  {
+                                   "plan":  "memory-moe-mvp/data/managed_expert_loading_plan.json",
+                                   "planner":  "scripts/plan_managed_expert_loading.py",
+                                   "doc":  "memory-moe-mvp/docs/managed-expert-loading.md",
+                                   "role":  "Concrete contract layer between roadmap-only expert paging and a future live runtime actuator.",
+                                   "current_limit":  "Planning and validation only; no live expert residency mutation exists."
+                               },
+    "llama_cpp_options":  [
+                              {
+                                  "option":  "external_controller",
+                                  "can_do":  "Schedule runs, choose probe suites, analyze artifacts, and recommend residency.",
+                                  "cannot_do":  "Load only routed experts or alter tensor residency without runtime support."
+                              },
+                              {
+                                  "option":  "small_controller_patch_or_fork",
+                                  "can_do":  "Expose routing and residency controls if llama.cpp internals support a narrow patch.",
+                                  "cannot_do":  "Avoid maintenance cost; must be justified by Phase 1-3 evidence."
+                              },
+                              {
+                                  "option":  "custom_runtime",
+                                  "can_do":  "Potentially expose full control.",
+                                  "cannot_do":  "Stay scoped; this is a last resort, not the starting point."
+                              }
+                          ],
+    "model_plane_handoff":  {
+                                "source":  "Model Plane callable function or cron",
+                                "artifact":  "run-scoped MoE manifest",
+                                "planned_stage":  "harness_run_request",
+                                "contract":  "MoE consumes manifests and emits planning artifacts; Model Plane owns orchestration surfaces.",
+                                "safety":  [
+                                               "No model launch from roadmap/planner checks.",
+                                               "No downloads, authentication, Docker, or prompt traffic from roadmap/planner checks.",
+                                               "Probe execution requires explicit user approval."
+                                           ]
+                            },
+    "actuator_spike_checklist":  [
+                                     {
+                                         "id":  "routing_visibility",
+                                         "question":  "Can the runtime expose routed expert ids or sufficient router metadata at the decision point?",
+                                         "required_evidence":  "Artifact showing layer, token or window, expert id, and routing score or rank."
+                                     },
+                                     {
+                                         "id":  "tensor_residency_control",
+                                         "question":  "Can policy pin, evict, preload, or alter expert offload behavior?",
+                                         "required_evidence":  "Runtime proof that residency changes occur and are visible."
+                                     },
+                                     {
+                                         "id":  "dense_fallback",
+                                         "question":  "Can the run revert to normal dense/full-residency behavior?",
+                                         "required_evidence":  "Fallback command or mode plus comparable artifact."
+                                     },
+                                     {
+                                         "id":  "artifact_shape",
+                                         "question":  "Can decisions and outcomes be exported in memory-moe-bridge-v1-compatible form?",
+                                         "required_evidence":  "Validated artifact with policy decision and observed outcome fields."
+                                     },
+                                     {
+                                         "id":  "cleanup",
+                                         "question":  "Does interruption or failure restore runtime state?",
+                                         "required_evidence":  "Failure-path cleanup test or rollback artifact."
+                                     }
+                                 ],
+    "risks":  [
+                  "Endpoint metrics may be overinterpreted as semantic routing.",
+                  "A runtime patch may expose routing but not safe tensor residency control.",
+                  "Replay policies may cause live churn or cleanup failures.",
+                  "Backend artifact fields may drift without strict labels.",
+                  "Fork maintenance cost may exceed the benefit if the patch is not small."
+              ],
+    "non_goals":  [
+                      "Claim live expert paging before an actuator exists.",
+                      "Download models, use tokens, run Docker, launch model servers, or send prompt traffic from roadmap/planner checks.",
+                      "Start with a large custom runtime rewrite.",
+                      "Infer semantic expert ids from stock OpenAI-compatible endpoint telemetry.",
+                      "Perform destructive cleanup or mutate user model caches."
+                  ],
+    "phase3_real_evidence_matrix_planner":  "scripts/plan_phase3_real_evidence_matrix.py",
+    "phase3_handoff_coverage_planner":  "scripts/plan_phase3_handoff_coverage.py",
+    "phase3_pc_qwen3_coder_a3b_router_trace":  "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_router_events.jsonl",
+    "phase3_pc_qwen3_coder_a3b_expert_inventory":  "memory-moe-mvp/phase3-real-evidence/sha256-17d51f5310e9a598e5ac914d30f401fb2d1bc3b6a06a846919099eac09364ae1.expert_inventory.json",
+    "phase3_pc_qwen3_coder_a3b_real_evidence_bundle":  "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.json",
+    "phase3_pc_qwen3_coder_30b_alias_router_trace":  "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_router_events.jsonl",
+    "phase3_pc_qwen3_coder_30b_alias_expert_inventory":  "memory-moe-mvp/phase3-real-evidence/sha256-1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a.expert_inventory.json",
+    "phase3_pc_qwen3_coder_30b_alias_real_evidence_bundle":  "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.json",
+    "phase3_pc_nemotron_cascade_router_trace":  "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_router_events.jsonl",
+    "phase3_pc_nemotron_cascade_expert_inventory":  "memory-moe-mvp/phase3-real-evidence/sha256-916a371ed63edd6602da950df2c1eed5ff74bfb9dac2ece64c7cabaafb3e2922.expert_inventory.json",
+    "phase3_pc_nemotron_cascade_real_evidence_bundle":  "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.json",
+    "phase3_pc_nemotron_nano_a3b_router_trace":  "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_router_events.jsonl",
+    "phase3_pc_nemotron_nano_a3b_expert_inventory":  "memory-moe-mvp/phase3-real-evidence/sha256-a70437c41b3b0b768c48737e15f8160c90f13dc963f5226aabb3a160f708d1ce.expert_inventory.json",
+    "phase3_pc_nemotron_nano_a3b_real_evidence_bundle":  "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.json",
+    "phase3_pc_gemma4_26b_a4b_router_trace":  "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_router_events.jsonl",
+    "phase3_pc_gemma4_26b_a4b_expert_inventory":  "memory-moe-mvp/phase3-real-evidence/sha256-2f8672b0c2cca8dedfb8782815c2769ccdaa6512788f3ee87b32cf117f0dffc1.expert_inventory.json",
+    "phase3_pc_gemma4_26b_a4b_real_evidence_bundle":  "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.json"
 }

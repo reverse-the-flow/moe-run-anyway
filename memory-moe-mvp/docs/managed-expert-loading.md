@@ -14,7 +14,11 @@ Validate the machine-readable plan from the repository root:
 ```bash
 python3 scripts/plan_managed_expert_loading.py
 python3 scripts/plan_managed_expert_loading.py --json
+python3 scripts/plan_phase3_runtime_actuator_design.py --json
+python3 scripts/plan_phase3_runtime_actuator_spike.py --json
 ```
+
+The managed-loading planner is dependency-free and side-effect-free. The Phase 3 actuator-design and actuator-spike planners are also metadata-only; they expose backend capability gaps, proof artifacts, dependency order, and completion gates before any live residency-control work.
 
 The planner is dependency-free and side-effect-free. It does not start models,
 download files, authenticate, run Docker, launch servers, send prompt traffic,
@@ -136,7 +140,9 @@ The current project can validate plans, collect endpoint/runtime evidence,
 capture hookable semantic traces in suitable local runtimes, and replay policy
 decisions offline. It still lacks live residency observation, live residency
 control, backend cleanup/restore proof, and validated live managed-loading
-artifacts.
+artifacts. `scripts/plan_phase3_runtime_actuator_spike.py` names the proof
+artifacts and gates that must be satisfied before those gaps can become live
+mutation work.
 
 Do not claim live managed expert loading until those gaps are closed by a real
 backend adapter and reproducible artifacts.

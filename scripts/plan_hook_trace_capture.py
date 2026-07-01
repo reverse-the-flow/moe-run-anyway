@@ -47,6 +47,8 @@ def safe_label(value: Any) -> str:
 
 
 def is_uri_like(raw_path: str) -> bool:
+    if len(raw_path) >= 3 and raw_path[1] == ":" and raw_path[0].isalpha() and raw_path[2] in {"/", "\\"}:
+        return False
     parsed = urlparse(raw_path)
     return bool(parsed.scheme and parsed.scheme not in {"", "file"})
 

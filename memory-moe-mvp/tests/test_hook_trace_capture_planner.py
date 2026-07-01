@@ -40,6 +40,11 @@ def hook_manifest(model_dir: Path, **overrides):
 
 
 class HookTraceCapturePlannerTests(unittest.TestCase):
+    def test_uri_detection_accepts_windows_drive_paths(self) -> None:
+        self.assertFalse(planner.is_uri_like(r"C:\models\fixture-moe"))
+        self.assertFalse(planner.is_uri_like("C:/models/fixture-moe"))
+        self.assertTrue(planner.is_uri_like("https://huggingface.co/org/model"))
+
     def test_valid_hookable_manifest_plans_synthetic_dry_run_and_approved_trace(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             model_dir = make_model_dir(Path(temp_dir))

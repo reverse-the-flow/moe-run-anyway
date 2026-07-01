@@ -1,0 +1,122 @@
+{
+  "backend_family": "llama_cpp",
+  "capture_receipt": {
+    "capture_host": null,
+    "captured_at": null,
+    "model_id": "/root/.ollama/models/blobs/sha256-a70437c41b3b0b768c48737e15f8160c90f13dc963f5226aabb3a160f708d1ce",
+    "operator_notes": "fill after approved runtime capture",
+    "output_label": "dense",
+    "prompt_family": "router-trace-pc-nemotron-nano-30b-a3b",
+    "receipt_ready": false,
+    "runtime_backend": "llama_cpp",
+    "runtime_capture_approved": false,
+    "runtime_prompt_traffic_approved": false,
+    "source_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.prompt-set.json",
+    "source_request_path": null
+  },
+  "model_id": "/root/.ollama/models/blobs/sha256-a70437c41b3b0b768c48737e15f8160c90f13dc963f5226aabb3a160f708d1ce",
+  "next_actions": [
+    "Fill output rows only from an approved runtime capture using the same prompt ids.",
+    "Fill capture_receipt with the approved request path, capture host, backend, timestamp, and approval flags.",
+    "Clear row error values when output text or response summaries are present.",
+    "Validate this summary before building the dense fallback comparison artifact."
+  ],
+  "output_label": "dense",
+  "output_ready": false,
+  "outputs": [
+    {
+      "error": "output_missing",
+      "group_id": "expert-cache-benefit",
+      "notes": "replace output and clear error after an approved runtime capture",
+      "output": "",
+      "output_label": "dense",
+      "prompt_id": "shared_phase3-expert-cache-benefit-r1",
+      "prompt_repeat": 1,
+      "ready": false
+    },
+    {
+      "error": "output_missing",
+      "group_id": "expert-cache-benefit",
+      "notes": "replace output and clear error after an approved runtime capture",
+      "output": "",
+      "output_label": "dense",
+      "prompt_id": "shared_phase3-expert-cache-benefit-r2",
+      "prompt_repeat": 2,
+      "ready": false
+    },
+    {
+      "error": "output_missing",
+      "group_id": "loading-risk-summary",
+      "notes": "replace output and clear error after an approved runtime capture",
+      "output": "",
+      "output_label": "dense",
+      "prompt_id": "shared_phase3-loading-risk-summary-r1",
+      "prompt_repeat": 1,
+      "ready": false
+    },
+    {
+      "error": "output_missing",
+      "group_id": "loading-risk-summary",
+      "notes": "replace output and clear error after an approved runtime capture",
+      "output": "",
+      "output_label": "dense",
+      "prompt_id": "shared_phase3-loading-risk-summary-r2",
+      "prompt_repeat": 2,
+      "ready": false
+    },
+    {
+      "error": "output_missing",
+      "group_id": "trace-validation-checklist",
+      "notes": "replace output and clear error after an approved runtime capture",
+      "output": "",
+      "output_label": "dense",
+      "prompt_id": "shared_phase3-trace-validation-checklist-r1",
+      "prompt_repeat": 1,
+      "ready": false
+    },
+    {
+      "error": "output_missing",
+      "group_id": "trace-validation-checklist",
+      "notes": "replace output and clear error after an approved runtime capture",
+      "output": "",
+      "output_label": "dense",
+      "prompt_id": "shared_phase3-trace-validation-checklist-r2",
+      "prompt_repeat": 2,
+      "ready": false
+    },
+    {
+      "error": "output_missing",
+      "group_id": "observe-vs-managed",
+      "notes": "replace output and clear error after an approved runtime capture",
+      "output": "",
+      "output_label": "dense",
+      "prompt_id": "shared_phase3-observe-vs-managed-r1",
+      "prompt_repeat": 1,
+      "ready": false
+    },
+    {
+      "error": "output_missing",
+      "group_id": "observe-vs-managed",
+      "notes": "replace output and clear error after an approved runtime capture",
+      "output": "",
+      "output_label": "dense",
+      "prompt_id": "shared_phase3-observe-vs-managed-r2",
+      "prompt_repeat": 2,
+      "ready": false
+    }
+  ],
+  "prompt_family": "router-trace-pc-nemotron-nano-30b-a3b",
+  "safety_contract": [
+    "output-summary builder reads and writes local JSON metadata only",
+    "output-summary builder does not launch model servers",
+    "output-summary builder does not call endpoints",
+    "output-summary builder does not run Docker",
+    "output-summary builder does not download models",
+    "output-summary builder does not inspect private tokens",
+    "output-summary builder does not send prompt traffic",
+    "output-summary builder does not mutate runtime residency",
+    "output-summary builder does not claim live expert paging"
+  ],
+  "schema_version": "moe-phase3-output-summary-v1",
+  "source_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.prompt-set.json"
+}

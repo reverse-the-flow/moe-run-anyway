@@ -1,0 +1,98 @@
+{
+  "backend_family": "llama_cpp",
+  "expected_trace_properties": {
+    "min_reuse_distance_observations": 1,
+    "note": "Repeated prompts make reuse observations possible; only replay can prove a policy candidate.",
+    "requires_router_trace": true,
+    "requires_selected_experts": true,
+    "requires_selected_weights": true
+  },
+  "model_id": "/root/.ollama/models/blobs/sha256-916a371ed63edd6602da950df2c1eed5ff74bfb9dac2ece64c7cabaafb3e2922",
+  "next_actions": [
+    "Use this exact prompt set for policy-candidate router trace capture.",
+    "Use the same prompt ids for managed and dense/full-runtime output summaries.",
+    "Run replay and fallback comparison validators before updating the Phase 3 bundle."
+  ],
+  "prompt_count": 8,
+  "prompt_family": "pc-router-trace-nemotron-cascade-jsonl",
+  "prompts": [
+    {
+      "expected_reuse_group": "expert-cache-benefit",
+      "group_id": "expert-cache-benefit",
+      "intent": "policy_candidate_reuse_probe",
+      "prompt": "Give a concise explanation of how expert caching could reduce repeated MoE routing work. Keep it under 120 words.",
+      "prompt_id": "shared_phase3-expert-cache-benefit-r1",
+      "repeat": 1
+    },
+    {
+      "expected_reuse_group": "expert-cache-benefit",
+      "group_id": "expert-cache-benefit",
+      "intent": "policy_candidate_reuse_probe",
+      "prompt": "Give a concise explanation of how expert caching could reduce repeated MoE routing work. Keep it under 120 words.",
+      "prompt_id": "shared_phase3-expert-cache-benefit-r2",
+      "repeat": 2
+    },
+    {
+      "expected_reuse_group": "loading-risk-summary",
+      "group_id": "loading-risk-summary",
+      "intent": "fallback_quality_probe",
+      "prompt": "Summarize the operational risks of loading only routed experts in a MoE model. Include cleanup and fallback in the answer.",
+      "prompt_id": "shared_phase3-loading-risk-summary-r1",
+      "repeat": 1
+    },
+    {
+      "expected_reuse_group": "loading-risk-summary",
+      "group_id": "loading-risk-summary",
+      "intent": "fallback_quality_probe",
+      "prompt": "Summarize the operational risks of loading only routed experts in a MoE model. Include cleanup and fallback in the answer.",
+      "prompt_id": "shared_phase3-loading-risk-summary-r2",
+      "repeat": 2
+    },
+    {
+      "expected_reuse_group": "trace-validation-checklist",
+      "group_id": "trace-validation-checklist",
+      "intent": "artifact_quality_probe",
+      "prompt": "Write a short checklist for validating a MoE router trace before using it for managed loading decisions.",
+      "prompt_id": "shared_phase3-trace-validation-checklist-r1",
+      "repeat": 1
+    },
+    {
+      "expected_reuse_group": "trace-validation-checklist",
+      "group_id": "trace-validation-checklist",
+      "intent": "artifact_quality_probe",
+      "prompt": "Write a short checklist for validating a MoE router trace before using it for managed loading decisions.",
+      "prompt_id": "shared_phase3-trace-validation-checklist-r2",
+      "repeat": 2
+    },
+    {
+      "expected_reuse_group": "observe-vs-managed",
+      "group_id": "observe-vs-managed",
+      "intent": "policy_comparison_probe",
+      "prompt": "Compare observe-only routing logs with a managed expert-loading policy in two short paragraphs.",
+      "prompt_id": "shared_phase3-observe-vs-managed-r1",
+      "repeat": 1
+    },
+    {
+      "expected_reuse_group": "observe-vs-managed",
+      "group_id": "observe-vs-managed",
+      "intent": "policy_comparison_probe",
+      "prompt": "Compare observe-only routing logs with a managed expert-loading policy in two short paragraphs.",
+      "prompt_id": "shared_phase3-observe-vs-managed-r2",
+      "repeat": 2
+    }
+  ],
+  "purpose": "shared_phase3",
+  "repeat_count_per_group": 2,
+  "safety_contract": [
+    "prompt-set builder writes metadata only",
+    "prompt-set builder does not launch model servers",
+    "prompt-set builder does not run Docker",
+    "prompt-set builder does not download models",
+    "prompt-set builder does not inspect private tokens",
+    "prompt-set builder does not send prompt traffic",
+    "prompt-set builder does not mutate runtime residency",
+    "prompt-set builder does not claim live expert paging"
+  ],
+  "schema_version": "moe-phase3-prompt-set-v1",
+  "source_bundle_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.json"
+}

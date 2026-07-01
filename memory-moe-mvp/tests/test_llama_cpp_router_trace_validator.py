@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import sys
 import tempfile
 import unittest
@@ -13,6 +14,28 @@ validator = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
 sys.modules[SPEC.name] = validator
 SPEC.loader.exec_module(validator)
+
+
+def events_with_prompt_identity(repeats: int = 2) -> list[dict]:
+    base_events = [json.loads(line) for line in FIXTURE_PATH.read_text(encoding="utf-8").splitlines() if line.strip()]
+    events: list[dict] = []
+    capture_sequence = 0
+    for repeat in range(repeats):
+        for event in base_events:
+            enriched = dict(event)
+            enriched.update(
+                {
+                    "prompt_id": "fixture-repeat-prompt",
+                    "prompt_group_id": "fixture-repeat-group",
+                    "repeat": repeat,
+                    "repeat_index": repeat,
+                    "capture_run_id": "unit-test-capture-run",
+                    "capture_sequence": capture_sequence,
+                }
+            )
+            events.append(enriched)
+            capture_sequence += 1
+    return events
 
 
 class LlamaCppRouterTraceValidatorTests(unittest.TestCase):
@@ -31,6 +54,38 @@ class LlamaCppRouterTraceValidatorTests(unittest.TestCase):
         self.assertEqual(summary["top_k_values"], [2])
         self.assertEqual(summary["token_count_values"], [2])
         self.assertEqual(summary["by_tensor_kind"]["selected_experts"], 2)
+        self.assertFalse(summary["prompt_identity_ready"])
+        self.assertEqual(summary["reuse_distance"]["observations"], 0)
+
+    def test_strict_policy_candidate_flags_reject_trace_without_prompt_identity_or_reuse(self) -> None:
+        events = validator.load_jsonl(FIXTURE_PATH)
+
+        errors = validator.validate_trace(
+            events,
+            require_kinds={"selected_experts", "selected_weights", "selected_weights_norm"},
+            require_prompt_identity=True,
+            min_reuse_distance_observations=1,
+        )
+
+        self.assertTrue(any("prompt_identity_metadata_missing" in error for error in errors), errors)
+        self.assertTrue(any("reuse_distance_observations 0 below required 1" in error for error in errors), errors)
+        self.assertTrue(any("repeated routed expert keys" in error for error in errors), errors)
+
+    def test_strict_policy_candidate_flags_accept_repeated_prompt_identity_trace(self) -> None:
+        events = events_with_prompt_identity(repeats=2)
+
+        errors = validator.validate_trace(
+            events,
+            require_kinds={"selected_experts", "selected_weights", "selected_weights_norm"},
+            require_prompt_identity=True,
+            min_reuse_distance_observations=1,
+        )
+
+        self.assertEqual(errors, [])
+        summary = validator.summarize_events(events)
+        self.assertTrue(summary["prompt_identity_ready"])
+        self.assertGreaterEqual(summary["reuse_distance"]["observations"], 1)
+        self.assertGreater(summary["route_repetition"]["repeated_route_key_count"], 0)
 
     def test_rejects_wrong_contract_version(self) -> None:
         events = validator.load_jsonl(FIXTURE_PATH)

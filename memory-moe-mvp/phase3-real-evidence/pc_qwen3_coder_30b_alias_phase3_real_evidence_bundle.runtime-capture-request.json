@@ -1,0 +1,557 @@
+{
+  "approvals": {
+    "dense_output_capture_approved": false,
+    "managed_output_capture_approved": false,
+    "router_trace_capture_approved": false,
+    "runtime_prompt_traffic_approved": false
+  },
+  "backend_family": "llama_cpp",
+  "bundle_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.json",
+  "candidate_trace_receipt": {
+    "blockers": [],
+    "errors": [],
+    "exists": true,
+    "path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+    "ready": true,
+    "valid": true
+  },
+  "candidate_trace_reuse": {
+    "blockers": [
+      "no_reuse_distance_observations",
+      "no_repeated_route_keys",
+      "prompt_identity_metadata_missing"
+    ],
+    "classification": "trace_missing_prompt_identity",
+    "errors": [],
+    "event_count": 144,
+    "exists": true,
+    "path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+    "prompt_identity": {
+      "event_count": 144,
+      "events_with_any_identity_count": 0,
+      "field_counts": {},
+      "fields_present": [],
+      "missing_required_group_ids": [
+        "capture_order",
+        "capture_run",
+        "prompt_boundary"
+      ],
+      "ready": false,
+      "required_field_groups": [
+        {
+          "description": "each event must name the prompt/request boundary it came from",
+          "fields": [
+            "prompt_id",
+            "request_id"
+          ],
+          "id": "prompt_boundary",
+          "missing_event_count": 144,
+          "ready": false
+        },
+        {
+          "description": "each event must carry enough ordering metadata to reconstruct repeated captures",
+          "fields": [
+            "capture_sequence",
+            "repeat_index",
+            "repeat"
+          ],
+          "id": "capture_order",
+          "missing_event_count": 144,
+          "ready": false
+        }
+      ],
+      "run_field_present": false,
+      "run_fields": [
+        "capture_run_id"
+      ]
+    },
+    "prompt_identity_fields_present": [],
+    "prompt_identity_ready": false,
+    "receipt": {
+      "blockers": [],
+      "candidate_trace_path_matches": true,
+      "errors": [],
+      "exists": true,
+      "path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+      "ready": true,
+      "source_prompt_set_path_matches": true,
+      "source_request_path_matches": true,
+      "valid": true
+    },
+    "reuse_distance": {
+      "first_touch_count": 760,
+      "max": null,
+      "mean": null,
+      "min": null,
+      "observations": 0
+    },
+    "reuse_ready": false,
+    "route_repetition": {
+      "repeated_route_key_count": 0,
+      "repeated_route_key_samples": [],
+      "repeated_route_observation_count": 0,
+      "route_count": 760,
+      "unique_route_key_count": 760
+    },
+    "selected_expert_event_count": 48,
+    "valid": true,
+    "warnings": []
+  },
+  "capture_complete": false,
+  "dense_output_summary": {
+    "blocker": "dense_output_summary_missing_outputs",
+    "capture_receipt_errors": [],
+    "capture_receipt_ready": false,
+    "capture_receipt_source_prompt_set_path_exists": true,
+    "capture_receipt_source_request_path_exists": false,
+    "errors": [],
+    "exists": true,
+    "missing_output_count": 8,
+    "output_present_count": 0,
+    "path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+    "prompt_ids": [
+      "shared_phase3-expert-cache-benefit-r1",
+      "shared_phase3-expert-cache-benefit-r2",
+      "shared_phase3-loading-risk-summary-r1",
+      "shared_phase3-loading-risk-summary-r2",
+      "shared_phase3-observe-vs-managed-r1",
+      "shared_phase3-observe-vs-managed-r2",
+      "shared_phase3-trace-validation-checklist-r1",
+      "shared_phase3-trace-validation-checklist-r2"
+    ],
+    "provided": true,
+    "ready": false,
+    "row_count": 8,
+    "valid": true
+  },
+  "errors": [],
+  "future_artifacts": [
+    {
+      "approval_required": true,
+      "description": "Fill the live-capability proof with approved residency observation/control and cleanup/restore evidence.",
+      "id": "live_capability_proof_fill",
+      "path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.live-capability-proof.template.json",
+      "source": {
+        "blockers": [
+          {
+            "id": "residency_observation_not_available",
+            "section": "residency_observation"
+          },
+          {
+            "id": "before_residency_state_missing",
+            "section": "residency_observation"
+          },
+          {
+            "id": "after_residency_state_missing",
+            "section": "residency_observation"
+          },
+          {
+            "id": "residency_control_not_available",
+            "section": "residency_control"
+          },
+          {
+            "id": "residency_control_is_dry_run_only",
+            "section": "residency_control"
+          },
+          {
+            "id": "cleanup_restore_not_available",
+            "section": "cleanup_restore"
+          },
+          {
+            "id": "cleanup_restore_not_verified",
+            "section": "cleanup_restore"
+          },
+          {
+            "id": "cleanup_failure_path_not_tested",
+            "section": "cleanup_restore"
+          },
+          {
+            "id": "artifact_export_not_available",
+            "section": "artifact_export"
+          }
+        ],
+        "phase_3_gate": {
+          "cleanup_restore_proof_ready": false,
+          "live_residency_observation_and_control_ready": false,
+          "ready_for_live_spike": false
+        },
+        "proof_available": true,
+        "proof_ready": false
+      },
+      "status": "future_adapter_required",
+      "validator_commands": [
+        [
+          "uv",
+          "run",
+          "--managed-python",
+          "--python",
+          "3.13",
+          "scripts/plan_phase3_live_capability_proof.py",
+          "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.live-capability-proof.template.json",
+          "--json"
+        ]
+      ]
+    }
+  ],
+  "inventory_path": "memory-moe-mvp/phase3-real-evidence/sha256-1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a.expert_inventory.json",
+  "live_capability_proof": {
+    "backend_family": "llama_cpp",
+    "blockers": [
+      {
+        "id": "residency_observation_not_available",
+        "section": "residency_observation"
+      },
+      {
+        "id": "before_residency_state_missing",
+        "section": "residency_observation"
+      },
+      {
+        "id": "after_residency_state_missing",
+        "section": "residency_observation"
+      },
+      {
+        "id": "residency_control_not_available",
+        "section": "residency_control"
+      },
+      {
+        "id": "residency_control_is_dry_run_only",
+        "section": "residency_control"
+      },
+      {
+        "id": "cleanup_restore_not_available",
+        "section": "cleanup_restore"
+      },
+      {
+        "id": "cleanup_restore_not_verified",
+        "section": "cleanup_restore"
+      },
+      {
+        "id": "cleanup_failure_path_not_tested",
+        "section": "cleanup_restore"
+      },
+      {
+        "id": "artifact_export_not_available",
+        "section": "artifact_export"
+      }
+    ],
+    "context_binding": {
+      "blockers": [],
+      "checks": {
+        "backend_family_matches": null,
+        "model_id_matches": null,
+        "prompt_family_matches": null,
+        "source_bundle_path_exists": true,
+        "source_bundle_path_matches": null
+      },
+      "ready": true
+    },
+    "errors": [],
+    "mode": "phase3_live_capability_proof_plan",
+    "model_id": "/root/.ollama/models/blobs/sha256-1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a",
+    "name": "PC Qwen3 Coder 30B alias Phase 3 real evidence live capability proof template",
+    "next_actions": [
+      "Use this proof with go/no-go and bundle evidence before a guarded live spike.",
+      "Keep proof paired to the same backend, model, prompt family, and adapter boundary as the replay bundle."
+    ],
+    "phase_3_gate": {
+      "cleanup_restore_proof_ready": false,
+      "live_residency_observation_and_control_ready": false,
+      "ready_for_live_spike": false
+    },
+    "prompt_family": "router-trace-pc-qwen3-coder-30b",
+    "proof_artifact_path": "C:\\Users\\jpret\\Documents\\remote\\moe-run-anyway-github-upload\\memory-moe-mvp\\phase3-real-evidence\\pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.live-capability-proof.template.json",
+    "proof_available": true,
+    "proof_ready": false,
+    "proof_scope": "phase3-live-capability-proof-template",
+    "safety_contract": [
+      "planner validates local proof metadata only",
+      "planner does not launch model servers",
+      "planner does not run Docker",
+      "planner does not load tensor values",
+      "planner does not mutate runtime residency",
+      "planner does not send prompt traffic",
+      "planner does not claim live expert paging"
+    ],
+    "schema_version": "moe-phase3-live-capability-proof-v1",
+    "section_status": {
+      "artifact_export": {
+        "artifact_path_count": 1,
+        "artifact_path_exists_count": 1,
+        "blockers": [
+          "artifact_export_not_available"
+        ],
+        "missing_artifact_paths": [],
+        "ready": false
+      },
+      "cleanup_restore": {
+        "blockers": [
+          "cleanup_restore_not_available",
+          "cleanup_restore_not_verified",
+          "cleanup_failure_path_not_tested"
+        ],
+        "ready": false
+      },
+      "context_binding": {
+        "blockers": [],
+        "ready": true
+      },
+      "residency_control": {
+        "blockers": [
+          "residency_control_not_available",
+          "residency_control_is_dry_run_only"
+        ],
+        "ready": false
+      },
+      "residency_observation": {
+        "blockers": [
+          "residency_observation_not_available",
+          "before_residency_state_missing",
+          "after_residency_state_missing"
+        ],
+        "ready": false
+      }
+    },
+    "source_bundle_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.json",
+    "valid": true
+  },
+  "managed_output_summary": {
+    "blocker": "managed_output_summary_missing_outputs",
+    "capture_receipt_errors": [],
+    "capture_receipt_ready": false,
+    "capture_receipt_source_prompt_set_path_exists": true,
+    "capture_receipt_source_request_path_exists": false,
+    "errors": [],
+    "exists": true,
+    "missing_output_count": 8,
+    "output_present_count": 0,
+    "path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+    "prompt_ids": [
+      "shared_phase3-expert-cache-benefit-r1",
+      "shared_phase3-expert-cache-benefit-r2",
+      "shared_phase3-loading-risk-summary-r1",
+      "shared_phase3-loading-risk-summary-r2",
+      "shared_phase3-observe-vs-managed-r1",
+      "shared_phase3-observe-vs-managed-r2",
+      "shared_phase3-trace-validation-checklist-r1",
+      "shared_phase3-trace-validation-checklist-r2"
+    ],
+    "provided": true,
+    "ready": false,
+    "row_count": 8,
+    "valid": true
+  },
+  "mode": "phase3_runtime_capture_request",
+  "model_id": "/root/.ollama/models/blobs/sha256-1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a",
+  "name": "PC Qwen3 Coder 30B alias Phase 3 real evidence",
+  "next_actions": [
+    "Grant runtime approval only when the target host is quiet enough for capture.",
+    "Capture the candidate router trace with the shared prompt set and per-event prompt identity metadata, fill its trace capture_receipt, then run the listed replay validators.",
+    "Fill the managed and dense output summaries from approved runtime outputs, mark their capture_receipts ready, then build the fallback comparison artifact.",
+    "Fill the live-capability proof template only after an approved backend adapter can observe/control residency and prove cleanup."
+  ],
+  "policies_path": "memory-moe-mvp/data/baseline_replay_policies.json",
+  "prompt_coverage": {
+    "dense": {
+      "extra_output_ids": [],
+      "label": "dense",
+      "missing_prompt_ids": [],
+      "ready": true
+    },
+    "managed": {
+      "extra_output_ids": [],
+      "label": "managed",
+      "missing_prompt_ids": [],
+      "ready": true
+    }
+  },
+  "prompt_family": "router-trace-pc-qwen3-coder-30b",
+  "prompt_set": {
+    "blocker": null,
+    "errors": [],
+    "exists": true,
+    "path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+    "prompt_count": 8,
+    "prompt_ids": [
+      "shared_phase3-expert-cache-benefit-r1",
+      "shared_phase3-expert-cache-benefit-r2",
+      "shared_phase3-loading-risk-summary-r1",
+      "shared_phase3-loading-risk-summary-r2",
+      "shared_phase3-trace-validation-checklist-r1",
+      "shared_phase3-trace-validation-checklist-r2",
+      "shared_phase3-observe-vs-managed-r1",
+      "shared_phase3-observe-vs-managed-r2"
+    ],
+    "provided": true,
+    "ready": true,
+    "valid": true
+  },
+  "ready_for_operator_capture": false,
+  "requested_artifacts": [
+    {
+      "approval_required": true,
+      "description": "Capture semantic llama.cpp router events with per-event prompt identity metadata for the shared repeated prompt set and mark the trace capture_receipt ready.",
+      "id": "candidate_router_trace",
+      "path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+      "source": {
+        "candidate_trace_blockers": [
+          "no_reuse_distance_observations",
+          "no_repeated_route_keys",
+          "prompt_identity_metadata_missing"
+        ],
+        "candidate_trace_classification": "trace_missing_prompt_identity",
+        "candidate_trace_exists": true,
+        "candidate_trace_prompt_identity_fields_present": [],
+        "candidate_trace_prompt_identity_ready": false,
+        "candidate_trace_repeated_route_key_count": 0,
+        "candidate_trace_reuse_distance_observations": 0,
+        "candidate_trace_reuse_ready": false,
+        "candidate_trace_valid": true,
+        "candidate_trace_warnings": [],
+        "capture_receipt_blockers": [],
+        "capture_receipt_errors": [],
+        "capture_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+        "capture_receipt_ready": true,
+        "capture_receipt_required": true,
+        "capture_receipt_valid": true,
+        "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+        "prompt_set_ready": true,
+        "receipt_fill_note": "trace capture_receipt must record approved request path, prompt set path, trace path, model/backend, host, timestamp, approval flags, and preserve per-event prompt identity metadata in the trace"
+      },
+      "status": "approval_required",
+      "validator_commands": [
+        [
+          "uv",
+          "run",
+          "--managed-python",
+          "--python",
+          "3.13",
+          "scripts/validate_llama_cpp_router_trace.py",
+          "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+          "--require-kind",
+          "selected_experts",
+          "--require-kind",
+          "selected_weights",
+          "--require-kind",
+          "selected_weights_norm",
+          "--require-prompt-identity",
+          "--min-reuse-distance-observations",
+          "1",
+          "--json"
+        ],
+        [
+          "uv",
+          "run",
+          "--managed-python",
+          "--python",
+          "3.13",
+          "scripts/plan_baseline_policy_replay.py",
+          "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+          "memory-moe-mvp/phase3-real-evidence/sha256-1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a.expert_inventory.json",
+          "memory-moe-mvp/data/baseline_replay_policies.json",
+          "--json"
+        ],
+        [
+          "uv",
+          "run",
+          "--managed-python",
+          "--python",
+          "3.13",
+          "scripts/plan_phase3_policy_candidate_trace.py",
+          "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.json",
+          "--candidate-prompt-set-path",
+          "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+          "--candidate-trace-path",
+          "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+          "--candidate-trace-receipt-path",
+          "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+          "--json"
+        ]
+      ]
+    },
+    {
+      "approval_required": true,
+      "description": "Fill the managed-path output summary template and mark capture_receipt ready using the same approved request.",
+      "id": "managed_output_summary_fill",
+      "path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "source": {
+        "capture_receipt_ready": false,
+        "capture_receipt_required": true,
+        "prompt_coverage": {
+          "extra_output_ids": [],
+          "label": "managed",
+          "missing_prompt_ids": [],
+          "ready": true
+        },
+        "receipt_fill_note": "capture_receipt must record approved request path, host/backend, timestamp, and approval flags",
+        "template_valid": true
+      },
+      "status": "approval_required",
+      "validator_commands": [
+        [
+          "uv",
+          "run",
+          "--managed-python",
+          "--python",
+          "3.13",
+          "scripts/build_phase3_output_summary.py",
+          "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+          "--output-label",
+          "managed",
+          "--input-summary",
+          "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+          "--json"
+        ]
+      ]
+    },
+    {
+      "approval_required": true,
+      "description": "Fill the dense/full-runtime output summary template and mark capture_receipt ready using the same approved request.",
+      "id": "dense_output_summary_fill",
+      "path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "source": {
+        "capture_receipt_ready": false,
+        "capture_receipt_required": true,
+        "prompt_coverage": {
+          "extra_output_ids": [],
+          "label": "dense",
+          "missing_prompt_ids": [],
+          "ready": true
+        },
+        "receipt_fill_note": "capture_receipt must record approved request path, host/backend, timestamp, and approval flags",
+        "template_valid": true
+      },
+      "status": "approval_required",
+      "validator_commands": [
+        [
+          "uv",
+          "run",
+          "--managed-python",
+          "--python",
+          "3.13",
+          "scripts/build_phase3_output_summary.py",
+          "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+          "--output-label",
+          "dense",
+          "--input-summary",
+          "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+          "--json"
+        ]
+      ]
+    }
+  ],
+  "runtime_prompt_traffic_approved": false,
+  "safety_contract": [
+    "runtime-capture request reads and writes local metadata only",
+    "runtime-capture request does not launch model servers",
+    "runtime-capture request does not run Docker",
+    "runtime-capture request does not call endpoints",
+    "runtime-capture request does not download models",
+    "runtime-capture request does not inspect private tokens",
+    "runtime-capture request does not send prompt traffic",
+    "runtime-capture request does not mutate runtime residency",
+    "runtime-capture request does not claim live expert paging"
+  ],
+  "schema_version": "moe-phase3-runtime-capture-request-v1",
+  "trace_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_router_events.jsonl",
+  "valid": true
+}

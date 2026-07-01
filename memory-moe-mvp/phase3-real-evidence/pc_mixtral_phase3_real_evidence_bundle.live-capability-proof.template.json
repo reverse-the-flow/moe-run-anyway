@@ -1,0 +1,70 @@
+{
+  "artifact_export": {
+    "artifact_paths": [
+      "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.live-capability-proof.template.json"
+    ],
+    "notes": "replace with exported proof artifacts from the approved runtime capture",
+    "status": "planned"
+  },
+  "backend_family": "llama_cpp",
+  "cleanup_restore": {
+    "cleanup_actions": [
+      "restore_dense",
+      "clear_policy_state",
+      "abort_run"
+    ],
+    "failure_path_tested": false,
+    "notes": "record the cleanup/rollback path and a failure-path test before live mutation",
+    "restore_verified": false,
+    "status": "planned"
+  },
+  "model_id": "/root/.ollama/models/blobs/sha256-5041ba4278429fe475782b889471b5ff065a6cce5c3a539bd61d1e457f1961de",
+  "name": "PC Mixtral Phase 3 real evidence live capability proof template",
+  "next_actions": [
+    "Fill this artifact only after approved live residency observation and control work.",
+    "Validate the filled artifact before attaching it to a Phase 3 bundle or go/no-go decision.",
+    "Keep live-spike readiness false until observation, control, cleanup, and export all validate."
+  ],
+  "prompt_family": "pc-router-trace-mixtral-jsonl",
+  "proof_scope": "phase3-live-capability-proof-template",
+  "residency_control": {
+    "actuator_boundary": "fill after selecting a concrete backend adapter or patch point",
+    "dry_run_only": true,
+    "notes": "set dry_run_only false only after a real non-dry-run actuator proves control",
+    "status": "planned",
+    "supported_actions": [
+      "observe",
+      "preload",
+      "pin",
+      "evict",
+      "restore_dense",
+      "abort_run"
+    ]
+  },
+  "residency_observation": {
+    "after_state_captured": false,
+    "before_state_captured": false,
+    "evidence_fields": [
+      "resident_expert_count",
+      "resident_bytes",
+      "layer_expert_keys",
+      "backend_session_id",
+      "observation_timestamp"
+    ],
+    "notes": "fill from approved before/after residency observations",
+    "status": "planned"
+  },
+  "safety_contract": [
+    "live-capability proof template builder reads and writes local JSON metadata only",
+    "live-capability proof template builder does not launch model servers",
+    "live-capability proof template builder does not call endpoints",
+    "live-capability proof template builder does not run Docker",
+    "live-capability proof template builder does not download models",
+    "live-capability proof template builder does not inspect private tokens",
+    "live-capability proof template builder does not send prompt traffic",
+    "live-capability proof template builder does not mutate runtime residency",
+    "live-capability proof template builder does not claim live expert paging"
+  ],
+  "schema_version": "moe-phase3-live-capability-proof-v1",
+  "source_bundle_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.json"
+}

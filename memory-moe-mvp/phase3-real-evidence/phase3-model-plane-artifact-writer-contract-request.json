@@ -1,0 +1,1128 @@
+{
+  "card_count": 6,
+  "execution_ready": false,
+  "mode": "phase3_model_plane_artifact_writer_contract_request",
+  "next_actions": [
+    "Create or update Model Plane cards so each requested writer appears under card.phase3_artifact_writers[].",
+    "Keep runtime_execution_ready false until the callable actually writes the exact artifact and receipt paths after approval.",
+    "Rerun scripts/plan_phase3_launch_card_library.py --model-plane-card-catalog with the exported Model Plane catalog before marking bridge readiness.",
+    "Validate returned Model Plane bindings with --model-plane-contract-fulfillment before writing filled launch cards."
+  ],
+  "phase3_artifact_writer_contract_count": 18,
+  "phase3_artifact_writer_ready_count": 0,
+  "request_ready": true,
+  "root": "memory-moe-mvp/phase3-real-evidence",
+  "safety_contract": [
+    "artifact-writer contract request is metadata only",
+    "artifact-writer contract request does not launch model servers",
+    "artifact-writer contract request does not run Docker",
+    "artifact-writer contract request does not call endpoints",
+    "artifact-writer contract request does not inspect private tokens",
+    "artifact-writer contract request does not send prompt traffic",
+    "artifact-writer contract request does not mutate runtime residency",
+    "artifact-writer contract request does not claim live expert paging"
+  ],
+  "schema_version": "moe-phase3-model-plane-artifact-writer-request-v1",
+  "task_count": 18,
+  "tasks": [
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "router_trace_capture_approved"
+      ],
+      "artifact_id": "candidate_router_trace",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+      "backend_family": "llama_cpp",
+      "capture_kind": "llama_cpp_router_trace_jsonl",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-2f8672b0c2cca8dedfb8782815c2769ccdaa6512788f3ee87b32cf117f0dffc1",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "router-trace-pc-unsloth-gemma4-26b-a4b",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "trace_capture_receipt_json",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+      "request_name": "PC Gemma4 26B A4B Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "artifact_id": "candidate_router_trace",
+        "capture_kind": "llama_cpp_router_trace_jsonl",
+        "receipt_kind": "trace_capture_receipt_json",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json"
+      },
+      "task_id": "phase3_capture_candidate_router_trace"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "managed_output_capture_approved"
+      ],
+      "artifact_id": "managed_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "managed_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-2f8672b0c2cca8dedfb8782815c2769ccdaa6512788f3ee87b32cf117f0dffc1",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "router-trace-pc-unsloth-gemma4-26b-a4b",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "request_name": "PC Gemma4 26B A4B Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "artifact_id": "managed_output_summary_fill",
+        "capture_kind": "managed_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/managed-output-summary.json"
+      },
+      "task_id": "phase3_capture_managed_output_summary_fill"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "dense_output_capture_approved"
+      ],
+      "artifact_id": "dense_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "dense_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-2f8672b0c2cca8dedfb8782815c2769ccdaa6512788f3ee87b32cf117f0dffc1",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "router-trace-pc-unsloth-gemma4-26b-a4b",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "request_name": "PC Gemma4 26B A4B Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "artifact_id": "dense_output_summary_fill",
+        "capture_kind": "dense_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_gemma4_26b_a4b_phase3_real_evidence_bundle-fallback/dense-output-summary.json"
+      },
+      "task_id": "phase3_capture_dense_output_summary_fill"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "router_trace_capture_approved"
+      ],
+      "artifact_id": "candidate_router_trace",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+      "backend_family": "llama_cpp",
+      "capture_kind": "llama_cpp_router_trace_jsonl",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-5041ba4278429fe475782b889471b5ff065a6cce5c3a539bd61d1e457f1961de",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "pc-router-trace-mixtral-jsonl",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "trace_capture_receipt_json",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+      "request_name": "PC Mixtral Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "artifact_id": "candidate_router_trace",
+        "capture_kind": "llama_cpp_router_trace_jsonl",
+        "receipt_kind": "trace_capture_receipt_json",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json"
+      },
+      "task_id": "phase3_capture_candidate_router_trace"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "managed_output_capture_approved"
+      ],
+      "artifact_id": "managed_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "managed_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-5041ba4278429fe475782b889471b5ff065a6cce5c3a539bd61d1e457f1961de",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "pc-router-trace-mixtral-jsonl",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "request_name": "PC Mixtral Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "artifact_id": "managed_output_summary_fill",
+        "capture_kind": "managed_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/managed-output-summary.json"
+      },
+      "task_id": "phase3_capture_managed_output_summary_fill"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "dense_output_capture_approved"
+      ],
+      "artifact_id": "dense_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "dense_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-5041ba4278429fe475782b889471b5ff065a6cce5c3a539bd61d1e457f1961de",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "pc-router-trace-mixtral-jsonl",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "request_name": "PC Mixtral Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "artifact_id": "dense_output_summary_fill",
+        "capture_kind": "dense_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_mixtral_phase3_real_evidence_bundle-fallback/dense-output-summary.json"
+      },
+      "task_id": "phase3_capture_dense_output_summary_fill"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "router_trace_capture_approved"
+      ],
+      "artifact_id": "candidate_router_trace",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+      "backend_family": "llama_cpp",
+      "capture_kind": "llama_cpp_router_trace_jsonl",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-916a371ed63edd6602da950df2c1eed5ff74bfb9dac2ece64c7cabaafb3e2922",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "pc-router-trace-nemotron-cascade-jsonl",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "trace_capture_receipt_json",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+      "request_name": "PC Nemotron Cascade Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "artifact_id": "candidate_router_trace",
+        "capture_kind": "llama_cpp_router_trace_jsonl",
+        "receipt_kind": "trace_capture_receipt_json",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json"
+      },
+      "task_id": "phase3_capture_candidate_router_trace"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "managed_output_capture_approved"
+      ],
+      "artifact_id": "managed_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "managed_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-916a371ed63edd6602da950df2c1eed5ff74bfb9dac2ece64c7cabaafb3e2922",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "pc-router-trace-nemotron-cascade-jsonl",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "request_name": "PC Nemotron Cascade Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "artifact_id": "managed_output_summary_fill",
+        "capture_kind": "managed_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/managed-output-summary.json"
+      },
+      "task_id": "phase3_capture_managed_output_summary_fill"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "dense_output_capture_approved"
+      ],
+      "artifact_id": "dense_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "dense_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-916a371ed63edd6602da950df2c1eed5ff74bfb9dac2ece64c7cabaafb3e2922",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "pc-router-trace-nemotron-cascade-jsonl",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "request_name": "PC Nemotron Cascade Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "artifact_id": "dense_output_summary_fill",
+        "capture_kind": "dense_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_cascade_phase3_real_evidence_bundle-fallback/dense-output-summary.json"
+      },
+      "task_id": "phase3_capture_dense_output_summary_fill"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "router_trace_capture_approved"
+      ],
+      "artifact_id": "candidate_router_trace",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+      "backend_family": "llama_cpp",
+      "capture_kind": "llama_cpp_router_trace_jsonl",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-a70437c41b3b0b768c48737e15f8160c90f13dc963f5226aabb3a160f708d1ce",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "router-trace-pc-nemotron-nano-30b-a3b",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "trace_capture_receipt_json",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+      "request_name": "PC Nemotron Nano A3B Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "artifact_id": "candidate_router_trace",
+        "capture_kind": "llama_cpp_router_trace_jsonl",
+        "receipt_kind": "trace_capture_receipt_json",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json"
+      },
+      "task_id": "phase3_capture_candidate_router_trace"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "managed_output_capture_approved"
+      ],
+      "artifact_id": "managed_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "managed_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-a70437c41b3b0b768c48737e15f8160c90f13dc963f5226aabb3a160f708d1ce",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "router-trace-pc-nemotron-nano-30b-a3b",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "request_name": "PC Nemotron Nano A3B Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "artifact_id": "managed_output_summary_fill",
+        "capture_kind": "managed_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json"
+      },
+      "task_id": "phase3_capture_managed_output_summary_fill"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "dense_output_capture_approved"
+      ],
+      "artifact_id": "dense_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "dense_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-a70437c41b3b0b768c48737e15f8160c90f13dc963f5226aabb3a160f708d1ce",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "router-trace-pc-nemotron-nano-30b-a3b",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "request_name": "PC Nemotron Nano A3B Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "artifact_id": "dense_output_summary_fill",
+        "capture_kind": "dense_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_nemotron_nano_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json"
+      },
+      "task_id": "phase3_capture_dense_output_summary_fill"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "router_trace_capture_approved"
+      ],
+      "artifact_id": "candidate_router_trace",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+      "backend_family": "llama_cpp",
+      "capture_kind": "llama_cpp_router_trace_jsonl",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "router-trace-pc-qwen3-coder-30b",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "trace_capture_receipt_json",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+      "request_name": "PC Qwen3 Coder 30B alias Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "artifact_id": "candidate_router_trace",
+        "capture_kind": "llama_cpp_router_trace_jsonl",
+        "receipt_kind": "trace_capture_receipt_json",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json"
+      },
+      "task_id": "phase3_capture_candidate_router_trace"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "managed_output_capture_approved"
+      ],
+      "artifact_id": "managed_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "managed_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "router-trace-pc-qwen3-coder-30b",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "request_name": "PC Qwen3 Coder 30B alias Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "artifact_id": "managed_output_summary_fill",
+        "capture_kind": "managed_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/managed-output-summary.json"
+      },
+      "task_id": "phase3_capture_managed_output_summary_fill"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "dense_output_capture_approved"
+      ],
+      "artifact_id": "dense_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "dense_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "router-trace-pc-qwen3-coder-30b",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "request_name": "PC Qwen3 Coder 30B alias Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "artifact_id": "dense_output_summary_fill",
+        "capture_kind": "dense_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_30b_alias_phase3_real_evidence_bundle-fallback/dense-output-summary.json"
+      },
+      "task_id": "phase3_capture_dense_output_summary_fill"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "router_trace_capture_approved"
+      ],
+      "artifact_id": "candidate_router_trace",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+      "backend_family": "llama_cpp",
+      "capture_kind": "llama_cpp_router_trace_jsonl",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-17d51f5310e9a598e5ac914d30f401fb2d1bc3b6a06a846919099eac09364ae1",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "pc-router-trace-qwen3-coder-jsonl",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "trace_capture_receipt_json",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json",
+      "request_name": "PC Qwen3 Coder A3B Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "artifact_id": "candidate_router_trace",
+        "capture_kind": "llama_cpp_router_trace_jsonl",
+        "receipt_kind": "trace_capture_receipt_json",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "router_trace_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.jsonl",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-policy-candidate/candidate-router-events.capture-receipt.json"
+      },
+      "task_id": "phase3_capture_candidate_router_trace"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "managed_output_capture_approved"
+      ],
+      "artifact_id": "managed_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "managed_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-17d51f5310e9a598e5ac914d30f401fb2d1bc3b6a06a846919099eac09364ae1",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "pc-router-trace-qwen3-coder-jsonl",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+      "request_name": "PC Qwen3 Coder A3B Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "artifact_id": "managed_output_summary_fill",
+        "capture_kind": "managed_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "managed_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/managed-output-summary.json"
+      },
+      "task_id": "phase3_capture_managed_output_summary_fill"
+    },
+    {
+      "approval_keys": [
+        "runtime_prompt_traffic_approved",
+        "dense_output_capture_approved"
+      ],
+      "artifact_id": "dense_output_summary_fill",
+      "artifact_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "backend_family": "llama_cpp",
+      "capture_kind": "dense_output_summary_json",
+      "launch_card_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-launch-card.template.json",
+      "model_id": "/root/.ollama/models/blobs/sha256-17d51f5310e9a598e5ac914d30f401fb2d1bc3b6a06a846919099eac09364ae1",
+      "model_plane_card_catalog_hint": {
+        "contract_only_until_runtime_execution_ready": true,
+        "must_accept_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "must_accept_runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "must_write_exact_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "must_write_exact_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "put_under": "card.phase3_artifact_writers[]"
+      },
+      "prompt_family": "pc-router-trace-qwen3-coder-jsonl",
+      "prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.prompt-set.json",
+      "receipt_kind": "embedded_output_capture_receipt",
+      "receipt_output_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+      "request_name": "PC Qwen3 Coder A3B Phase 3 real evidence",
+      "request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+      "required_phase3_artifact_writer": {
+        "accepts_prompt_set_path": true,
+        "accepts_runtime_capture_request_path": true,
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "artifact_id": "dense_output_summary_fill",
+        "capture_kind": "dense_output_summary_json",
+        "receipt_kind": "embedded_output_capture_receipt",
+        "runtime_execution_ready": false,
+        "writes_explicit_artifact_path": true,
+        "writes_explicit_receipt_path": true,
+        "writes_runtime_artifacts": false
+      },
+      "requires_explicit_user_approval": true,
+      "requires_prompt_traffic": true,
+      "requires_runtime": true,
+      "runtime_binding_template": {
+        "approval_keys": [
+          "runtime_prompt_traffic_approved",
+          "dense_output_capture_approved"
+        ],
+        "binding_kind": "model_plane_callable_or_launch_command",
+        "command_ready": false,
+        "launch_command": [],
+        "may_send_prompt_traffic": true,
+        "model_plane_callable_id": "",
+        "reads_prompt_set_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.prompt-set.json",
+        "requires_explicit_user_approval": true,
+        "runtime_capture_request_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle.runtime-capture-request.json",
+        "writes_artifact_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json",
+        "writes_receipt_path": "memory-moe-mvp/phase3-real-evidence/pc_qwen3_coder_a3b_phase3_real_evidence_bundle-fallback/dense-output-summary.json"
+      },
+      "task_id": "phase3_capture_dense_output_summary_fill"
+    }
+  ],
+  "valid": true
+}

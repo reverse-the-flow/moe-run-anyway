@@ -1,0 +1,37 @@
+{
+  "schema_version": "moe-phase3-real-evidence-bundle-v1",
+  "name": "Fixture Phase 3 real-evidence bundle",
+  "model_id": "fixture-mixtral.gguf",
+  "source_format": "gguf",
+  "backend_family": "llama_cpp",
+  "prompt_family": "fixture",
+  "artifact_paths": {
+    "trace_path": "memory-moe-mvp/data/llama_cpp_router_trace.fixture.jsonl",
+    "inventory_path": "memory-moe-mvp/data/expert_inventory_manifest.fixture.json",
+    "policies_path": "memory-moe-mvp/data/baseline_replay_policies.json",
+    "managed_plan_path": "memory-moe-mvp/data/managed_expert_loading_plan.json",
+    "fallback_artifact_path": null
+  },
+  "approvals": {
+    "real_model_trace_capture_approved": false,
+    "dense_fallback_capture_approved": false,
+    "runtime_prompt_traffic_approved": false,
+    "notes": [
+      "Fixture validates the bundle contract only.",
+      "Real trace capture and dense fallback capture still need explicit approval."
+    ]
+  },
+  "safety_contract": [
+    "Bundle validation reads local artifacts only.",
+    "Bundle validation does not launch model servers.",
+    "Bundle validation does not download models.",
+    "Bundle validation does not inspect private tokens.",
+    "Bundle validation does not send prompt traffic.",
+    "Bundle validation does not claim live expert paging."
+  ],
+  "next_actions": [
+    "Replace fixture trace and inventory paths with scanner-derived real-model artifacts.",
+    "Attach a dense/full-runtime fallback comparison artifact after approved runtime capture.",
+    "Validate the bundle before treating replay output as Phase 3 real evidence."
+  ]
+}

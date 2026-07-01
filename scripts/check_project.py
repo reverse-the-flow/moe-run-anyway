@@ -30,6 +30,9 @@ PRIMARY_DOCS = [
     MVP_DIR / "docs" / "hookable-progression.md",
     MVP_DIR / "docs" / "llama-cpp-engine-hook-track.md",
     MVP_DIR / "docs" / "llama-cpp-engine-hook-traces-2026-06-25.md",
+    MVP_DIR / "docs" / "phase-2-repeat-protocol.md",
+    MVP_DIR / "docs" / "flash-moe-inspiration-next-step.md",
+    MVP_DIR / "phase3-real-evidence" / "README.md",
     MVP_DIR / "docs" / "pc-llama-debug-mixtral-hook-smoke-2026-06-26.md",
     MVP_DIR / "docs" / "hookable-moe-attempts-pc-gx10-2026-06-25.md",
     MVP_DIR / "docs" / "managed-expert-loading.md",
@@ -57,6 +60,140 @@ def validate_expert_paging_roadmap() -> int:
 
 def validate_managed_expert_loading_plan() -> int:
     return run_command([sys.executable, str(ROOT / "scripts" / "plan_managed_expert_loading.py")])
+
+
+def validate_expert_inventory_manifest() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_expert_inventory.py")])
+
+
+def validate_expert_store_layout() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_expert_store_layout.py")])
+
+
+
+def validate_trace_inventory_replay_plan() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_trace_inventory_replay.py")])
+
+
+def validate_real_model_trace_inventory_pairing() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_real_model_trace_inventory_pairing.py")])
+
+
+
+def validate_baseline_replay_policies() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_baseline_replay_policies.py")])
+
+
+def validate_baseline_policy_replay() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_baseline_policy_replay.py")])
+
+
+def validate_dense_fallback_comparison() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_dense_fallback_comparison.py")])
+
+
+def validate_dense_fallback_comparison_builder() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "build_dense_fallback_comparison.py"), "--template", "--json"])
+
+
+def validate_phase3_prompt_set_builder() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "build_phase3_prompt_set.py"), "--json"])
+
+
+def validate_phase3_output_summary_builder() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "build_phase3_output_summary.py"), "--json"])
+
+
+def validate_phase3_trace_receipt_builder() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "build_phase3_trace_receipt.py"), "--json"])
+
+
+def validate_phase3_runtime_capture_request_builder() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "build_phase3_runtime_capture_request.py"), "--json"])
+
+
+def validate_phase3_runtime_capture_request_audit() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_runtime_capture_request.py")])
+
+
+def validate_phase3_runtime_capture_command_contract() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_runtime_capture_commands.py")])
+
+
+def validate_phase3_launch_card_library() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_launch_card_library.py")])
+
+
+def validate_phase3_capture_result_intake() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_capture_result_intake.py")])
+
+def validate_phase3_live_capability_proof_template_builder() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "build_phase3_live_capability_proof_template.py"), "--json"])
+
+def validate_phase3_go_no_go() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_go_no_go.py")])
+
+
+def validate_phase3_live_capability_proof() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_live_capability_proof.py")])
+
+
+def validate_phase3_runtime_actuator_design() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_runtime_actuator_design.py")])
+
+
+def validate_phase3_runtime_actuator_spike() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_runtime_actuator_spike.py")])
+
+
+def validate_phase3_evidence_packet() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_evidence_packet.py")])
+
+
+def validate_phase3_operator_handoff() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_operator_handoff.py")])
+
+
+def validate_phase3_capture_completion_receipt() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_capture_completion_receipt.py"), "--json"])
+
+
+def validate_phase3_dense_fallback_capture() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_dense_fallback_capture.py")])
+
+
+def validate_phase3_policy_candidate_trace() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_policy_candidate_trace.py")])
+
+
+def validate_phase3_real_evidence_capture() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_real_evidence_capture.py")])
+
+def validate_phase3_artifact_intake() -> int:
+    return run_command([
+        sys.executable,
+        str(ROOT / "scripts" / "plan_phase3_artifact_intake.py"),
+        "--root",
+        str(MVP_DIR / "data"),
+        "--trace-glob",
+        "llama_cpp_router_trace.fixture.jsonl",
+        "--json",
+    ])
+
+
+def validate_phase3_real_evidence_bundle() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_real_evidence_bundle.py")])
+
+def validate_phase3_real_evidence_bundle_builder() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "build_phase3_real_evidence_bundle.py"), "--json"])
+
+
+def validate_phase3_real_evidence_matrix() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_real_evidence_matrix.py")])
+
+
+def validate_phase3_handoff_coverage() -> int:
+    return run_command([sys.executable, str(ROOT / "scripts" / "plan_phase3_handoff_coverage.py")])
 
 
 def validate_runtime_baseline_artifact_contract() -> int:
@@ -169,6 +306,38 @@ def main() -> int:
         ("model target registry", validate_model_target_registry),
         ("expert paging roadmap", validate_expert_paging_roadmap),
         ("managed expert loading plan", validate_managed_expert_loading_plan),
+        ("expert inventory manifest", validate_expert_inventory_manifest),
+        ("expert store layout", validate_expert_store_layout),
+        ("trace inventory replay plan", validate_trace_inventory_replay_plan),
+        ("real-model trace inventory pairing", validate_real_model_trace_inventory_pairing),
+        ("baseline replay policies", validate_baseline_replay_policies),
+        ("baseline policy replay", validate_baseline_policy_replay),
+        ("dense fallback comparison", validate_dense_fallback_comparison),
+        ("dense fallback comparison builder", validate_dense_fallback_comparison_builder),
+        ("phase 3 prompt-set builder", validate_phase3_prompt_set_builder),
+        ("phase 3 output-summary builder", validate_phase3_output_summary_builder),
+        ("phase 3 trace-receipt builder", validate_phase3_trace_receipt_builder),
+        ("phase 3 runtime-capture request builder", validate_phase3_runtime_capture_request_builder),
+        ("phase 3 runtime-capture request audit", validate_phase3_runtime_capture_request_audit),
+        ("phase 3 runtime-capture command contract", validate_phase3_runtime_capture_command_contract),
+        ("phase 3 launch-card library", validate_phase3_launch_card_library),
+        ("phase 3 capture-result intake", validate_phase3_capture_result_intake),
+        ("phase 3 live-capability proof template builder", validate_phase3_live_capability_proof_template_builder),
+        ("phase 3 go/no-go decision", validate_phase3_go_no_go),
+        ("phase 3 live capability proof", validate_phase3_live_capability_proof),
+        ("phase 3 runtime actuator design", validate_phase3_runtime_actuator_design),
+        ("phase 3 runtime actuator spike", validate_phase3_runtime_actuator_spike),
+        ("phase 3 evidence packet", validate_phase3_evidence_packet),
+        ("phase 3 operator handoff package", validate_phase3_operator_handoff),
+        ("phase 3 capture-completion receipt", validate_phase3_capture_completion_receipt),
+        ("phase 3 dense fallback capture plan", validate_phase3_dense_fallback_capture),
+        ("phase 3 policy-candidate trace plan", validate_phase3_policy_candidate_trace),
+        ("phase 3 real-evidence capture plan", validate_phase3_real_evidence_capture),
+        ("phase 3 artifact intake", validate_phase3_artifact_intake),
+        ("phase 3 real-evidence bundle", validate_phase3_real_evidence_bundle),
+        ("phase 3 real-evidence bundle builder", validate_phase3_real_evidence_bundle_builder),
+        ("phase 3 real-evidence matrix", validate_phase3_real_evidence_matrix),
+        ("phase 3 handoff coverage", validate_phase3_handoff_coverage),
         ("runtime baseline artifact contract", validate_runtime_baseline_artifact_contract),
         ("runtime baseline capture plan", validate_runtime_baseline_capture_plan),
         ("edge hardware quickstart", validate_edge_hardware_quickstart),
